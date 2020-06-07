@@ -11,7 +11,7 @@ public class makeCards : MonoBehaviour
         for (int i = 0; i < 32; i++)
         {
             GameObject newCard = Instantiate(newCardPrefab);
-            newCard.name = "Card("  + i.ToString() + ")";
+            newCard.name = "invisibleCard";
             newCard.transform.SetParent(transform, false);
             // newCard.transform.parent = this.transform;
             newCard.transform.localScale = new Vector3(1, 1, 1);

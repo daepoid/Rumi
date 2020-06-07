@@ -1,13 +1,16 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
-    - Arranger
     - AuthManager
-    - Central
+    - CardControlEngine
+    - CardSlot
     - Draggable
     - LobbyManager
     - MyGameManager
     - PlayerName
+    - PlayerTextManager
+    - SortButtonHandler
+    - makeCards
     PhotonUnityNetworking.Demos.dll:
     - Photon.Pun.Demo.Asteroids.Asteroid
     - Photon.Pun.Demo.Asteroids.Bullet
@@ -18,8 +21,6 @@ ScriptsOnlyBuild:
     - Photon.Pun.Demo.PunBasics.PlayerUI
     - Photon.Pun.Demo.SlotRacer.PlayerControl
     - Photon.Pun.Demo.SlotRacer.Utils.SplineWalker
-    PhotonUnityNetworking.Editor.dll:
-    - Photon.Pun.PunSceneSettings
     PhotonUnityNetworking.dll:
     - Photon.Pun.PhotonAnimatorView
     - Photon.Pun.PhotonRigidbodyView
@@ -63,33 +64,41 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11226}
+      Script: {instanceID: 11208}
     - Class: 114
-      Script: {instanceID: 11444}
+      Script: {instanceID: 11228}
     - Class: 114
-      Script: {instanceID: 11492}
+      Script: {instanceID: 11446}
     - Class: 114
-      Script: {instanceID: 11976}
+      Script: {instanceID: 11494}
     - Class: 114
-      Script: {instanceID: 12326}
+      Script: {instanceID: 11978}
     - Class: 114
-      Script: {instanceID: 12456}
+      Script: {instanceID: 12118}
     - Class: 114
-      Script: {instanceID: 12588}
+      Script: {instanceID: 12206}
     - Class: 114
-      Script: {instanceID: 12624}
+      Script: {instanceID: 12332}
     - Class: 114
-      Script: {instanceID: 12740}
+      Script: {instanceID: 12354}
     - Class: 114
-      Script: {instanceID: 13066}
+      Script: {instanceID: 12464}
     - Class: 114
-      Script: {instanceID: 13200}
+      Script: {instanceID: 12596}
     - Class: 114
-      Script: {instanceID: 13294}
+      Script: {instanceID: 12700}
     - Class: 114
-      Script: {instanceID: 13420}
+      Script: {instanceID: 12748}
     - Class: 114
-      Script: {instanceID: 13502}
+      Script: {instanceID: 13072}
+    - Class: 114
+      Script: {instanceID: 13206}
+    - Class: 114
+      Script: {instanceID: 13216}
+    - Class: 114
+      Script: {instanceID: 13426}
+    - Class: 114
+      Script: {instanceID: 13508}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -124,23 +133,23 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11226}
+      Script: {instanceID: 11228}
     - Class: 114
-      Script: {instanceID: 11444}
+      Script: {instanceID: 11446}
     - Class: 114
-      Script: {instanceID: 11492}
+      Script: {instanceID: 11494}
     - Class: 114
-      Script: {instanceID: 11964}
+      Script: {instanceID: 11966}
     - Class: 114
-      Script: {instanceID: 11976}
+      Script: {instanceID: 11978}
     - Class: 114
-      Script: {instanceID: 12456}
+      Script: {instanceID: 12464}
     - Class: 114
-      Script: {instanceID: 13066}
+      Script: {instanceID: 13072}
     - Class: 114
-      Script: {instanceID: 13502}
+      Script: {instanceID: 13508}
     - Class: 114
-      Script: {instanceID: 13546}
+      Script: {instanceID: 13554}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -195,55 +204,65 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11226}
+      Script: {instanceID: 11208}
     - Class: 114
-      Script: {instanceID: 11382}
+      Script: {instanceID: 11228}
     - Class: 114
-      Script: {instanceID: 11406}
+      Script: {instanceID: 11384}
     - Class: 114
-      Script: {instanceID: 11444}
+      Script: {instanceID: 11408}
     - Class: 114
-      Script: {instanceID: 11484}
+      Script: {instanceID: 11446}
     - Class: 114
-      Script: {instanceID: 11492}
+      Script: {instanceID: 11486}
     - Class: 114
-      Script: {instanceID: 11888}
+      Script: {instanceID: 11494}
     - Class: 114
-      Script: {instanceID: 11976}
+      Script: {instanceID: 11890}
     - Class: 114
-      Script: {instanceID: 12050}
+      Script: {instanceID: 11978}
     - Class: 114
-      Script: {instanceID: 12260}
+      Script: {instanceID: 12052}
     - Class: 114
-      Script: {instanceID: 12326}
+      Script: {instanceID: 12118}
     - Class: 114
-      Script: {instanceID: 12456}
+      Script: {instanceID: 12206}
     - Class: 114
-      Script: {instanceID: 12514}
+      Script: {instanceID: 12266}
     - Class: 114
-      Script: {instanceID: 12606}
+      Script: {instanceID: 12332}
     - Class: 114
-      Script: {instanceID: 12690}
+      Script: {instanceID: 12464}
     - Class: 114
-      Script: {instanceID: 12698}
+      Script: {instanceID: 12522}
     - Class: 114
-      Script: {instanceID: 12710}
+      Script: {instanceID: 12614}
     - Class: 114
-      Script: {instanceID: 12910}
+      Script: {instanceID: 12696}
     - Class: 114
-      Script: {instanceID: 12928}
+      Script: {instanceID: 12706}
+    - Class: 114
+      Script: {instanceID: 12718}
+    - Class: 114
+      Script: {instanceID: 12748}
+    - Class: 114
+      Script: {instanceID: 12918}
     - Class: 114
       Script: {instanceID: 12936}
     - Class: 114
-      Script: {instanceID: 13066}
+      Script: {instanceID: 12944}
     - Class: 114
-      Script: {instanceID: 13420}
+      Script: {instanceID: 13072}
     - Class: 114
-      Script: {instanceID: 13502}
+      Script: {instanceID: 13206}
     - Class: 114
-      Script: {instanceID: 13532}
+      Script: {instanceID: 13426}
+    - Class: 114
+      Script: {instanceID: 13508}
     - Class: 114
       Script: {instanceID: 13540}
+    - Class: 114
+      Script: {instanceID: 13548}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -275,6 +294,12 @@ ScriptsOnlyBuild:
     - Class: 225
       Script: {instanceID: 0}
   scriptHashData:
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: makeCards
   - hash:
       serializedVersion: 2
       Hash: 80d2851602cb4bcb6f559596c5eb955b
@@ -619,12 +644,6 @@ ScriptsOnlyBuild:
     className: SendRateOnSerializeField
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: NewBehaviourScript
-  - hash:
-      serializedVersion: 2
       Hash: 01af2a1ccde6f5a3777877fce1d85576
     assemblyName: PhotonUnityNetworking.Utilities.dll
     namespaceName: Photon.Pun.UtilityScripts
@@ -793,6 +812,12 @@ ScriptsOnlyBuild:
     className: CurrentRoomPlayerTtlProperty
   - hash:
       serializedVersion: 2
+      Hash: df69094b0d158842922d6999476d4acb
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: CardSlot
+  - hash:
+      serializedVersion: 2
       Hash: f941c3a384168571b7d90f58ec4986bc
     assemblyName: PhotonUnityNetworking.Demos.dll
     namespaceName: Photon.Pun.Demo.Cockpit
@@ -803,6 +828,12 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.Demos.dll
     namespaceName: Photon.Pun.Demo.Cockpit
     className: CurrentRoomIsOpenToggle
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Game.CardControl
+    className: TableTopSlot
   - hash:
       serializedVersion: 2
       Hash: b3ab2106268377ffe25dd18ac23dca28
@@ -917,6 +948,12 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.Demos.dll
     namespaceName: Photon.Pun.Demo.Cockpit
     className: CurrentRoomPropertiesListedInLobbyProperty
+  - hash:
+      serializedVersion: 2
+      Hash: 5e48db24a99df2d2ca2878fa0d71595a
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: CardControlEngine
   - hash:
       serializedVersion: 2
       Hash: d329540117e6b6c523bded68046af505
@@ -1039,7 +1076,7 @@ ScriptsOnlyBuild:
     className: ToggleExpand
   - hash:
       serializedVersion: 2
-      Hash: 53e786f0902ac8b683bbfd4dc40f98db
+      Hash: a31f7b97189224afb49becd8df692173
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MyGameManager
@@ -1063,12 +1100,6 @@ ScriptsOnlyBuild:
     className: PlayerUI
   - hash:
       serializedVersion: 2
-      Hash: 0ddb8485c6e68aa903af0218818d889a
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: Central
-  - hash:
-      serializedVersion: 2
       Hash: a8a4fba96bef6fccf7bb4be2f06c16b6
     assemblyName: PhotonUnityNetworking.Demos.dll
     namespaceName: Photon.Pun.Demo.Cockpit.Forms
@@ -1085,6 +1116,12 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.Utilities.dll
     namespaceName: Photon.Pun.UtilityScripts
     className: PointedAtGameObjectInfo
+  - hash:
+      serializedVersion: 2
+      Hash: 6852391864fc4e47561d6a1c0da4f408
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: PlayerTextManager
   - hash:
       serializedVersion: 2
       Hash: 37b66d97ccef5607e80037acafe51b3b
@@ -1345,6 +1382,12 @@ ScriptsOnlyBuild:
     className: PhotonTeamsManager
   - hash:
       serializedVersion: 2
+      Hash: cabd73321fa93f89f8544f534d63723d
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: SortButtonHandler
+  - hash:
+      serializedVersion: 2
       Hash: c656dcc13ae391b68d594cc8f9c590b0
     assemblyName: PhotonUnityNetworking.Demos.dll
     namespaceName: Photon.Pun.Demo.Cockpit
@@ -1373,12 +1416,6 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.Utilities.dll
     namespaceName: Photon.Pun.UtilityScripts
     className: OnEscapeQuit
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: Arranger
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -1561,6 +1598,12 @@ ScriptsOnlyBuild:
     className: WorldGenerator
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Game.CardControl
+    className: TableTopCardManager
+  - hash:
+      serializedVersion: 2
       Hash: 55fd795e51da61232a17e9ce0af59f52
     assemblyName: PhotonUnityNetworking.Demos.dll
     namespaceName: Photon.Pun.Demo.Asteroids
@@ -1630,4 +1673,4 @@ ScriptsOnlyBuild:
   - Assets/Scenes/SignIn.unity
   - Assets/Scenes/Lobby.unity
   - Assets/Scenes/Game.unity
-  playerPath: C:/Users/samuel/Desktop/Rumi.exe
+  playerPath: C:/Users/samuel/Desktop/Rumi/Rumi.exe

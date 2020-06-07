@@ -8,13 +8,9 @@ using System;
 
 public class MyGameManager : MonoBehaviourPunCallbacks
 {
-    public const int COL = 12;
-    public const int ROW = 32;
-
-    public List<Card> DECK = new List<Card>();  // 전체 카드 덱 : 분배하고 남은 카드가 있습니다.
+    public List<Card> DECK = new List<Card>();                 // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
     public static List<Player> PLAYERS = new List<Player>();  // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
-    // public static Card[,] TABLE = new Card[12, 30];    // Rumikub의 테이블 판을 저장한 배열입니다.
-    public static List<List<Card>> TABLE = new List<List<Card>>();
+    public Card[,] TABLE = new Card[12, 32];    // Rumikub의 테이블 판을 저장한 배열입니다.
     private int playerNum;                      // 자신의 플레이어 번호를 알려줍니다. 0~4
     public int gameStart = 0;                   // 게임전:0, 게임중:1
 
@@ -172,13 +168,11 @@ public class MyGameManager : MonoBehaviourPunCallbacks
     void createTable()
     {
         Debug.Log("TABLE 인스턴스 생성 시작");
-        for (int col = 0; col < COL; col++)
+        for (int raw = 0; raw < 12; raw++)
         {
-            TABLE.Add(new List<Card>());
-            for (int row = 0; row < ROW; row++)
+            for (int col = 0; col < 32; col++)
             {
-                TABLE[col].Add(new Card());
-                // TABLE[col, raw] = new Card() { number = "", color = "" };
+                TABLE[raw, col] = new Card() { number = "", color = "" };
             }
         }
         Debug.Log("TABLE 인스턴스 생성 끝");
@@ -310,17 +304,16 @@ public class MyGameManager : MonoBehaviourPunCallbacks
     // num_col[]에 number와 color를 받아와 PLAYERS에 추가하는 함수
     //=========================================================================
     [PunRPC]
-    void DECK_Sync(string[] num_col)
+    void mainCardSetting(string[] num_col)
     {
         DECK.Add(new Card() { number = num_col[0], color=num_col[1] });
     }
 
     [PunRPC]
-    void PLAYERS_Card_Sync(int playerIndex, int cardIndex, string[] num_col)
+    void Setting(int playerIndex, int cardIndex, string[] num_col)
     {
-
-        Debug.Log("     RPC 수신" + playerIndex+" : 카드" + cardIndex+ " = " + num_col[0] + ", " + num_col[1]);
-        PLAYERS[playerIndex].cards[cardIndex] = new Card(num_col[0], num_col[1]);
+        Debug.Log("     RPC 수신"+playerIndex+" : 카드"+ cardIndex+ " = " + num_col[0] + ", " + num_col[1]);
+        PLAYERS[playerIndex].cards[cardIndex] = new Card() { number = num_col[0], color = num_col[1] };
     }
 
     //=========================================================================
@@ -403,10 +396,10 @@ public class MyGameManager : MonoBehaviourPunCallbacks
     // TABLE 동기화
     //=========================================================================
     [PunRPC]
-    void TABLE_Sync(int col, int row, string[] num_col)
+    void TABLE_Sync(int raw, int col, string[] num_col)
     {
-        TABLE[col][row].number = num_col[0];
-        TABLE[col][row].color = num_col[1];
+        TABLE[raw, col].number = num_col[0];
+        TABLE[raw, col].color = num_col[1];
     }
 
     //=========================================================================
@@ -414,19 +407,19 @@ public class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     void getTABLE()
     {
-        for (int col = 0; col < COL; col++)
+        for (int raw = 0; raw < 12; raw++)
         {
-            for (int row = 0; row < ROW; row++)
+            for (int col = 0; col < 32; col++)
             {
-                if (TableTop.GetChild(col).GetChild(row).GetComponent<Card>() == null)
+                try
                 {
-                    Debug.Log("널 발생!");
-                    return;
+                    TABLE[raw, col].number = TableTop.GetChild(raw).GetChild(col).GetChild(0).GetComponent<Text>().text;
+                    TABLE[raw, col].color = TableTop.GetChild(raw).GetChild(col).GetChild(0).GetComponent<Text>().color.ToString();
                 }
-                else
-                {
-                    TABLE[col][row].number = TableTop.GetChild(col).GetChild(row).GetComponent<Card>().number;
-                    TABLE[col][row].color = TableTop.GetChild(col).GetChild(row).GetComponent<Card>().color;
+                catch (Exception e)
+                { 
+                    Debug.Log("getTable 에러발생");
+                    return;
                 }
             }
         }
@@ -437,20 +430,24 @@ public class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     void viewTABLE()
     {
-        for(int col = 0; col < COL; col++)
+        for(int raw=0;raw<12;raw++)
         {
-            for(int row = 0; row < ROW; row++)
+            for(int col=0;col<32;col++)
             {
-                // Color color = Color.green;
-                // switch (TABLE[col][row].color)
-                // {
-                //     case "red": color = Color.red; break;
-                //     case "blue": color = Color.blue; break;
-                //     case "yellow": color = Color.yellow; break;
-                //     case "black": color = Color.black; break;
-                // }
-                TableTop.GetChild(row).GetChild(col).GetComponent<Card>().number = TABLE[col][row].number;
-                TableTop.GetChild(row).GetChild(col).GetComponent<Card>().color = TABLE[col][row].color;
+                Color color = Color.green;
+                switch (TABLE[raw,col].color)
+                {
+                    case "red": color = Color.red; break;
+                    case "blue": color = Color.blue; break;
+                    case "yellow": color = Color.yellow; break;
+                    case "black": color = Color.black; break;
+                }
+                //test
+                TABLE[raw, col].number = col.ToString();
+                //test
+
+                TableTop.GetChild(raw).GetChild(col).GetChild(0).GetComponent<Text>().text = TABLE[raw,col].number;
+                TableTop.GetChild(raw).GetChild(col).GetChild(0).GetComponent<Text>().color = color;
             }
         }
     }
@@ -468,16 +465,17 @@ public class MyGameManager : MonoBehaviourPunCallbacks
             // Master Client는 매 프래임마다 자신의 테이블을 업데이트해서 알려줍니다. 
             if (PhotonNetwork.IsMasterClient)
             {
-                for (int col = 0; col < COL; col++)
+                for (int raw = 0; raw < 12; raw++)
                 {
-                    for (int row = 0; row < ROW; row++)
+                    for (int col = 0; col < 32; col++)
                     {
-                        num_col[0] = TABLE[col][row].number;
-                        num_col[1] = TABLE[col][row].color;
-                        photonView.RPC("TABLE_Sync", RpcTarget.Others, col, row, num_col);
+                        num_col[0] = TABLE[raw, col].number;
+                        num_col[1] = TABLE[raw, col].color;
+                        photonView.RPC("TABLE_Sync", RpcTarget.Others, raw, col, num_col);
                     }
                 }
             }
+
             viewTABLE();
         }
     }
@@ -495,7 +493,8 @@ public class MyGameManager : MonoBehaviourPunCallbacks
         Photon.Realtime.Player[] playersInRoom = PhotonNetwork.PlayerList;
         //로컬 플레이어 인덱스 찾기
         int localPlayerIndex = Array.FindIndex(playersInRoom, player => player.IsLocal == true);
-        
+
+
         //로컬 플레이어 찾기
         Player localPlayer = PLAYERS.Find(x => x.NickName == playersInRoom[localPlayerIndex].NickName);
         //텍스트 출력
@@ -530,10 +529,12 @@ public class MyGameManager : MonoBehaviourPunCallbacks
         //Player2 정보 가져오기
         Photon.Realtime.Player playerInRoom = PhotonNetwork.PlayerListOthers[1];
 
+
         //players 리스트에서 Player2 찾기
         Player cardNumber = PLAYERS.Find(x => x.NickName == playerInRoom.NickName);
         //텍스트 출력
         nameText.text = cardNumber.cards.Length.ToString();
+
     }
 
     [PunRPC]
@@ -545,7 +546,8 @@ public class MyGameManager : MonoBehaviourPunCallbacks
 
         //Player3 정보 가져오기
         Photon.Realtime.Player playerInRoom = PhotonNetwork.PlayerListOthers[2];
-        
+
+
         //players 리스트에서 Player3 찾기
         Player cardNumber = PLAYERS.Find(x => x.NickName == playerInRoom.NickName);
         //텍스트 출력

@@ -166,12 +166,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5241805999010764c951fabf4f05c93e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DECK: []
-  gameStart: 0
   playButton: {fileID: 416342483}
+  getButton: {fileID: 0}
+  preCard: {fileID: 1042356755607709087, guid: 7d6e93b91940a1e439513644a2f1bf10, type: 3}
   CardHandTop: {fileID: 2110373449}
   CardHandBot: {fileID: 352459280}
-  TableTop: {fileID: 0}
 --- !u!114 &9070349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1425,7 +1424,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2481ee5e4f3413daa89a056b7fa7e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originCardCount: 0
 --- !u!1 &371289321
 GameObject:
   m_ObjectHideFlags: 0
@@ -1526,7 +1524,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2481ee5e4f3413daa89a056b7fa7e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originCardCount: 0
 --- !u!1 &416342481
 GameObject:
   m_ObjectHideFlags: 0
@@ -2678,7 +2675,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invisibleCard: {fileID: 1814767190}
-  whichCardSlot: {fileID: 0}
 --- !u!114 &695004089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6451,7 +6447,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2481ee5e4f3413daa89a056b7fa7e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originCardCount: 0
 --- !u!1 &2129631298
 GameObject:
   m_ObjectHideFlags: 0
