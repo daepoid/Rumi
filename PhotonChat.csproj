@@ -12,7 +12,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{2720F905-E7F7-1C3D-B8A5-6827A1BE2A59}</ProjectGuid>
+    <ProjectGuid>{6F9B5B87-4575-12A9-631C-8B785EBB8FD5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>PhotonChat</AssemblyName>
@@ -74,10 +74,10 @@
      <None Include="Assets\Photon\PhotonChat\Code\changes-chat.txt" />
      <None Include="Assets\Photon\PhotonChat\Code\PhotonChat.asmdef" />
  <Reference Include="UnityEditor.UI">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
  <HintPath>D:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -269,49 +269,49 @@
  <HintPath>D:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="Google.IOSResolver_v1.2.155">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.IOSResolver_v1.2.155.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/ExternalDependencyManager/Editor/Google.IOSResolver_v1.2.155.dll</HintPath>
  </Reference>
  <Reference Include="Google.JarResolver_v1.2.155">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.JarResolver_v1.2.155.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/ExternalDependencyManager/Editor/Google.JarResolver_v1.2.155.dll</HintPath>
  </Reference>
  <Reference Include="Google.PackageManagerResolver_v1.2.155">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.PackageManagerResolver_v1.2.155.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/ExternalDependencyManager/Editor/Google.PackageManagerResolver_v1.2.155.dll</HintPath>
  </Reference>
  <Reference Include="Google.VersionHandler">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.VersionHandler.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/ExternalDependencyManager/Editor/Google.VersionHandler.dll</HintPath>
  </Reference>
  <Reference Include="Google.VersionHandlerImpl_v1.2.155">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.VersionHandlerImpl_v1.2.155.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/ExternalDependencyManager/Editor/Google.VersionHandlerImpl_v1.2.155.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.Editor">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Firebase/Editor/Firebase.Editor.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Firebase/Editor/Firebase.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.App">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Firebase/Plugins/Firebase.App.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Firebase/Plugins/Firebase.App.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.Auth">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Firebase/Plugins/Firebase.Auth.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Firebase/Plugins/Firebase.Auth.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.Platform">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Firebase/Plugins/Firebase.Platform.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Firebase/Plugins/Firebase.Platform.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.TaskExtension">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Firebase/Plugins/Firebase.TaskExtension.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Firebase/Plugins/Firebase.TaskExtension.dll</HintPath>
  </Reference>
  <Reference Include="Google.MiniJson">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Firebase/Plugins/Google.MiniJson.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Firebase/Plugins/Google.MiniJson.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Compat">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Parse/Plugins/dotNet45/Unity.Compat.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Parse/Plugins/dotNet45/Unity.Compat.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Tasks">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Parse/Plugins/dotNet45/Unity.Tasks.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Parse/Plugins/dotNet45/Unity.Tasks.dll</HintPath>
  </Reference>
  <Reference Include="Photon3Unity3D">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Photon/PhotonLibs/Photon3Unity3D.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Photon/PhotonLibs/Photon3Unity3D.dll</HintPath>
  </Reference>
  <Reference Include="websocket-sharp">
- <HintPath>E:/Users/Daepoid/Code/Rumi_4/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
  </Reference>
  <Reference Include="netstandard">
  <HintPath>D:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
@@ -661,7 +661,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="PhotonWebSocket.csproj">
-      <Project>{ED5A10B0-F0E1-42AA-720F-86C0164A5714}</Project>
+      <Project>{36D3F9D6-21CC-2C7E-783C-E052B8126A1A}</Project>
       <Name>PhotonWebSocket</Name>
     </ProjectReference>
   </ItemGroup>
