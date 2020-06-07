@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "108918624526",
+    "firebase_url": "https://rummikub-911e5.firebaseio.com",
+    "project_id": "rummikub-911e5",
+    "storage_bucket": "rummikub-911e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108918624526:android:a7f5b23cf7dd54480e075f",
+        "android_client_info": {
+          "package_name": "com.WindowProject.rummikub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108918624526-fft0ups93tidl7n26al5mkbfj4oc6stk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.WindowProject.rummikub",
+            "certificate_hash": "59864748de1c95a47cc0068df764d6f992e91639"
+          }
+        },
+        {
+          "client_id": "108918624526-lrfeoru1ucf5i9a8og20r8l90v5g01p7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk-xk_mNI5byqw-3wmkWZ2my4FRJPFpVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108918624526-lrfeoru1ucf5i9a8og20r8l90v5g01p7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
