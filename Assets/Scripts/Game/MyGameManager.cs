@@ -8,15 +8,11 @@ using System;
 
 public partial class MyGameManager : MonoBehaviourPunCallbacks
 {
-    static private readonly int RAW_TABLE = 6;                  // 게임판의 RAW 크기
-    static private readonly int COL_TABLE = 12;                 // 게임판의 COLUM 크기
-
     public List<Card> DECK = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
     public static List<Player> PLAYERS = new List<Player>();    // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
-    public Card[,] TABLE = new Card[RAW_TABLE, COL_TABLE];      // Rumikub의 게임판을 저장한 배열입니다.
+    public Card[,] TABLE = new Card[12, 32];                    // Rumikub의 게임판을 저장한 배열입니다.
     public Card[,] TABLE_backup;                                // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
     private int playerNum;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
-    public Card[] clientCard;                                   // 클라이언트의 카드를 나타냅니다.
     public int gameStart = 0;                                   // 게임전:0, 게임중:1
     public int turn = -1;                                       // 턴을 나타내는 변수
     private float time = 0;
@@ -36,7 +32,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             if (playerNum == turn)
             {
-                // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
+                // 게임판이 사용을 허가하는 코드를 추가해야 합니다.
             }
 
             if (PhotonNetwork.IsMasterClient)
@@ -92,7 +88,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     public void Next()
     {
-        Debug.Log("Next 버튼 클릭");
         photonView.RPC("Backup", RpcTarget.All);
         turn++;
     }
@@ -104,17 +99,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void Backup()
     {
-        Debug.Log("백업 시작");
-
-        Get_TABLE();
-
         TABLE_backup = TABLE;
-
-        for(int raw = 0;raw<RAW_TABLE;raw++)
-        {
-            for (int col = 0; col < COL_TABLE; col++)
-                Debug.Log("(" + raw + "," + col + ") = " + TABLE_backup[raw, col].color + "/" + TABLE_backup[raw,col].number);
-        }
     }
 
     //=========================================================================
@@ -126,9 +111,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Sync_TABLE()
     {
         string[] num_col = { "", "" };
-        for (int raw = 0; raw < RAW_TABLE; raw++)
+        for (int raw = 0; raw < 12; raw++)
         {
-            for (int col = 0; col < COL_TABLE; col++)
+            for (int col = 0; col < 32; col++)
             {
                 num_col[0] = TABLE[raw, col].number;
                 num_col[1] = TABLE[raw, col].color;
@@ -157,23 +142,14 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     void Get_TABLE()
     {
-        for (int raw = 0; raw < RAW_TABLE; raw++)
+        for (int raw = 0; raw < 12; raw++)
         {
-            for (int col = 0; col < COL_TABLE; col++)
+            for (int col = 0; col < 32; col++)
             {
                 try
                 {
-                    string color = "Normal";
-                    switch (TableTop.GetChild(raw).GetChild(col).GetChild(0).GetChild(0).GetComponent<Text>().color.ToString())
-                    {
-                        case "RGBA(1.000, 0.000, 0.000, 1.000)" : color = "red"; break;
-                        case "RGBA(0.000, 0.000, 1.000, 1.000)": color = "blue"; break;
-                        case "RGBA(1.000, 0.920, 0.016, 1.000)": color = "yellow"; break;
-                        case "RGBA(0.000, 0.000, 0.000, 1.000)": color = "black"; break;
-                    }
-
-                    TABLE[raw, col].number = TableTop.GetChild(raw).GetChild(col).GetChild(0).GetChild(0).GetComponent<Text>().text;
-                    TABLE[raw, col].color = color;
+                    TABLE[raw, col].number = TableTop.GetChild(raw).GetChild(col).GetChild(0).GetComponent<Text>().text;
+                    TABLE[raw, col].color = TableTop.GetChild(raw).GetChild(col).GetChild(0).GetComponent<Text>().color.ToString();
                 }
                 catch (Exception e)
                 { 
@@ -191,9 +167,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     void View_TABLE()
     {
-        for(int raw=0;raw<RAW_TABLE;raw++)
+        for(int raw=0;raw<12;raw++)
         {
-            for(int col=0;col<COL_TABLE;col++)
+            for(int col=0;col<32;col++)
             {
                 Color color = Color.green;
                 switch (TABLE[raw,col].color)
@@ -221,7 +197,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void Sync_time(float time)
     {
-        this.Timmer.text = $"{time:N1}";
+        this.Timmer.text = $"{time:N2}";
     }
     //=========================================================================
     //카드 갯수 띄우기

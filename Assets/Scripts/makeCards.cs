@@ -8,7 +8,7 @@ public class makeCards : MonoBehaviour
     {
         GameObject newCardPrefab = Resources.Load("prefab/Card") as GameObject;
 
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 32; i++)
         {
             GameObject newCard = Instantiate(newCardPrefab);
             newCard.name = "invisibleCard";
