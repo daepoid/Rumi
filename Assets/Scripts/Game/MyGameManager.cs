@@ -6,397 +6,130 @@ using UnityEngine.UI;
 using System.IO;
 using System;
 
-public class MyGameManager : MonoBehaviourPunCallbacks
+public partial class MyGameManager : MonoBehaviourPunCallbacks
 {
-    public List<Card> DECK = new List<Card>();                 // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
-    public static List<Player> PLAYERS = new List<Player>();  // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
-    public Card[,] TABLE = new Card[12, 32];    // Rumikub의 테이블 판을 저장한 배열입니다.
-    private int playerNum;                      // 자신의 플레이어 번호를 알려줍니다. 0~4
-    public int gameStart = 0;                   // 게임전:0, 게임중:1
+    public List<Card> DECK = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
+    public static List<Player> PLAYERS = new List<Player>();    // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
+    public Card[,] TABLE = new Card[12, 32];                    // Rumikub의 게임판을 저장한 배열입니다.
+    public Card[,] TABLE_backup;                                // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
+    private int playerNum;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
+    public int gameStart = 0;                                   // 게임전:0, 게임중:1
+    public int turn = -1;                                       // 턴을 나타내는 변수
+    private float time = 0;
 
-    public Button playButton;
-    public Transform CardHandTop;
-    public Transform CardHandBot;
-    public Transform TableTop;
+    public Button playButton;                                   // start button : 마스터만 실행
+    public Button requet;                                       // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
+    public Button nextButton;                                   // turn을 넘겨주는 버튼
+    public Transform CardHandTop;                               // 로컬 플레이어 카드패 
+    public Transform CardHandBot;                               // 로컬 플레이어 카드패
+    public Transform TableTop;                                  // 게임판
+    public Text Timmer;                                          // 타이머
 
-    // Start is called before the first frame update
-    void Start()
+    // Update is called once per frame
+    void Update()
     {
-        Debug.Log("게임메니저 시작\n");
-
-        playerNum = PhotonNetwork.PlayerList.Length - 1;
-
-        if (!PhotonNetwork.IsMasterClient)
-            playButton.enabled = false;
-    }
-
-    //=========================================================================
-    // 버튼을 누르면 시작하는 함수
-    //=========================================================================
-    public void Reset()
-    {
-        Debug.Log(PhotonNetwork.LocalPlayer.UserId + "\n");
-
-        photonView.RPC("setPlayerNum", RpcTarget.All);  // 플레이어 번호 지정
-        photonView.RPC("initialize", RpcTarget.All);    // 카드, 플레이어 초기화
-        photonView.RPC("opencard", RpcTarget.All);      // 카드 생성 및 섞기(마스터)
-        photonView.RPC("createPlayer", RpcTarget.All);  // 플레이어 인스턴스 생성
-        photonView.RPC("createTable", RpcTarget.All);   // TABLE 인스턴스 생성
-        cardCall();                                     // 마스터(서버)가 카드를 나누어줌
-        syncCard();                                     // 마스터(서버)가 배분한 카드를 동기화 시킵니다.                
-        photonView.RPC("viewCard", RpcTarget.All);      // 자신이 받은 카드를 확인합니다.
-        // 게임 시작
-        photonView.RPC("PrintPlayer0CardText", RpcTarget.All);  //Player0 카드 갯수 출력
-        photonView.RPC("PrintPlayer1CardText", RpcTarget.All);  //Player1 카드 갯수 출력
-        photonView.RPC("PrintPlayer2CardText", RpcTarget.All);  //Player2 카드 갯수 출력
-        photonView.RPC("PrintPlayer3CardText", RpcTarget.All);  //Player3 카드 갯수 출력
-    }
-
-    //=========================================================================
-    // 플레이어 번호 지정
-    //=========================================================================
-    [PunRPC]
-    void setPlayerNum()
-    {
-        Debug.Log("플레이어 번호 지정 시작");
-        
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        if (gameStart == 1)
         {
-            if (PhotonNetwork.PlayerList[i].IsLocal)
+            if (playerNum == turn)
             {
-                playerNum = i;
-                Debug.Log("     플레이어번호 : " + playerNum);
-                return;
+                // 게임판이 사용을 허가하는 코드를 추가해야 합니다.
             }
-        }
 
-        Debug.Log("플레이어 번호 지정 끝");
-    }
-    //=========================================================================
-    // 카드, 플레이어 초기화
-    //=========================================================================
-    [PunRPC]
-    void initialize()
-    {
-        DECK.Clear();            // 카드 초기화
-        PLAYERS.Clear();         // 플레이어 초기화
-    }
-    //=========================================================================
-    // 카드 생성 - 마스터만 실행
-    //=========================================================================
-    [PunRPC]
-    void opencard()
-    {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.Log("마스터가 카드를 생성하고 있습니다.");
-            return;
-        }
-            
-        Debug.Log("카드 생성 시작\n");
-        for (int i = 0; i < 104; i++)
-        {
-            Card c = new Card();
-            c.number = ((i % 13) + 1).ToString();
-            switch((i / 26))
+            if (PhotonNetwork.IsMasterClient)
             {
-                case 0: c.color = "red"; break;
-                case 1: c.color = "blue"; break;
-                case 2: c.color = "yellow"; break;
-                case 3: c.color = "black"; break;
-            }
-            DECK.Add(c);
-        }
+                time += Time.deltaTime;
 
-        DECK.Add(new Card() { number = "J", color = "red" });
-        DECK.Add(new Card() { number = "J", color = "black" });
-
-        // 마스터 클라이언트만 카드를 섞습니다.
-        if(PhotonNetwork.IsMasterClient)
-            shuffle();
-
-        Debug.Log("카드 생성 완료");
-    }
-
-    // 카드 섞기 - opencard()에서 사용
-    void shuffle()
-    {
-        Debug.Log("마스터 : 카드 섞기 시작\n");
-        int i, j;
-        Random random = new Random();
-
-        for (i = 0; i < DECK.Count; i++)
-        {
-            j = ((int)(random.NextDouble() * 1000)) % 106;
-            swap(i, j);
-
-        }
-
-        Debug.Log("마스터 : 카드 섞기 완료\n");
-    }
-
-    // 카드 바꾸기 - shuffle()에서 사용
-    void swap(int sour, int dest)
-    {
-        Card temp = DECK[sour];
-        DECK[sour] = DECK[dest];
-        DECK[dest] = temp;
-    }
-
-    //=========================================================================
-    // PLAYERS 인스턴스 생성
-    //=========================================================================
-    [PunRPC]
-    void createPlayer()
-    {
-        Debug.Log("플레이어 인스턴스 생성 시작");
-        Player p;
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-        {
-            p = new Player();
-            PLAYERS.Add(p);
-        }
-        Debug.Log("     입장한 플레이어 수: " + PhotonNetwork.PlayerList.Length + "\n");
-        Debug.Log("     플레이어 인스턴스 수 : " + PLAYERS.Count);
-        Debug.Log("플레이어 인스턴스 생성 끝");
-    }
-
-    //=========================================================================
-    // TABLE 인스턴스 생성
-    //=========================================================================
-    [PunRPC]
-    void createTable()
-    {
-        Debug.Log("TABLE 인스턴스 생성 시작");
-        for (int raw = 0; raw < 12; raw++)
-        {
-            for (int col = 0; col < 32; col++)
-            {
-                TABLE[raw, col] = new Card() { number = "", color = "" };
-            }
-        }
-        Debug.Log("TABLE 인스턴스 생성 끝");
-    }
-
-    //=========================================================================
-    //카드 분배하기 - 마스터만 실행
-    //=========================================================================
-    void cardCall()
-    {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.Log("마스터가 카드 분배하고 있습니다.\n");
-            return;
-        }
-
-        Debug.Log("카드 분배 시작\n");
-
-        /*Debug.Log("     전체 카드 확인 \n");
-        //###########################카드 출력
-        for (int i = 0;  i < DECK.Count; i++)
-        {
-            Debug.Log("     card[" + i + "] :" + DECK[i].color + DECK[i].number);
-        }*/
-
-        //카드 분배, 멀티 플레이용
-        // ## PLAYERS.count 사용 시 다른 사람이 접속이 끊겨도 계속 실행됩니다.
-        try
-        {
-            for (int j = 0; j < PLAYERS.Count; j++)
-            {
-                for (int i = 0; i < 22; i++)
+                if (time > 60)
                 {
-                    //Debug.Log("     마지막 카드" + i + DECK[DECK.Count - 1].color + DECK[DECK.Count - 1].number);
-                    PLAYERS[j].cards[i] = DECK[DECK.Count - 1];
-                    //Debug.Log("     입력한 카드" + i + PLAYERS[j].cards[PLAYERS[j].cards.Length - 1].color
-                    //     + PLAYERS[j].cards[PLAYERS[j].cards.Length - 1].number);
-
-                    DECK.RemoveAt(DECK.Count - 1);
+                    time = 0;
+                    Next();
                 }
+
+                photonView.RPC("Sync_time", RpcTarget.All, time);
             }
-        }
-        catch (Exception e)
-        {
-            Debug.Log("     Error : 오류가 발생했습니다. \n");
-            return;
-        }
 
-        //###########################카드 출력
-        /*  
-        //Debug.Log("   @남은 카드 확인");
-        for (int i = 0; i < DECK.Count; i++)
-        {
-            Debug.Log("     card[" + i + "] :" + DECK[i].color + DECK[i].number);
-        }
-        
 
-        for(int i =0; i< PLAYERS.Count; i++)
-        {
-            Debug.Log("   @player"+i+"의 카드 ==========");
-            for (int j = 0; j< PLAYERS[i].cards.Length; j++)
-            {
-                Debug.Log("     card["+j+"]:"+PLAYERS[i].cards[j].color+ PLAYERS[i].cards[j].number);
-            }
+            // 자신의 카드의 개수가 0개면 게임을 종료합니다.
+            /* if()
+              {
+              }
+             */
         }
-        */
-
-        Debug.Log("카드 분배 완료\n");
     }
 
     //=========================================================================
-    //카드의 싱크를 맞추는 함수 - 마스터만 실행
+    // request 버튼 - BETA
+    // 설명
+    // 1. request 버튼을 누르게 되면 클라이언트의 TABLE을 읽어와 Rule을 검사합니다.
+    // 2. Rule을 검사하고 Rule에 문제가 없으면 모든 클라이언트의 TABLE을 동기화합니다.
+    // 3. Rule에 문제가 있으면 TABLE을 TABLE_backup 내용으로 바꿉니다.
+    // 4. 자신의 카드 개수를 업데이트 합니다.
     //=========================================================================
-    void syncCard()
+    public void Request()
     {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.Log("마스터가 카드를 동기화하고 있습니다.\n");
-            return;
-        }
+        Get_TABLE();
 
-        Debug.Log("카드 동기화 시작\n");
+        bool flag = false;
+        //Rule 구현
+        // ....
+        // ....
 
-        Debug.Log("     입장한 플레이어 수: " + PhotonNetwork.PlayerList.Length + "\n");
-        Debug.Log("     플레이어 인스턴스 수 : " + PLAYERS.Count);
-
-        string[] num_col = { "", "" };
-
-        // 전체 카드 동기화
-        for(int cardIndex = 0; cardIndex < DECK.Count; cardIndex++)
-        {
-            num_col[0] = DECK[cardIndex].number;
-            num_col[1] = DECK[cardIndex].color;
-
-            photonView.RPC("mainCardSetting", RpcTarget.Others, num_col);
-        }
-
-
-        // 플레이어 카드 동기화
-        for (int playerIndex = 0; playerIndex < PhotonNetwork.PlayerList.Length; playerIndex++)
-        {
-            Debug.Log("     " + playerIndex + "플레이어 카드 동기화 시작");
-
-            for(int cardIndex = 0; cardIndex < PLAYERS[playerIndex].cards.Length; cardIndex++)
-            {
-                num_col[0] = PLAYERS[playerIndex].cards[cardIndex].number;
-                num_col[1] = PLAYERS[playerIndex].cards[cardIndex].color ;
-
-                Debug.Log("     RPC 송신" + cardIndex + ": " + num_col[0] + ", " + num_col[1]);
-                photonView.RPC("Setting", RpcTarget.Others, playerIndex, cardIndex, num_col);
-                for (int i = 0; i < 1000; i++)
-                    ;
-            }
-
-            Debug.Log("     " + playerIndex + "플레이어 카드 : " + PLAYERS[playerIndex].cards.Length);
-            Debug.Log("     " + playerIndex + "플레이어 카드 동기화 끝");
-        }
-        /*
-        Debug.Log("     분배 후 전체카드 수 : " + DECK.Count);
-        Debug.Log("     플레이어 번호:" + playerNum);
-        Debug.Log("     카드수:" + PLAYERS[playerNum].cards.Length);
-        Debug.Log("     플레이어 수:" + PhotonNetwork.PlayerList.Length);
-        */
-        Debug.Log("카드 동기화 완료\n");
+        // 만약 자신의 테이블이 참이라면
+        if (flag)
+            Sync_TABLE();
+        else
+            TABLE = TABLE_backup;
     }
 
     //=========================================================================
-    // RPC에서 사용하는 함수 - 클라이언트만 실행
-    // num_col[]에 number와 color를 받아와 PLAYERS에 추가하는 함수
+    // next 버튼 - BETA
+    // 설명
+    // 1. next 버튼을 누르게 되면 int turn이 증가하여 다음 플레이어에게 턴을 전달합니다.
+    //=========================================================================
+    public void Next()
+    {
+        photonView.RPC("Backup", RpcTarget.All);
+        turn++;
+    }
+
+    //=========================================================================
+    // 테이블을 백업합니다.
+    // 위 함수에서 호출합니다.
     //=========================================================================
     [PunRPC]
-    void mainCardSetting(string[] num_col)
+    void Backup()
     {
-        DECK.Add(new Card() { number = num_col[0], color=num_col[1] });
-    }
-
-    [PunRPC]
-    void Setting(int playerIndex, int cardIndex, string[] num_col)
-    {
-        Debug.Log("     RPC 수신"+playerIndex+" : 카드"+ cardIndex+ " = " + num_col[0] + ", " + num_col[1]);
-        PLAYERS[playerIndex].cards[cardIndex] = new Card() { number = num_col[0], color = num_col[1] };
-    }
-
-    //=========================================================================
-    //카드 띄우기
-    //=========================================================================
-    [PunRPC]
-    void viewCard()
-    {
-        Debug.Log("카드 띄우기 실행\n");
-
-        Debug.Log("     플레이어번호 : " + playerNum);
-        Debug.Log("     호스트 플레이어 카드 갯수" + PLAYERS[0].cards.Length);
-        Debug.Log("     플레이어 카드 갯수" + PLAYERS[playerNum].cards.Length);
-
-        for (int i = 0; i < PLAYERS.Count; i++)
-        {
-            Debug.Log("   @player" + i + "의 카드 ==========");
-            for (int j = 0; j < PLAYERS[i].cards.Length; j++)
-            {
-                Debug.Log("     card[" + j + "]:" + PLAYERS[i].cards[j].color + PLAYERS[i].cards[j].number);
-            }
-        }
-
-        for (int i = 0; i < 22; i++)
-        {
-            Color color = Color.green;
-            switch (PLAYERS[playerNum].cards[i].color)
-            {
-                case "red": color = Color.red; break;
-                case "blue": color = Color.blue; break;
-                case "yellow": color = Color.yellow; break;
-                case "black": color = Color.black; break;
-            }
-
-            Debug.Log("CardHandTop.GetChild(i % 11).GetChild(0) : " + CardHandTop.GetChild(i % 11).GetChild(0).name);
-            if (i > 11)
-            {
-                CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text = PLAYERS[playerNum].cards[i].number;
-                CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color = color;
-                // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = PLAYERS[playerNum].card[i].number;
-                // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
-            }
-            else
-            {
-                CardHandBot.GetChild(i % 11).GetChild(0).GetComponent<Text>().text = PLAYERS[playerNum].cards[i].number;
-                CardHandBot.GetChild(i % 11).GetChild(0).GetComponent<Text>().color = color;
-                // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = PLAYERS[playerNum].card[i].number;
-                // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
-            }
-            
-            // if (i < 11)
-            // {
-            //     CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = PLAYERS[playerNum].card[i].number;
-            //     switch (PLAYERS[playerNum].card[i].color)
-            //     {
-            //         case "red": CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.red; break;
-            //         case "blue": CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.blue; break;
-            //         case "yellow": CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.yellow; break;
-            //         case "black": CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.black; break;
-            //     }
-            // }
-            // else
-            // {
-            //     CardHandBot.GetChild(i - 11).GetChild(0).GetComponent<Text>().text = PLAYERS[playerNum].card[i].number;
-            //     switch (PLAYERS[playerNum].card[i].color)
-            //     {
-            //         case "red": CardHandBot.GetChild(i-11).GetChild(0).GetComponent<Text>().color = Color.red; break;
-            //         case "blue": CardHandBot.GetChild(i-11).GetChild(0).GetComponent<Text>().color = Color.blue; break;
-            //         case "yellow": CardHandBot.GetChild(i-11).GetChild(0).GetComponent<Text>().color = Color.yellow; break;
-            //         case "black": CardHandBot.GetChild(i-11).GetChild(0).GetComponent<Text>().color = Color.black; break;
-            //     }
-            // }
-        }
-        gameStart = 1;
-
-        Debug.Log("카드 띄우기 완료\n");
+        TABLE_backup = TABLE;
     }
 
     //=========================================================================
     // TABLE 동기화
+    // 설명
+    // 1. 자신의 TABLE을 모든 클라이언트에게 동기화 시킵니다.
+    // 2. raw와 col로 TABLE 배열의 인덱스로 접근하며, num_col에 해당 TABLE 요소의 숫자와 색상을 저장합니다.
+    //=========================================================================
+    void Sync_TABLE()
+    {
+        string[] num_col = { "", "" };
+        for (int raw = 0; raw < 12; raw++)
+        {
+            for (int col = 0; col < 32; col++)
+            {
+                num_col[0] = TABLE[raw, col].number;
+                num_col[1] = TABLE[raw, col].color;
+                photonView.RPC("Sync_TABLE_Element", RpcTarget.Others, raw, col, num_col);
+            }
+        }
+
+    }
+    //=========================================================================
+    // TABLE 요소 동기화 - 위 함수에 의해 호출됩니다.
+    // 설명
+    // 1. TABLE들의 요소를 동기화 합니다.
+    // 2. raw, col 으로 TABLE의 인덱스를 나타내며, num_col 배열에 숫자와 색상이 담겨 있습니다.
     //=========================================================================
     [PunRPC]
-    void TABLE_Sync(int raw, int col, string[] num_col)
+    void Sync_TABLE_Element(int raw, int col, string[] num_col)
     {
         TABLE[raw, col].number = num_col[0];
         TABLE[raw, col].color = num_col[1];
@@ -404,8 +137,10 @@ public class MyGameManager : MonoBehaviourPunCallbacks
 
     //=========================================================================
     // TABLE 가져오기
+    // 설명
+    // 1. 게임판에 있는 데이터를 TABLE 배열로 가져옵니다.
     //=========================================================================
-    void getTABLE()
+    void Get_TABLE()
     {
         for (int raw = 0; raw < 12; raw++)
         {
@@ -427,8 +162,10 @@ public class MyGameManager : MonoBehaviourPunCallbacks
 
     //=========================================================================
     // TABLE 띄우기
+    // 설명
+    // 1. TABLE 배열에 있는 데이터를 게임판으로 보냅니다.
     //=========================================================================
-    void viewTABLE()
+    void View_TABLE()
     {
         for(int raw=0;raw<12;raw++)
         {
@@ -452,32 +189,15 @@ public class MyGameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    //=========================================================================
+    // 타이머 동기화
+    // 설명
+    // 1. 마스터의 타이머를 동기화 하는 프로그램 입니다.
+    //=========================================================================
+    [PunRPC]
+    void Sync_time(float time)
     {
-        if (gameStart == 1)
-        {
-            // TABLE UI에서 정보를 가져옵니다.
-            getTABLE();
-
-            string[] num_col = { "", "" };
-
-            // Master Client는 매 프래임마다 자신의 테이블을 업데이트해서 알려줍니다. 
-            if (PhotonNetwork.IsMasterClient)
-            {
-                for (int raw = 0; raw < 12; raw++)
-                {
-                    for (int col = 0; col < 32; col++)
-                    {
-                        num_col[0] = TABLE[raw, col].number;
-                        num_col[1] = TABLE[raw, col].color;
-                        photonView.RPC("TABLE_Sync", RpcTarget.Others, raw, col, num_col);
-                    }
-                }
-            }
-
-            viewTABLE();
-        }
+        this.Timmer.text = $"{time:N2}";
     }
     //=========================================================================
     //카드 갯수 띄우기

@@ -54,6 +54,11 @@ MonoBehaviour:
   - TABLE_Sync
   - PrintCardNumberText
   - updateCardNumberText
+  - Backup
+  - playerCardSetting
+  - TABLE_Element_Sync
+  - Sync_TABLE_Element
+  - Sync_time
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

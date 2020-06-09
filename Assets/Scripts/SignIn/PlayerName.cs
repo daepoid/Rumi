@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class PlayerName : MonoBehaviour
 {
-    // Start is called before the first frame update
     private Text nameText;
     void Start()
     {

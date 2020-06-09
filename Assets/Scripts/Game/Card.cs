@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Card
+public class Card : MonoBehaviour
 {
     public string number; // J:Joker, 1~13:Number
     public string color; // black, blue, red, yellow
@@ -12,7 +12,7 @@ public class Card
     public Card()
     {
         number = "0";
-        color = "black";
+        color = "green";
     }
     
 }

@@ -300,7 +300,7 @@
       <HintPath>Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>C:/Users/samuel/Desktop/Rumi (1)/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2019.3.14f1\Editor\Data\MonoBleedingEdge\lib\mono\4.7.1-api\mscorlib.dll</HintPath>
@@ -936,71 +936,6 @@
     <None Include="Assets\Photon\PhotonUnityNetworking\readme.txt" />
     <None Include="Assets\Plugins\Android\Firebase\AndroidManifest.xml" />
     <None Include="Assets\Plugins\Android\Firebase\res\values\google-services.xml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\LayoutOverlay\LayoutOverlay.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\LayoutOverlay\LayoutOverlayStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\LayoutOverlay\ScrollableToolbar.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\BoneInspectorPanel.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\BoneInspectorPanelStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\BoneReparentStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\BoneReparentWindow.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\BoneToolbar.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\BoneToolbarStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\CopyToolbar.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\CopyToolbarStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\GenerateGeometryPanel.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\GenerateGeometryPanelStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\GenerateWeightsPanel.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\GenerateWeightsPanelStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\MeshToolbar.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\MeshToolbarStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\PastePanel.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\PastePanelStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\SkinningModule-GUITextureClip.shader" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\SpriteBitMask.shader" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\SpriteBoneInfluenceListWidget.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\SpriteBoneInfluenceListWidgetStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\SpriteBoneInfluenceWindow.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\SpriteBoneInfluenceWindowStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\SpriteOutline.shader" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\ToolbarStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\VisibilityTool.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\VisibilityToolWindow.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\VisibilityToolbar.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\WeightInspectorIMGUIPanelStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\WeightPainterPanel.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\WeightPainterPanelStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\WeightToolbar.uxml" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Assets\SkinningModule\WeightToolbarStyle.uss" />
-    <None Include="Packages\com.unity.2d.animation\Editor\Unity.2D.Animation.Editor.asmdef" />
-    <None Include="Packages\com.unity.2d.animation\Runtime\Triangle\Unity.2D.Animation.Triangle.Runtime.asmdef" />
-    <None Include="Packages\com.unity.2d.animation\Runtime\Unity.2D.Animation.Runtime.asmdef" />
-    <None Include="Packages\com.unity.2d.animation\Tests\Editor\Unity.2D.Animation.EditorTests.asmdef" />
-    <None Include="Packages\com.unity.2d.common\Editor\InternalBridge\InternalBridgeDef.asmdef" />
-    <None Include="Packages\com.unity.2d.common\Editor\Unity.2D.Common.Editor.asmdef" />
-    <None Include="Packages\com.unity.2d.common\Runtime\InternalBridge\InternalBridgeDef.asmdef" />
-    <None Include="Packages\com.unity.2d.common\Runtime\Unity.2D.Common.Runtime.asmdef" />
-    <None Include="Packages\com.unity.2d.common\Tests\Editor\Unity.2D.Common.EditorTests.asmdef" />
-    <None Include="Packages\com.unity.2d.path\Editor\Unity.2D.Path.Editor.asmdef" />
-    <None Include="Packages\com.unity.2d.path\Tests\Unity.2D.Path.Tests.asmdef" />
-    <None Include="Packages\com.unity.2d.pixel-perfect\Editor\Unity.2D.PixelPerfect.Editor.asmdef" />
-    <None Include="Packages\com.unity.2d.pixel-perfect\Runtime\Unity.2D.PixelPerfect.asmdef" />
-    <None Include="Packages\com.unity.2d.pixel-perfect\Tests\Editor\Unity.2D.PixelPerfect.Editor.Tests.asmdef" />
-    <None Include="Packages\com.unity.2d.pixel-perfect\Tests\Runtime\Unity.2D.PixelPerfect.Tests.asmdef" />
-    <None Include="Packages\com.unity.2d.psdimporter\Editor\PSDPlugin\PsdPlugin.asmdef" />
-    <None Include="Packages\com.unity.2d.psdimporter\Editor\Unity.2D.Psdimporter.Editor.asmdef" />
-    <None Include="Packages\com.unity.2d.psdimporter\Tests\EditorTests\Unity.2D.Psdimporter.EditorTests.asmdef" />
-    <None Include="Packages\com.unity.2d.sprite\Editor\UI\SpriteEditor\PolygonChangeShapeWindow.uxml" />
-    <None Include="Packages\com.unity.2d.sprite\Editor\UI\SpriteEditor\SpriteEditor.uss" />
-    <None Include="Packages\com.unity.2d.sprite\Editor\UI\SpriteEditor\SpriteFrameModuleInspector.uxml" />
-    <None Include="Packages\com.unity.2d.sprite\Editor\Unity.2D.Sprite.Editor.asmdef" />
-    <None Include="Packages\com.unity.2d.sprite\Tests\Editor\Unity.2D.Sprite.Package.EditorTests.asmdef" />
-    <None Include="Packages\com.unity.2d.spriteshape\Editor\Handles\Shaders\Sprites-Inspector.shader" />
-    <None Include="Packages\com.unity.2d.spriteshape\Editor\Unity.2D.SpriteShape.Editor.asmdef" />
-    <None Include="Packages\com.unity.2d.spriteshape\Runtime\External\LibTessDotNet\LICENSE.txt" />
-    <None Include="Packages\com.unity.2d.spriteshape\Runtime\Unity.2D.SpriteShape.Runtime.asmdef" />
-    <None Include="Packages\com.unity.2d.spriteshape\Tests\Unity.2D.SpriteShape.EditorTests.asmdef" />
-    <None Include="Packages\com.unity.2d.tilemap\Editor\Unity.2D.Tilemap.Editor.asmdef" />
-    <None Include="Packages\com.unity.2d.tilemap\Tests\Editor\Unity.2D.Tilemap.EditorTests.asmdef" />
     <None Include="Packages\com.unity.collab-proxy\Editor\Resources\Styles\CollabHistoryCommon.uss" />
     <None Include="Packages\com.unity.collab-proxy\Editor\Resources\Styles\CollabHistoryDark.uss" />
     <None Include="Packages\com.unity.collab-proxy\Editor\Resources\Styles\CollabHistoryLight.uss" />
@@ -1010,9 +945,6 @@
     <None Include="Packages\com.unity.ext.nunit\net35\unity-custom\nunit.framework.xml" />
     <None Include="Packages\com.unity.ide.rider\Rider\Editor\com.unity.ide.rider.asmdef" />
     <None Include="Packages\com.unity.ide.vscode\Editor\Unity.com.unity.vscode.Editor.asmdef" />
-    <None Include="Packages\com.unity.mathematics\Tests\Unity.Mathematics.Tests.asmdef" />
-    <None Include="Packages\com.unity.mathematics\Unity.Mathematics.Editor\Unity.Mathematics.Editor.asmdef" />
-    <None Include="Packages\com.unity.mathematics\Unity.Mathematics\Unity.Mathematics.asmdef" />
     <None Include="Packages\com.unity.test-framework\UnityEditor.TestRunner\UnityEditor.TestRunner.asmdef" />
     <None Include="Packages\com.unity.test-framework\UnityEngine.TestRunner\UnityEngine.TestRunner.asmdef" />
     <None Include="Packages\com.unity.textmeshpro\Editor Resources\Shaders\TMP_Properties.cginc" />

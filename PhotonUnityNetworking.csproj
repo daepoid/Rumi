@@ -11,7 +11,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{B9EB28C3-50E0-1D6A-3FDD-E777E91BDBBC}</ProjectGuid>
+    <ProjectGuid>{A6FE12FB-375A-E9D1-F657-9459BCE7C61B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>PhotonUnityNetworking</AssemblyName>
@@ -279,49 +279,49 @@
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/15.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
     <Reference Include="Google.IOSResolver_v1.2.155">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.IOSResolver_v1.2.155.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/ExternalDependencyManager/Editor/Google.IOSResolver_v1.2.155.dll</HintPath>
     </Reference>
     <Reference Include="Google.JarResolver_v1.2.155">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.JarResolver_v1.2.155.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/ExternalDependencyManager/Editor/Google.JarResolver_v1.2.155.dll</HintPath>
     </Reference>
     <Reference Include="Google.PackageManagerResolver_v1.2.155">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.PackageManagerResolver_v1.2.155.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/ExternalDependencyManager/Editor/Google.PackageManagerResolver_v1.2.155.dll</HintPath>
     </Reference>
     <Reference Include="Google.VersionHandler">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.VersionHandler.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/ExternalDependencyManager/Editor/Google.VersionHandler.dll</HintPath>
     </Reference>
     <Reference Include="Google.VersionHandlerImpl_v1.2.155">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/ExternalDependencyManager/Editor/Google.VersionHandlerImpl_v1.2.155.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/ExternalDependencyManager/Editor/Google.VersionHandlerImpl_v1.2.155.dll</HintPath>
     </Reference>
     <Reference Include="Firebase.Editor">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Firebase/Editor/Firebase.Editor.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Firebase/Editor/Firebase.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Firebase.App">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Firebase/Plugins/Firebase.App.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Firebase/Plugins/Firebase.App.dll</HintPath>
     </Reference>
     <Reference Include="Firebase.Auth">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Firebase/Plugins/Firebase.Auth.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Firebase/Plugins/Firebase.Auth.dll</HintPath>
     </Reference>
     <Reference Include="Firebase.Platform">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Firebase/Plugins/Firebase.Platform.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Firebase/Plugins/Firebase.Platform.dll</HintPath>
     </Reference>
     <Reference Include="Firebase.TaskExtension">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Firebase/Plugins/Firebase.TaskExtension.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Firebase/Plugins/Firebase.TaskExtension.dll</HintPath>
     </Reference>
     <Reference Include="Google.MiniJson">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Firebase/Plugins/Google.MiniJson.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Firebase/Plugins/Google.MiniJson.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Compat">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Parse/Plugins/dotNet45/Unity.Compat.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Parse/Plugins/dotNet45/Unity.Compat.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Tasks">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Parse/Plugins/dotNet45/Unity.Tasks.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Parse/Plugins/dotNet45/Unity.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Photon/PhotonLibs/Photon3Unity3D.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Photon/PhotonLibs/Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="websocket-sharp">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
@@ -669,15 +669,15 @@
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/NetStandard/compat/2.0.0/shims/netfx/System.Xml.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>C:/Users/samuel/Desktop/Rumi_4/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+      <HintPath>C:/Users/samuel/Documents/GitHub/Rumikub/Rumi/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="PhotonRealtime.csproj">
-      <Project>{C5099322-F93A-4DE6-430F-7728E6BC6DDE}</Project>
+      <Project>{755FA1A6-F135-3353-96D2-26629B3CD969}</Project>
       <Name>PhotonRealtime</Name>
     </ProjectReference>
   </ItemGroup>

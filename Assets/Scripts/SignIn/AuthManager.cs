@@ -16,7 +16,7 @@ public class AuthManager : MonoBehaviour
 
     public static FirebaseApp firebaseApp;
     public static FirebaseAuth firebaseAuth;
-
+    
     public static FirebaseUser User;
     
     public void Start()
