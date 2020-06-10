@@ -19,13 +19,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         connectionInfoText.text = "Connection To Master Server...";
 
     }
-
-    public void SetNickName()
-    {
-        string[] temp = AuthManager.User.Email.Split('@');
-        //PhotonNetwork.NickName = AuthManager.User.Email;
-        PhotonNetwork.NickName = temp[0];
-    }
+    
     
     public override void OnConnectedToMaster()
     {

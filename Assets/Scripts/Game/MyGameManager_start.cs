@@ -165,6 +165,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
             p = new Player();
+            p.NickName = PhotonNetwork.PlayerList[i].NickName;
             PLAYERS.Add(p);
         }
         Debug.Log("     입장한 플레이어 수: " + PhotonNetwork.PlayerList.Length + "\n");

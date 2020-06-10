@@ -25,7 +25,15 @@ public class LobbyNetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.GameVersion = gameVersion;
         PhotonNetwork.ConnectUsingSettings();
 
+        SetNickName();
+
      }
+
+    public void SetNickName()
+    {
+        string[] temp = AuthManager.User.Email.Split('@');
+        PhotonNetwork.NickName = temp[0];
+    }
 
     public void MyListClick(int num)
     {
