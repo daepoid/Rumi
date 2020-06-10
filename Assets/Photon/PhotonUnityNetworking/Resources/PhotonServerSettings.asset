@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 366f1a35-a90c-4b2e-91cf-1cb4e392636b
+    AppIdRealtime: 
     AppIdChat: 
     AppIdVoice: 
     AppVersion: 
@@ -25,40 +25,34 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: kr
+  DevRegion: 
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
+  - Backup
   - ClickRpc
+  - createPlayer
+  - createTable
   - DestroyRpc
   - DestroySpaceship
   - Fire
-  - RespawnSpaceship
-  - Setting
-  - calling
-  - viewCard
-  - createPlayer
-  - opencard
   - initialize
-  - setPlayerNum
   - mainCardSetting
+  - opencard
+  - playerCardSetting
+  - PrintCardNumberText
   - PrintPlayer0CardText
   - PrintPlayer1CardText
   - PrintPlayer2CardText
   - PrintPlayer3CardText
-  - createTable
-  - DECK_Sync
-  - PLAYERS_Card_Sync
-  - TABLE_Sync
-  - PrintCardNumberText
-  - updateCardNumberText
-  - Backup
-  - playerCardSetting
-  - TABLE_Element_Sync
+  - RespawnSpaceship
+  - setPlayerNum
   - Sync_TABLE_Element
   - Sync_time
+  - updateCardNumberText
+  - viewCard
   DisableAutoOpenWizard: 1
   ShowSettings: 0
-  DevRegionSetOnce: 1
+  DevRegionSetOnce: 0
