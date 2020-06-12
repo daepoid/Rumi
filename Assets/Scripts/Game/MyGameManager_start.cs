@@ -13,8 +13,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("게임메니저 시작\n");
 
-        playerNum = PhotonNetwork.PlayerList.Length - 1;
-
         if (!PhotonNetwork.IsMasterClient)
             playButton.enabled = false;
     }
@@ -30,17 +28,20 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log(PhotonNetwork.LocalPlayer.UserId + "\n");
 
-        photonView.RPC("Set_playerNum", RpcTarget.All);  // 플레이어 번호 지정
-        photonView.RPC("Initialize", RpcTarget.All);    // 카드, 플레이어 초기화
-        photonView.RPC("Create_DECK", RpcTarget.All);      // 카드 생성 및 섞기(마스터)
-        photonView.RPC("Create_PLAYERS", RpcTarget.All);  // 플레이어 인스턴스 생성
-        photonView.RPC("Create_Table", RpcTarget.All);   // TABLE 인스턴스 생성
-        cardCall();                                     // 마스터(서버)가 카드를 나누어줌
-        Sync_Card();                                     // 마스터(서버)가 배분한 카드를 동기화 시킵니다.                
-        photonView.RPC("View_Card", RpcTarget.All);      // 자신이 받은 카드를 확인합니다.
+        photonView.RPC("Set_playerNum", RpcTarget.All);     // 플레이어 번호 지정
+        photonView.RPC("Create_Table", RpcTarget.All);      // TABLE 인스턴스 생성
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Initialize();
+            Create_DECK();
+            Create_PLAYERS();
+            cardCall();                                     // 마스터(서버)가 카드를 나누어줌
+            Sync_Card();                                    // 마스터(서버)가 배분한 카드를 동기화 시킵니다.
+        }                                                 
+        photonView.RPC("View_Card", RpcTarget.All);         // 자신이 받은 카드를 확인합니다.
+
 
         TABLE_backup = TABLE;
-
         Random random = new Random();
         turn = (int)(random.NextDouble()* 1000 % PLAYERS.Count); // 게임의 턴을 랜덤으로 설정합니다.
 
@@ -68,8 +69,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.PlayerList[i].IsLocal)
             {
-                playerNum = i;
-                Debug.Log("     플레이어번호 : " + playerNum);
+                PlayerNum = i;
+                Debug.Log("     플레이어번호 : " + PlayerNum);
                 return;
             }
         }
@@ -81,7 +82,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // 설명
     // 1. 카드와 플레이어 인스턴스를 초기화합니다.
     //=========================================================================
-    [PunRPC]
     void Initialize()
     {
         DECK.Clear();            // 카드 초기화
@@ -93,7 +93,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // 1. 덱을 새롭게 생성합니다.
     // 2. 마스터만 자신의 덱을 섞습니다.
     //=========================================================================
-    [PunRPC]
     void Create_DECK()
     {
         if (!PhotonNetwork.IsMasterClient)
@@ -157,7 +156,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // 설명
     // 1. PLAYER의 인스턴스를 게임에 참여한 수에 맞게 설정합니다.
     //=========================================================================
-    [PunRPC]
     void Create_PLAYERS()
     {
         Debug.Log("플레이어 인스턴스 생성 시작");
@@ -182,9 +180,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Create_Table()
     {
         Debug.Log("TABLE 인스턴스 생성 시작");
-        for (int raw = 0; raw < 12; raw++)
+        for (int raw = 0; raw < RAW_TABLE; raw++)
         {
-            for (int col = 0; col < 32; col++)
+            for (int col = 0; col < COL_TABLE; col++)
             {
                 TABLE[raw, col] = new Card() { number = "", color = "" };
             }
@@ -199,12 +197,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     void cardCall()
     {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.Log("마스터가 카드 분배하고 있습니다.\n");
-            return;
-        }
-
         Debug.Log("카드 분배 시작\n");
 
         /*Debug.Log("     전체 카드 확인 \n");
@@ -222,11 +214,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 for (int i = 0; i < 22; i++)
                 {
-                    //Debug.Log("     마지막 카드" + i + DECK[DECK.Count - 1].color + DECK[DECK.Count - 1].number);
                     PLAYERS[j].cards[i] = DECK[DECK.Count - 1];
-                    //Debug.Log("     입력한 카드" + i + PLAYERS[j].cards[PLAYERS[j].cards.Length - 1].color
-                    //     + PLAYERS[j].cards[PLAYERS[j].cards.Length - 1].number);
-
                     DECK.RemoveAt(DECK.Count - 1);
                 }
             }
@@ -236,25 +224,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             Debug.Log("     Error : 오류가 발생했습니다. \n");
             return;
         }
-
-        //###########################카드 출력
-        /*  
-        //Debug.Log("   @남은 카드 확인");
-        for (int i = 0; i < DECK.Count; i++)
-        {
-            Debug.Log("     card[" + i + "] :" + DECK[i].color + DECK[i].number);
-        }
-        
-
-        for(int i =0; i< PLAYERS.Count; i++)
-        {
-            Debug.Log("   @player"+i+"의 카드 ==========");
-            for (int j = 0; j< PLAYERS[i].cards.Length; j++)
-            {
-                Debug.Log("     card["+j+"]:"+PLAYERS[i].cards[j].color+ PLAYERS[i].cards[j].number);
-            }
-        }
-        */
 
         Debug.Log("카드 분배 완료\n");
     }
@@ -266,28 +235,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     void Sync_Card()
     {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.Log("마스터가 카드를 동기화하고 있습니다.\n");
-            return;
-        }
-
         Debug.Log("카드 동기화 시작\n");
 
         Debug.Log("     입장한 플레이어 수: " + PhotonNetwork.PlayerList.Length + "\n");
         Debug.Log("     플레이어 인스턴스 수 : " + PLAYERS.Count);
 
+
         string[] num_col = { "", "" };
-
-        // 전체 카드 동기화
-        for (int cardIndex = 0; cardIndex < DECK.Count; cardIndex++)
-        {
-            num_col[0] = DECK[cardIndex].number;
-            num_col[1] = DECK[cardIndex].color;
-
-            photonView.RPC("Sync_DECK", RpcTarget.Others, num_col);
-        }
-
 
         // 플레이어 카드 동기화
         for (int playerIndex = 0; playerIndex < PhotonNetwork.PlayerList.Length; playerIndex++)
@@ -296,11 +250,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
             for (int cardIndex = 0; cardIndex < PLAYERS[playerIndex].cards.Length; cardIndex++)
             {
+                // 마스터가 분배한 카드의 정보를 담슴니다.
                 num_col[0] = PLAYERS[playerIndex].cards[cardIndex].number;
                 num_col[1] = PLAYERS[playerIndex].cards[cardIndex].color;
 
+                // 마스터가 카드를 나누어줍니다.
                 Debug.Log("     RPC 송신" + cardIndex + ": " + num_col[0] + ", " + num_col[1]);
-                photonView.RPC("Sync_Card_Element", RpcTarget.Others, playerIndex, cardIndex, num_col);
+                photonView.RPC("Sync_Client_Card", RpcTarget.All, playerIndex, cardIndex, num_col);
                 for (int i = 0; i < 1000; i++)
                     ;
             }
@@ -308,12 +264,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             Debug.Log("     " + playerIndex + "플레이어 카드 : " + PLAYERS[playerIndex].cards.Length);
             Debug.Log("     " + playerIndex + "플레이어 카드 동기화 끝");
         }
-        /*
-        Debug.Log("     분배 후 전체카드 수 : " + DECK.Count);
-        Debug.Log("     플레이어 번호:" + playerNum);
-        Debug.Log("     카드수:" + PLAYERS[playerNum].cards.Length);
-        Debug.Log("     플레이어 수:" + PhotonNetwork.PlayerList.Length);
-        */
         Debug.Log("카드 동기화 완료\n");
     }
 
@@ -322,16 +272,14 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // num_col[]에 number와 color를 받아와 PLAYERS에 추가하는 함수
     //=========================================================================
     [PunRPC]
-    void Sync_DECK(string[] num_col)
+    void Sync_Client_Card(int playerIndex, int cardIndex, string[] num_col)
     {
-        DECK.Add(new Card() { number = num_col[0], color = num_col[1] });
-    }
-
-    [PunRPC]
-    void Sync_Card_Element(int playerIndex, int cardIndex, string[] num_col)
-    {
-        Debug.Log("     RPC 수신" + playerIndex + " : 카드" + cardIndex + " = " + num_col[0] + ", " + num_col[1]);
-        PLAYERS[playerIndex].cards[cardIndex] = new Card() { number = num_col[0], color = num_col[1] };
+        if (playerIndex == this.PlayerNum)
+        {
+            Debug.Log("     RPC 수신" + playerIndex + " : 카드" + cardIndex + " = " + num_col[0] + ", " + num_col[1]);
+            clientCard[cardIndex] = new Card() { number = num_col[0], color = num_col[1] };
+            PLAYERS[playerIndex].cards[cardIndex] = new Card() { number = num_col[0], color = num_col[1] };
+        }
     }
 
     //=========================================================================
@@ -344,73 +292,40 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("카드 띄우기 실행\n");
 
-        Debug.Log("     플레이어번호 : " + playerNum);
-        Debug.Log("     호스트 플레이어 카드 갯수" + PLAYERS[0].cards.Length);
-        Debug.Log("     플레이어 카드 갯수" + PLAYERS[playerNum].cards.Length);
-
-        for (int i = 0; i < PLAYERS.Count; i++)
-        {
-            Debug.Log("   @player" + i + "의 카드 ==========");
-            for (int j = 0; j < PLAYERS[i].cards.Length; j++)
-            {
-                Debug.Log("     card[" + j + "]:" + PLAYERS[i].cards[j].color + PLAYERS[i].cards[j].number);
-            }
-        }
+        Debug.Log("     플레이어번호 : " + PlayerNum);
 
         for (int i = 0; i < 22; i++)
         {
             Color color = Color.green;
-            switch (PLAYERS[playerNum].cards[i].color)
+            switch (clientCard[i].color)
             {
                 case "red": color = Color.red; break;
                 case "blue": color = Color.blue; break;
                 case "yellow": color = Color.yellow; break;
                 case "black": color = Color.black; break;
             }
-
+           
             if (i < 11)
             {
-                Debug.Log("Top : num/col = " + PLAYERS[playerNum].cards[i].number + "/" + PLAYERS[playerNum].cards[i].color);
-                CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = PLAYERS[playerNum].cards[i].number;
+                Debug.Log("Top : num/col = " + clientCard[i].number + "/" + clientCard[i].color);
+                CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].number;
                 CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
-                Debug.Log("Real Top : num/col = " + CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text +
-                    "/" + CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color);
+                Debug.Log("Real Top : num/col = " + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text +
+                    "/" + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color);
                 // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = PLAYERS[playerNum].card[i].number;
                 // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
             }
             else
             {
-                Debug.Log("Bottom : num/col = " + PLAYERS[playerNum].cards[i].number + "/" + PLAYERS[playerNum].cards[i].color);
-                CardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = PLAYERS[playerNum].cards[i].number;
+                Debug.Log("Bottom : num/col = " + clientCard[i].number + "/" + clientCard[i].color);
+                CardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].number;
                 CardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
-                Debug.Log("Real Bottom : num/col = " + CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text +
-                    "/" + CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color);
+                Debug.Log("Real Bottom : num/col = " + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text +
+                    "/" + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color);
                 // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = PLAYERS[playerNum].card[i].number;
                 // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
             }
 
-            // if (i < 11)
-            // {
-            //     CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = PLAYERS[playerNum].card[i].number;
-            //     switch (PLAYERS[playerNum].card[i].color)
-            //     {
-            //         case "red": CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.red; break;
-            //         case "blue": CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.blue; break;
-            //         case "yellow": CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.yellow; break;
-            //         case "black": CardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.black; break;
-            //     }
-            // }
-            // else
-            // {
-            //     CardHandBot.GetChild(i - 11).GetChild(0).GetComponent<Text>().text = PLAYERS[playerNum].card[i].number;
-            //     switch (PLAYERS[playerNum].card[i].color)
-            //     {
-            //         case "red": CardHandBot.GetChild(i-11).GetChild(0).GetComponent<Text>().color = Color.red; break;
-            //         case "blue": CardHandBot.GetChild(i-11).GetChild(0).GetComponent<Text>().color = Color.blue; break;
-            //         case "yellow": CardHandBot.GetChild(i-11).GetChild(0).GetComponent<Text>().color = Color.yellow; break;
-            //         case "black": CardHandBot.GetChild(i-11).GetChild(0).GetComponent<Text>().color = Color.black; break;
-            //     }
-            // }
         }
         gameStart = 1;
 

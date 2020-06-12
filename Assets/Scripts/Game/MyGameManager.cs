@@ -13,13 +13,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
     public List<Card> DECK = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
     public static List<Player> PLAYERS = new List<Player>();    // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
-    public Card[,] TABLE = new Card[RAW_TABLE, COL_TABLE];                    // Rumikub의 게임판을 저장한 배열입니다.
+    public Card[,] TABLE = new Card[RAW_TABLE, COL_TABLE];      // Rumikub의 게임판을 저장한 배열입니다.
     public Card[,] TABLE_backup;                                // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
-    private int playerNum;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
-    public Card[] clientCard;                                   // 클라이언트의 카드를 나타냅니다.
+    private int PlayerNum;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
+    public Card[] clientCard = new Card[22];                    // 클라이언트의 카드를 나타냅니다.
     public int gameStart = 0;                                   // 게임전:0, 게임중:1
     public int turn = -1;                                       // 턴을 나타내는 변수
-    private float time = 0;
+    private float time = 0;                                     // 60초 타이머
 
     public Button playButton;                                   // start button : 마스터만 실행
     public Button requet;                                       // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
@@ -27,14 +27,14 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public Transform CardHandTop;                               // 로컬 플레이어 카드패 
     public Transform CardHandBot;                               // 로컬 플레이어 카드패
     public Transform TableTop;                                  // 게임판
-    public Text Timmer;                                          // 타이머
+    public Text Timmer;                                         // 60초 타이머
 
     // Update is called once per frame
     void Update()
     {
         if (gameStart == 1)
         {
-            if (playerNum == turn)
+            if (PlayerNum == turn)
             {
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
             }
