@@ -120,11 +120,10 @@ public class AuthManager : MonoBehaviour
             if (task.IsFaulted)
             {
                 WarningText.text = "이미 존재하거나 잘못된 이메일입니다";
-                Debug.LogError("실패?");
             }
             else if (task.IsCanceled)
             {
-                Debug.LogError("Sign up Canceled");
+                WarningText.text = "가입이 취소되었습니다";
             }
             else
             {
