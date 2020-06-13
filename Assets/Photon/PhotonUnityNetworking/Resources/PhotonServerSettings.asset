@@ -63,6 +63,13 @@ MonoBehaviour:
   - View_Card
   - Sync_Client_Card
   - StartCardNumberText
+  - Sync_Time
+  - Sync_Turn
+  - View_TABLE
+  - Next
+  - Set_RunningGame
+  - Sync_TABLE
+  - Create_TABLE
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

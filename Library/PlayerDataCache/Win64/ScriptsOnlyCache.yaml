@@ -1083,7 +1083,7 @@ ScriptsOnlyBuild:
     className: ToggleExpand
   - hash:
       serializedVersion: 2
-      Hash: d39e6c5a4fe355648276fbf7baafeed0
+      Hash: 4dbbef94c8ddc73d12341d8ebdd44a65
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MyGameManager

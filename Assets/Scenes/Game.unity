@@ -167,14 +167,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameStart: 0
-  turn: -1
-  playButton: {fileID: 416342483}
-  requet: {fileID: 408495734}
-  nextButton: {fileID: 2084898288}
+  Turn: -1
+  Button_Start: {fileID: 416342483}
+  Button_Reset: {fileID: 408495734}
+  Button_Next: {fileID: 2084898288}
   CardHandTop: {fileID: 2110373449}
   CardHandBot: {fileID: 352459280}
   TableTop: {fileID: 1969046464}
-  Timmer: {fileID: 1131551104}
+  Text_Timmer: {fileID: 1131551104}
+  Text_Turn: {fileID: 1670563604}
 --- !u!114 &9070349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1756,7 +1757,7 @@ GameObject:
   - component: {fileID: 408495735}
   - component: {fileID: 408495734}
   m_Layer: 5
-  m_Name: Request
+  m_Name: Button_Reset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1826,7 +1827,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 9070348}
-        m_MethodName: request
+        m_MethodName: Reset
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1956,7 +1957,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 9070348}
-        m_MethodName: Reset
+        m_MethodName: GameStart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2650,6 +2651,7 @@ RectTransform:
   - {fileID: 2124247349}
   - {fileID: 1969046464}
   - {fileID: 1131551103}
+  - {fileID: 1670563603}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3856,7 +3858,7 @@ GameObject:
   - component: {fileID: 1131551105}
   - component: {fileID: 1131551104}
   m_Layer: 5
-  m_Name: Timmer
+  m_Name: Text_Timmer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3878,7 +3880,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 559.94, y: 336.47}
+  m_AnchoredPosition: {x: 559.94, y: 295}
   m_SizeDelta: {x: 159.87805, y: 46.840942}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1131551104
@@ -4795,7 +4797,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Request
+  m_Text: Reset
 --- !u!222 &1379083504
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5627,6 +5629,84 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1662261530}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1670563602
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1670563603}
+  - component: {fileID: 1670563605}
+  - component: {fileID: 1670563604}
+  m_Layer: 5
+  m_Name: Text_Turn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1670563603
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1670563602}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 695004087}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 559.94, y: 336.58}
+  m_SizeDelta: {x: 159.87805, y: 46.840942}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1670563604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1670563602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 18
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'Turn :'
+--- !u!222 &1670563605
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1670563602}
+  m_CullTransparentMesh: 0
 --- !u!1001 &1697783950
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7216,7 +7296,7 @@ GameObject:
   - component: {fileID: 2084898289}
   - component: {fileID: 2084898288}
   m_Layer: 5
-  m_Name: Next
+  m_Name: Button_Next
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7286,7 +7366,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 9070348}
-        m_MethodName: next
+        m_MethodName: Next
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
