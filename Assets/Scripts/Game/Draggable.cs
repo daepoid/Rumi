@@ -11,11 +11,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         root = transform.root;
     }
     
-    void Update()
-    {
-        
-    }
-
     public void OnBeginDrag(PointerEventData eventData)
     {
         root.BroadcastMessage("BeginDrag", transform, SendMessageOptions.DontRequireReceiver);

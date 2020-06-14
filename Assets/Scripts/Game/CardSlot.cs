@@ -7,12 +7,14 @@ using UnityEngine.UI;
 public class CardSlot : MonoBehaviour
 { 
     private List<Transform> _cards;
-    public int originCardCount = 0;
+    public bool cardHandFlag = false;
+    public int OriginCardCount { get; set; }
+    
     void Start()
     {
         _cards = new List<Transform>();
         UpdateCardSlot();
-        originCardCount = CountRealCard();
+        OriginCardCount = CountRealCard();
     }
 
     public void UpdateCardSlot()
@@ -62,10 +64,5 @@ public class CardSlot : MonoBehaviour
     {
         var realCards = transform.GetComponentsInChildren<Draggable>();
         return realCards.Length;
-    }
-    
-    void Update()
-    {
-        
     }
 }

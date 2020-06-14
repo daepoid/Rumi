@@ -127,19 +127,19 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < 104; i++)
         {
             Card c = new Card();
-            c.number = ((i % 13) + 1).ToString();
+            c.CardNumber = ((i % 13) + 1).ToString();
             switch ((i / 26))
             {
-                case 0: c.color = "red"; break;
-                case 1: c.color = "blue"; break;
-                case 2: c.color = "yellow"; break;
-                case 3: c.color = "black"; break;
+                case 0: c.CardColor = "red"; break;
+                case 1: c.CardColor = "blue"; break;
+                case 2: c.CardColor = "yellow"; break;
+                case 3: c.CardColor = "black"; break;
             }
             DECK.Add(c);
         }
 
-        DECK.Add(new Card() { number = "J", color = "red" });
-        DECK.Add(new Card() { number = "J", color = "black" });
+        DECK.Add(new Card() { CardNumber = "J", CardColor = "red" });
+        DECK.Add(new Card() { CardNumber = "J", CardColor = "black" });
 
         // 마스터 클라이언트만 카드를 섞습니다.
         if (PhotonNetwork.IsMasterClient)
@@ -206,7 +206,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             for (int col = 0; col < COL_TABLE; col++)
             {
-                TABLE[raw, col] = new Card() { number = "", color = "" };
+                TABLE[raw, col] = new Card() { CardNumber = "", CardColor = "" };
             }
         }
         Debug.Log("TABLE 인스턴스 생성 끝");
@@ -266,8 +266,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             for (int cardIndex = 0; cardIndex < PLAYERS[playerIndex].cards.Length; cardIndex++)
             {
                 // 마스터가 분배한 카드의 정보를 담슴니다.
-                num_col[0] = PLAYERS[playerIndex].cards[cardIndex].number;
-                num_col[1] = PLAYERS[playerIndex].cards[cardIndex].color;
+                num_col[0] = PLAYERS[playerIndex].cards[cardIndex].CardNumber;
+                num_col[1] = PLAYERS[playerIndex].cards[cardIndex].CardColor;
 
                 // 마스터가 카드를 나누어줍니다.
                 Debug.Log("     RPC 송신" + cardIndex + ": " + num_col[0] + ", " + num_col[1]);
@@ -292,7 +292,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         if (playerIndex == this.PlayerNum)
         {
             Debug.Log("     RPC 수신" + playerIndex + " : 카드" + cardIndex + " = " + num_col[0] + ", " + num_col[1]);
-            clientCard[cardIndex] = new Card() { number = num_col[0], color = num_col[1] };
+            clientCard[cardIndex] = new Card() { CardNumber = num_col[0], CardColor = num_col[1] };
         }
     }
 
@@ -311,7 +311,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < 22; i++)
         {
             Color color = Color.green;
-            switch (clientCard[i].color)
+            switch (clientCard[i].CardColor)
             {
                 case "red": color = Color.red; break;
                 case "blue": color = Color.blue; break;
@@ -321,8 +321,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
            
             if (i < 11)
             {
-                Debug.Log("Top : num/col = " + clientCard[i].number + "/" + clientCard[i].color);
-                CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].number;
+                Debug.Log("Top : num/col = " + clientCard[i].CardNumber + "/" + clientCard[i].CardColor);
+                CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
                 CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
                 Debug.Log("Real Top : num/col = " + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text +
                     "/" + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color);
@@ -331,8 +331,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                Debug.Log("Bottom : num/col = " + clientCard[i].number + "/" + clientCard[i].color);
-                CardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].number;
+                Debug.Log("Bottom : num/col = " + clientCard[i].CardNumber + "/" + clientCard[i].CardColor);
+                CardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
                 CardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
                 Debug.Log("Real Bottom : num/col = " + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text +
                     "/" + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color);

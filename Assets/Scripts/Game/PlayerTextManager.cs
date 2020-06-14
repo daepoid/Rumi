@@ -40,7 +40,7 @@ public class PlayerTextManager : MonoBehaviourPunCallbacks
 
         for(int i = 0; i < currentPlayersInRoom.Length; i++)
         {
-            cardlist[i] = MyGameManager.PLAYERS[i].card_num;
+            cardlist[i] = MyGameManager.PLAYERS[i].cardNum;
         }
 
         return cardlist;

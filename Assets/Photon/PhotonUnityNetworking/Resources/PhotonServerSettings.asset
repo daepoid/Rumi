@@ -33,43 +33,36 @@ MonoBehaviour:
   RpcList:
   - Backup
   - ClickRpc
-  - createPlayer
-  - createTable
+  - Create_TABLE
   - DestroyRpc
   - DestroySpaceship
   - Fire
-  - initialize
-  - mainCardSetting
-  - opencard
-  - playerCardSetting
-  - PrintCardNumberText
+  - Next
   - PrintPlayer0CardText
   - PrintPlayer1CardText
   - PrintPlayer2CardText
   - PrintPlayer3CardText
   - RespawnSpaceship
-  - setPlayerNum
-  - Sync_TABLE_Element
-  - Sync_time
-  - updateCardNumberText
-  - viewCard
-  - Create_DECK
-  - Create_PLAYERS
-  - Create_Table
-  - Initialize
   - Set_playerNum
-  - Sync_Card_Element
-  - Sync_DECK
-  - View_Card
-  - Sync_Client_Card
+  - Set_RunningGame
   - StartCardNumberText
+  - Sync_Client_Card
+  - Sync_TABLE
+  - Sync_TABLE_Element
   - Sync_Time
   - Sync_Turn
+  - View_Card
   - View_TABLE
-  - Next
-  - Set_RunningGame
-  - Sync_TABLE
-  - Create_TABLE
+  - CreateDeck
+  - CreatePlayers
+  - CreateTable
+  - InitGameData
+  - SetPlayerNum
+  - Sync_time
+  - SyncCardElements
+  - SyncCards
+  - SyncTableElements
+  - ViewCards
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

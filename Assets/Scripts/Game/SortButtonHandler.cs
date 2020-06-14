@@ -1,97 +1,70 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SortButtonHandler : MonoBehaviour
 {
-    public Transform CardHandTop;
-    public Transform CardHandBot;
+    public Transform cardHandTop;
+    public Transform cardHandBot;
     
     public void OnClickSortbyColor()
     {
-        List<Card> cards = new List<Card>();
-        for (int i = 0; i < CardHandTop.childCount; i++)
+        List<Transform> cards = new List<Transform>();
+        for (int i = 0; i < cardHandTop.childCount; i++)
         {
-            cards.Add(CardHandTop.GetChild(i).GetComponent<Card>());
+            cards.Add(cardHandTop.GetChild(i));            
         }
 
-        for (int i = 0; i < CardHandBot.childCount; i++)
+        for (int i = 0; i < cardHandBot.childCount; i++)
         {
-            cards.Add(CardHandBot.GetChild(i).GetComponent<Card>());
+            cards.Add(cardHandTop.GetChild(i));
         }
-        cards.Sort(delegate(Card cardA, Card cardB)
-        {
-            if (cardA.color == cardB.color)
-            {
-                return String.Compare(cardA.number, cardB.number);
-            }
-            else
-            {
-                return String.Compare(cardA.color, cardB.color);
-            }
-        });
-        UpdateHand(cards);
-        CardHandTop.GetComponent<CardSlot>().UpdateCardSlot();
-        CardHandBot.GetComponent<CardSlot>().UpdateCardSlot();
+        
+        Debug.Log("\nStart Sort!\ncards.Count : " + cards.Count + "\ncards[0].CardNumber : " + cards[0].GetChild(0).GetComponent<Text>().text);
+        List<Transform> sortedCards = cards.OrderBy(x => x.GetChild(0).GetComponent<Text>().color.ToString()).ThenBy(x => x.GetChild(0).GetComponent<Text>().text).ToList();
+        
+        MoveDataToCardHands(sortedCards);
         Debug.Log("SortbyColor 789");
     }
     
     public void OnClickSortbyNumber()
     {
-        List<Card> cards = new List<Card>();
-        for (int i = 0; i < CardHandTop.childCount; i++)
+        List<Transform> cards = new List<Transform>();
+        for (int i = 0; i < cardHandTop.childCount; i++)
         {
-            cards.Add(CardHandTop.GetChild(i).GetComponent<Card>());
+            cards.Add(cardHandTop.GetChild(i));            
         }
 
-        for (int i = 0; i < CardHandBot.childCount; i++)
+        for (int i = 0; i < cardHandBot.childCount; i++)
         {
-            cards.Add(CardHandBot.GetChild(i).GetComponent<Card>());
+            cards.Add(cardHandTop.GetChild(i));
         }
         
-        cards.Sort(delegate(Card cardA, Card cardB)
-        {
-            if (cardA.number == cardB.number)
-            {
-                return String.Compare(cardA.color, cardB.color);
-            }
-            else
-            {
-                return String.Compare(cardA.number, cardB.number);
-            }
-        });
-        UpdateHand(cards);
-        CardHandTop.GetComponent<CardSlot>().UpdateCardSlot();
-        CardHandBot.GetComponent<CardSlot>().UpdateCardSlot();
+        Debug.Log("Start Sort!");
+        List<Transform> sortedCards = cards.OrderBy(x => x.GetChild(0).GetComponent<Text>().text).ThenBy(x => x.GetChild(0).GetComponent<Text>().color.ToString()).ToList();
+        
+        MoveDataToCardHands(sortedCards);
         Debug.Log("SortByColor 777");
     }
 
-    public void UpdateHand(List<Card> cards)
+    private void MoveDataToCardHands(List<Transform> cards)
     {
-        for (int i = 0; i < 22; i++)
+        int halfSize = MyGameManager.MaxHandSize / 2;
+        for (int i = 0; i < MyGameManager.MaxHandSize; i++)
         {
-            if (i < 11)
+            if (i < halfSize)
             {
-                CardHandTop.GetChild(i).GetComponent<Card>().color = cards[i].color;
-                CardHandTop.GetChild(i).GetComponent<Card>().number = cards[i].number;
+                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
+                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
             }
             else
             {
-                CardHandBot.GetChild(i % 11).GetComponent<Card>().color = cards[i].color;
-                CardHandBot.GetChild(i % 11).GetComponent<Card>().color = cards[i].color;
+                cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
+                cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
             }
         }
-    }
-    
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
     }
 }
