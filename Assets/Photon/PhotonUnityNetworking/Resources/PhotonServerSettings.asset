@@ -25,7 +25,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: kr
+  DevRegion: 
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -34,9 +34,13 @@ MonoBehaviour:
   - Backup
   - ClickRpc
   - Create_TABLE
+  - CreateDeck
+  - CreatePlayers
+  - CreateTable
   - DestroyRpc
   - DestroySpaceship
   - Fire
+  - InitGameData
   - Next
   - PrintPlayer0CardText
   - PrintPlayer1CardText
@@ -45,24 +49,20 @@ MonoBehaviour:
   - RespawnSpaceship
   - Set_playerNum
   - Set_RunningGame
+  - SetPlayerNum
   - StartCardNumberText
   - Sync_Client_Card
   - Sync_TABLE
   - Sync_TABLE_Element
+  - Sync_time
   - Sync_Time
   - Sync_Turn
-  - View_Card
-  - View_TABLE
-  - CreateDeck
-  - CreatePlayers
-  - CreateTable
-  - InitGameData
-  - SetPlayerNum
-  - Sync_time
   - SyncCardElements
   - SyncCards
   - SyncTableElements
+  - View_Card
+  - View_TABLE
   - ViewCards
   DisableAutoOpenWizard: 1
   ShowSettings: 0
-  DevRegionSetOnce: 1
+  DevRegionSetOnce: 0
