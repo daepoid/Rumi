@@ -71,8 +71,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     _time = 0;
                     photonView.RPC("Next", RpcTarget.All);
                 }
-
-                photonView.RPC("Sync_Time", RpcTarget.All, _time);
+                // photonView.RPC("SyncTime", RpcTarget.All, _time.ToString("N1"));
+                photonView.RPC("SyncTime", RpcTarget.All, _time);
             }
             
             // 자신의 카드의 개수가 0개면 게임을 종료합니다.
@@ -150,7 +150,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         photonView.RPC("Backup", RpcTarget.All);
         _time = 0;
         _turn = (_turn + 1) % _playerCount;
-        photonView.RPC("Sync_Time", RpcTarget.All, _time);
+        photonView.RPC("SyncTime", RpcTarget.All, _time);
         photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
         photonView.RPC("View_TABLE", RpcTarget.All);
 
@@ -416,9 +416,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // 1. 마스터의 타이머를 동기화 하는 프로그램 입니다.
     //=========================================================================
     [PunRPC]
-    void Sync_Time(float time)
+    void SyncTime(float time)
+    // void SyncTime(String time)
     {
-        this.textTimer.text = $"{time:N1}";
+        // textTimer.text = time;
+        textTimer.text = time.ToString("N1");
+        // this.textTimer.text = $"{time:N1}";
         // textTimer.text = time.ToString();
     }
 
