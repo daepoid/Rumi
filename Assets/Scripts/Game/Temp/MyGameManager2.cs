@@ -37,6 +37,53 @@ public partial class MyGameManager2 : MonoBehaviourPunCallbacks
     public Text timer;
     public Text turnText;
 
+    // void Update()
+    // {
+    //     if (RunningGame == 1)
+    //     {
+    //         if (turnStartFlag)
+    //         {
+    //             ControlFlag = true;
+    //             SaveCardHand();
+    //         }
+    //         if (PlayerNum == Turn)
+    //         {
+    //             // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
+    //             Button_Next.enabled = true;
+    //             Button_Next.GetComponent<Image>().color = Color.white;
+    //             Button_Reset.enabled = true;
+    //             Button_Reset.GetComponent<Image>().color = Color.white;
+    //         }
+    //         else
+    //         {
+    //             Button_Next.enabled = false;
+    //             Button_Next.GetComponent<Image>().color = Color.gray;
+    //         }
+    //
+    //         // 제한시간 60초가 지나면 모든 '사용자'들의 Turn을 1 증가시킵니다.
+    //         // Next를 누르지 못하면 자동으로 규칙을 검사합니다.
+    //         if (PhotonNetwork.IsMasterClient)
+    //         {
+    //             _Time += Time.deltaTime;
+    //
+    //             if (_Time > 60)
+    //             {
+    //                 _Time = 0;
+    //                 photonView.RPC("Next", RpcTarget.All);
+    //             }
+    //
+    //             photonView.RPC("Sync_Time", RpcTarget.All, _Time);
+    //         }
+    //
+    //
+    //         // 자신의 카드의 개수가 0개면 게임을 종료합니다.
+    //         /* if()
+    //           {
+    //           }
+    //          */
+    //     }
+    // }
+    
     void Update()
     {
         if (gameStart == 1)

@@ -10,7 +10,7 @@ public class Player
     public int cardNum = 22;
     public Player()
     {
-        for(int i=0;i< MAX_CARD; i++)
+        for(int i = 0; i < MAX_CARD; i++)
         {
             cards[i] = new Card();
         }

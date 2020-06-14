@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class CardControlEngine : MonoBehaviour
 {
     public Transform invisibleCard;
-    public Transform TempCard;
+    public Transform tempCard;
     
     private List<CardSlot> _cardSlots;
     private CardSlot _workingCardHand;        // BeginDrag를 수행 할 때 선택 된 Card의 CardHand

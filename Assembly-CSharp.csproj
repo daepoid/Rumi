@@ -75,6 +75,7 @@
      <Compile Include="Assets\Scripts\Game\CardControlEngine.cs" />
      <Compile Include="Assets\Scripts\Game\CardSlot.cs" />
      <Compile Include="Assets\Scripts\Game\Draggable.cs" />
+     <Compile Include="Assets\Scripts\Game\MakeCards.cs" />
      <Compile Include="Assets\Scripts\Game\MyGameManager.cs" />
      <Compile Include="Assets\Scripts\Game\MyGameManager_start.cs" />
      <Compile Include="Assets\Scripts\Game\Player.cs" />
@@ -83,7 +84,6 @@
      <Compile Include="Assets\Scripts\Game\TableTopSlot.cs" />
      <Compile Include="Assets\Scripts\Game\Temp\MyGameManager2.cs" />
      <Compile Include="Assets\Scripts\Game\Temp\MyGameManager2_start.cs" />
-     <Compile Include="Assets\Scripts\Game\makeCards.cs" />
      <Compile Include="Assets\Scripts\Lobby\LobbyManager.cs" />
      <Compile Include="Assets\Scripts\Lobby\LobbyNetworkManager.cs" />
      <Compile Include="Assets\Scripts\SignIn\AuthManager.cs" />

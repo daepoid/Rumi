@@ -8,74 +8,73 @@ using System;
 
 public partial class MyGameManager : MonoBehaviourPunCallbacks
 {
-    static public readonly int RAW_TABLE = 6;                  // 게임판의 RAW 크기
-    static public readonly int COL_TABLE = 16;                 // 게임판의 COLUM 크기
+    static public readonly int TableRow = 6;                  // 게임판의 RAW 크기
+    static public readonly int TableCol = 16;                 // 게임판의 COLUM 크기
     public static readonly int MaxHandSize = 22;
     
     public static bool ControlFlag = false;
-    public List<Card> DECK = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
-    public static List<Player> PLAYERS = new List<Player>();    // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
-    public static Card[,] TABLE = new Card[RAW_TABLE, COL_TABLE];      // Rumikub의 게임판을 저장한 배열입니다.
-    public static Card[,] TABLE_backup;                                // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
+    public List<Card> deck = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
+    public static List<Player> Players = new List<Player>();    // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
+    public static Card[,] Table = new Card[TableRow, TableCol];      // Rumikub의 게임판을 저장한 배열입니다.
+    public static Card[,] TableBackup;                                // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
     public static List<Card> CardHandBackup = new List<Card>();
-
-    private int PlayerNum;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
-    private int PLAYER_COUNT;
     public Card[] clientCard = new Card[22];                    // 클라이언트의 카드를 나타냅니다.
-    public int RunningGame = 0;                                   // 게임전:0, 게임중:1
-    public int Turn = -1;                                       // 턴을 나타내는 변수
-    private float _Time = 0;                                    // 60초 타이머
 
-    public Button Button_Start;                                 // start button : 마스터만 실행
-    public Button Button_Reset;                                  // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
-    public Button Button_Next;                                  // turn을 넘겨주는 버튼
+    private int _playerCount = 0;
+    private int _playerNum = -1;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
+    private int _runningGame = 0;                                   // 게임전:0, 게임중:1
+    private int _turn = -1;                                       // 턴을 나타내는 변수
+    private float _time = 0;                                    // 60초 타이머
+
+    public Button buttonStart;                                 // start button : 마스터만 실행
+    public Button buttonReset;                                  // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
+    public Button buttonNext;                                  // turn을 넘겨주는 버튼
     public Transform cardHandTop;                               // 로컬 플레이어 카드패 
     public Transform cardHandBot;                               // 로컬 플레이어 카드패
-    public Transform TableTop;                                  // 게임판
-    public Text Text_Timmer;                                    // 60초 타이머
-    public Text Text_Turn;
+    public Transform tableTop;                                  // 게임판
+    public Text textTimer;                                    // 60초 타이머
+    // public Text textTurn;
 
     private bool turnStartFlag = true;
     // Update is called once per frame
     void Update()
     {
-        if (RunningGame == 1)
+        if (_runningGame == 1)
         {
             if (turnStartFlag)
             {
                 ControlFlag = true;
                 SaveCardHand();
             }
-            if (PlayerNum == Turn)
+            if (_playerNum == _turn)
             {
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
-                Button_Next.enabled = true;
-                Button_Next.GetComponent<Image>().color = Color.white;
-                Button_Reset.enabled = true;
-                Button_Reset.GetComponent<Image>().color = Color.white;
+                buttonNext.enabled = true;
+                buttonNext.GetComponent<Image>().color = Color.white;
+                buttonReset.enabled = true;
+                buttonReset.GetComponent<Image>().color = Color.white;
             }
             else
             {
-                Button_Next.enabled = false;
-                Button_Next.GetComponent<Image>().color = Color.gray;
+                buttonNext.enabled = false;
+                buttonNext.GetComponent<Image>().color = Color.gray;
             }
 
             // 제한시간 60초가 지나면 모든 '사용자'들의 Turn을 1 증가시킵니다.
             // Next를 누르지 못하면 자동으로 규칙을 검사합니다.
             if (PhotonNetwork.IsMasterClient)
             {
-                _Time += Time.deltaTime;
+                _time += Time.deltaTime;
 
-                if (_Time > 60)
+                if (_time > 60)
                 {
-                    _Time = 0;
+                    _time = 0;
                     photonView.RPC("Next", RpcTarget.All);
                 }
 
-                photonView.RPC("Sync_Time", RpcTarget.All, _Time);
+                photonView.RPC("Sync_Time", RpcTarget.All, _time);
             }
-
-
+            
             // 자신의 카드의 개수가 0개면 게임을 종료합니다.
             /* if()
               {
@@ -111,7 +110,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     public void Reset()
     {
-        TABLE = TABLE_backup;
+        Table = TableBackup;
         View_TABLE();
     }
 
@@ -127,7 +126,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Next()
     {
-        if (Turn != PlayerNum)
+        if (_turn != _playerNum)
             return;
 
         Debug.Log("Next 버튼 클릭");
@@ -138,7 +137,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             // Rule을 만족시키지 못함
             Debug.Log("     Rule : Fail");
-            TABLE = TABLE_backup;
+            Table = TableBackup;
             View_TABLE();
         }
         else
@@ -149,10 +148,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         }
 
         photonView.RPC("Backup", RpcTarget.All);
-        _Time = 0;
-        Turn = (Turn + 1) % PLAYER_COUNT;
-        photonView.RPC("Sync_Time", RpcTarget.All, _Time);
-        photonView.RPC("Sync_Turn", RpcTarget.All, Turn);
+        _time = 0;
+        _turn = (_turn + 1) % _playerCount;
+        photonView.RPC("Sync_Time", RpcTarget.All, _time);
+        photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
         photonView.RPC("View_TABLE", RpcTarget.All);
 
         Debug.Log("Next 버튼 끝");
@@ -176,12 +175,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         List<string> Card_Color = new List<string>(); //색상이 겹치는지 확인할 때 사용하는 리스트
 
         // 규칙 연산 시작
-        for (int row = 0; row < RAW_TABLE; row++)
+        for (int row = 0; row < TableRow; row++)
         {
-            for (int col = 0; col < COL_TABLE; col++)
+            for (int col = 0; col < TableCol; col++)
             {
-                cur = TABLE[row, col];
-                Debug.Log("TABLE[" + row + "," + col + "]:" + TABLE[row,col].CardColor + TABLE[row, col].CardNumber);
+                cur = Table[row, col];
+                Debug.Log("Table[" + row + "," + col + "]:" + Table[row,col].CardColor + Table[row, col].CardNumber);
                 Debug.Log("cur:" +cur.CardColor+cur.CardNumber);
 
                 // 해당 위치에 카드가 없을 때
@@ -303,77 +302,79 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Backup()
     {
         Debug.Log("백업 시작");
-        TABLE_backup = TABLE;
+        TableBackup = Table;
         Debug.Log("백업 끝");
     }
 
     [PunRPC]
     void Sync_Turn(int turn)
     {
-        Turn = turn;
-        Text_Turn.text = "Turn : "+turn;
+        _turn = turn;
+        // textTurn.text = "_turn : "+ _turn.ToString();
     }
 
     //=========================================================================
-    // TABLE 동기화
+    // Table 동기화
     // 설명
     // 1. 자신의 TABLE을 모든 클라이언트에게 동기화 시킵니다.
-    // 2. raw와 col로 TABLE 배열의 인덱스로 접근하며, num_col에 해당 TABLE 요소의 숫자와 색상을 저장합니다.
+    // 2. raw와 col로 Table 배열의 인덱스로 접근하며, num_col에 해당 Table 요소의 숫자와 색상을 저장합니다.
     //=========================================================================
     [PunRPC]
     void Sync_TABLE()
     {
         Debug.Log("게임판 동기화 시작");
 
-        string[] num_col = { "", "" };
-        for (int row = 0; row < RAW_TABLE; row++)
+        string[] numCol = { "", "" };
+        for (int row = 0; row < TableRow; row++)
         {
-            for (int col = 0; col < COL_TABLE; col++)
+            for (int col = 0; col < TableCol; col++)
             {
-                num_col[0] = TABLE[row, col].CardNumber;
-                num_col[1] = TABLE[row, col].CardColor;
-                photonView.RPC("Sync_TABLE_Element", RpcTarget.Others, row, col, num_col);
+                numCol[0] = Table[row, col].CardNumber;
+                numCol[1] = Table[row, col].CardColor;
+                photonView.RPC("Sync_TABLE_Element", RpcTarget.Others, row, col, numCol);
             }
         }
         Debug.Log("게임판 동기화 끝");
     }
     //=========================================================================
-    // TABLE 요소 동기화 - 위 함수에 의해 호출됩니다.
+    // Table 요소 동기화 - 위 함수에 의해 호출됩니다.
     // 설명
     // 1. TABLE들의 요소를 동기화 합니다.
-    // 2. row, col 으로 TABLE의 인덱스를 나타내며, num_col 배열에 숫자와 색상이 담겨 있습니다.
+    // 2. row, col 으로 TABLE의 인덱스를 나타내며, numCol 배열에 숫자와 색상이 담겨 있습니다.
     //=========================================================================
     [PunRPC]
-    void Sync_TABLE_Element(int row, int col, string[] num_col)
+    void Sync_TABLE_Element(int row, int col, string[] numCol)
     {
-        TABLE[row, col].CardNumber = num_col[0];
-        TABLE[row, col].CardColor = num_col[1];
+        Table[row, col].CardNumber = numCol[0];
+        Table[row, col].CardColor = numCol[1];
     }
 
     //=========================================================================
-    // TABLE 가져오기
+    // Table 가져오기
     // 설명
-    // 1. 게임판에 있는 데이터를 TABLE 배열로 가져옵니다.
+    // 1. 게임판에 있는 데이터를 Table 배열로 가져옵니다.
     //=========================================================================
     void Get_TABLE()
     {
-        for (int row = 0; row < RAW_TABLE; row++)
+        for (int row = 0; row < TableRow; row++)
         {
-            for (int col = 0; col < COL_TABLE; col++)
+            for (int col = 0; col < TableCol; col++)
             {
                 try
                 {
                     string color = "red";
-                    switch (TableTop.GetChild(row).GetChild(col).GetChild(0).GetChild(0).GetComponent<Text>().color.ToString())
+                    switch (tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color.ToString())
                     {
                         case "RGBA(1.000, 0.000, 0.000, 1.000)": color = "red"; break;
                         case "RGBA(0.000, 0.000, 1.000, 1.000)": color = "blue"; break;
                         case "RGBA(1.000, 0.920, 0.016, 1.000)": color = "yellow"; break;
                         case "RGBA(0.000, 0.000, 0.000, 1.000)": color = "black"; break;
+                        default : color = "green"; break;
                     }
 
-                    TABLE[row, col].CardNumber = TableTop.GetChild(row).GetChild(col).GetChild(0).GetChild(0).GetComponent<Text>().text;
-                    TABLE[row, col].CardColor = color;
+                    Table[row, col].CardNumber = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text;
+                    Table[row, col].CardColor = color;
+                    // Table[row, col].RealColor = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color;
                 }
                 catch (Exception e)
                 {
@@ -382,42 +383,29 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 }
             }
         }
-
-        for (int row = 0; row < RAW_TABLE; row++)
-        {
-            for (int col = 0; col < COL_TABLE; col++)
-            {
-                Debug.Log("TABLE[" + row + "," + col + "]" + TABLE[row, col].CardColor + TABLE[row, col].CardNumber);
-            }
-        }
+        // for (int row = 0; row < TableRow; row++)
+        // {
+        //     for (int col = 0; col < TableCol; col++)
+        //     {
+        //         Debug.Log("Table[" + row + "," + col + "]" + Table[row, col].CardColor + Table[row, col].CardNumber);
+        //     }
+        // }
     }
 
     //=========================================================================
-    // TABLE 띄우기
+    // Table 띄우기
     // 설명
-    // 1. TABLE 배열에 있는 데이터를 게임판으로 보냅니다.
+    // 1. Table 배열에 있는 데이터를 게임판으로 보냅니다.
     //=========================================================================
     [PunRPC]
     void View_TABLE()
     {
-        for (int row = 0; row < RAW_TABLE; row++)
+        for (int row = 0; row < TableRow; row++)
         {
-            for (int col = 0; col < COL_TABLE; col++)
+            for (int col = 0; col < TableCol; col++)
             {
-                Color color = Color.green;
-                switch (TABLE[row, col].CardColor)
-                {
-                    case "red": color = Color.red; break;
-                    case "blue": color = Color.blue; break;
-                    case "yellow": color = Color.yellow; break;
-                    case "black": color = Color.black; break;
-                }
-                //test
-                TABLE[row, col].CardNumber = col.ToString();
-                //test
-
-                TableTop.GetChild(row).GetChild(col).GetChild(0).GetChild(0).GetComponent<Text>().text = TABLE[row, col].CardNumber;
-                TableTop.GetChild(row).GetChild(col).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
+                tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text = Table[row, col].CardNumber;
+                tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color = Table[row, col].RealColor;
             }
         }
     }
@@ -430,7 +418,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void Sync_Time(float time)
     {
-        this.Text_Timmer.text = $"{time:N1}";
+        this.textTimer.text = $"{time:N1}";
+        // textTimer.text = time.ToString();
     }
 
     //=========================================================================
@@ -450,7 +439,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
 
         //로컬 플레이어 찾기
-        Player localPlayer = PLAYERS.Find(x => x.NickName == playersInRoom[localPlayerIndex].NickName);
+        Player localPlayer = Players.Find(x => x.NickName == playersInRoom[localPlayerIndex].NickName);
         //텍스트 출력
         nameText.text = localPlayer.cards.Length.ToString();
 
@@ -467,7 +456,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Photon.Realtime.Player playerInRoom = PhotonNetwork.PlayerListOthers[0];
 
         //players 리스트에서 Player1 찾기
-        Player Player1 = PLAYERS.Find(x => x.NickName == playerInRoom.NickName);
+        Player Player1 = Players.Find(x => x.NickName == playerInRoom.NickName);
         //텍스트 출력
         nameText.text = Player1.cards.Length.ToString();
 
@@ -485,7 +474,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
 
         //players 리스트에서 Player2 찾기
-        Player cardNumber = PLAYERS.Find(x => x.NickName == playerInRoom.NickName);
+        Player cardNumber = Players.Find(x => x.NickName == playerInRoom.NickName);
         //텍스트 출력
         nameText.text = cardNumber.cards.Length.ToString();
 
@@ -503,7 +492,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
 
         //players 리스트에서 Player3 찾기
-        Player cardNumber = PLAYERS.Find(x => x.NickName == playerInRoom.NickName);
+        Player cardNumber = Players.Find(x => x.NickName == playerInRoom.NickName);
         //텍스트 출력
         nameText.text = cardNumber.cards.Length.ToString();
     }

@@ -8,18 +8,18 @@ using System;
 public class PlayerTextManager : MonoBehaviourPunCallbacks
 {
 
-    public Text[] PlayerText;                                       //텍스트 오브젝트들의 텍스트 컴포넌트
+    public Text[] playerText;                                       //텍스트 오브젝트들의 텍스트 컴포넌트
 
-    private Photon.Realtime.Player[] currentPlayersInRoom;          //현재 룸 플레이어 정보
-    private Photon.Realtime.Player[] playersInRoomOthersLeft;       //바로 전 상태 룸 플레이어 정보
-    private int localPlayerIndex;
+    private Photon.Realtime.Player[] _currentPlayersInRoom;          //현재 룸 플레이어 정보
+    private Photon.Realtime.Player[] _playersInRoomOthersLeft;       //바로 전 상태 룸 플레이어 정보
+    private int _localPlayerIndex;
     
     void Start()
     {
-        currentPlayersInRoom = PhotonNetwork.PlayerList;
-        playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
+        _currentPlayersInRoom = PhotonNetwork.PlayerList;
+        _playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
 
-        printNameText();
+        PrintNameText();
     }
 
     //게임 시작버튼 눌렀을 때
@@ -27,23 +27,23 @@ public class PlayerTextManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            getCardNumberList();
-            photonView.RPC("StartCardNumberText", RpcTarget.All, getCardNumberList());
+            GetCardNumberList();
+            photonView.RPC("StartCardNumberText", RpcTarget.All, GetCardNumberList());
 
         }
     }
 
     //카드 갯수 리스트 얻어오기
-    int[] getCardNumberList()
+    int[] GetCardNumberList()
     {
-        int[] cardlist = { 0, 0, 0, 0 };
+        int[] cardList = { 0, 0, 0, 0 };
 
-        for(int i = 0; i < currentPlayersInRoom.Length; i++)
+        for(int i = 0; i < _currentPlayersInRoom.Length; i++)
         {
-            cardlist[i] = MyGameManager.PLAYERS[i].cardNum;
+            cardList[i] = MyGameManager.Players[i].cardNum;
         }
 
-        return cardlist;
+        return cardList;
     }
 
 
@@ -52,17 +52,17 @@ public class PlayerTextManager : MonoBehaviourPunCallbacks
     {
         int passLocal = 0;
         //player0 카드 갯수 출력
-        PlayerText[1].text = playersCardNumber[localPlayerIndex].ToString();
+        playerText[1].text = playersCardNumber[_localPlayerIndex].ToString();
 
         //다른 플레이어 카드 갯수 출력
-        for(int i = 0; i < currentPlayersInRoom.Length; i++)
+        for(int i = 0; i < _currentPlayersInRoom.Length; i++)
         {
-            if (i == localPlayerIndex)
+            if (i == _localPlayerIndex)
             {
-                PlayerText[1].text = playersCardNumber[localPlayerIndex].ToString();
+                playerText[1].text = playersCardNumber[_localPlayerIndex].ToString();
                 continue;
             }
-            PlayerText[2 * (i - passLocal) + 1].text = playersCardNumber[i].ToString();
+            playerText[2 * (i - passLocal) + 1].text = playersCardNumber[i].ToString();
         }
     }
     
@@ -70,7 +70,7 @@ public class PlayerTextManager : MonoBehaviourPunCallbacks
     //게임 중 확인버튼 늘렀을 때
     public void ClickOkButton()
     {
-        photonView.RPC("PrintCardNumberText", RpcTarget.All, currentPlayersInRoom[localPlayerIndex]);
+        photonView.RPC("PrintCardNumberText", RpcTarget.All, _currentPlayersInRoom[_localPlayerIndex]);
     }
 
     [PunRPC]
@@ -80,53 +80,53 @@ public class PlayerTextManager : MonoBehaviourPunCallbacks
         //있으면 카드 갯수 수정
         try
         {
-            int playerIndex = Array.FindIndex(playersInRoomOthersLeft, x => x.NickName == currentPlayer.NickName);
-            Player player = playersInfo.Find(x => x.NickName == currentPlayersInRoom[playerIndex].NickName);
-            PlayerText[2 * playerIndex + 1].text = player.cards.Length.ToString();
+            int playerIndex = Array.FindIndex(_playersInRoomOthersLeft, x => x.NickName == currentPlayer.NickName);
+            Player player = playersInfo.Find(x => x.NickName == _currentPlayersInRoom[playerIndex].NickName);
+            playerText[2 * playerIndex + 1].text = player.cards.Length.ToString();
         }
         //Array.FindIndex에서 못찾을 경우
         //로컬 플레이어 카드 갯수 수정
         catch(ArgumentNullException exception)
         {
-            Player player = playersInfo.Find(x => x.NickName == currentPlayersInRoom[localPlayerIndex].NickName);
-            PlayerText[1].text = player.cards.Length.ToString();
+            Player player = playersInfo.Find(x => x.NickName == _currentPlayersInRoom[_localPlayerIndex].NickName);
+            playerText[1].text = player.cards.Length.ToString();
         }
     }
     */
     
     //텍스트 출력
-    void printNameText()
+    void PrintNameText()
     {
         //로컬 플레이어 인덱스 찾기
-        localPlayerIndex = Array.FindIndex(currentPlayersInRoom, player => player.IsLocal == true);
+        _localPlayerIndex = Array.FindIndex(_currentPlayersInRoom, player => player.IsLocal == true);
 
         //플레이어 순서는 원격 플레이어들 정보가 들어있는
         //PhotonNetwork.PlayerListOthers배열의 원소 순서대로 지정
         
         //Player0 출력
-        PlayerText[0].text = currentPlayersInRoom[localPlayerIndex].NickName.ToString();
-        PlayerText[1].text = "준비중";
+        playerText[0].text = _currentPlayersInRoom[_localPlayerIndex].NickName.ToString();
+        playerText[1].text = "준비중";
 
         //Player1 존재시 출력
         if (PhotonNetwork.PlayerListOthers.Length >= 1)
         {
-            PlayerText[2].text = PhotonNetwork.PlayerListOthers[0].NickName.ToString();
-            PlayerText[3].text = "준비중";
+            playerText[2].text = PhotonNetwork.PlayerListOthers[0].NickName.ToString();
+            playerText[3].text = "준비중";
         }
 
         //Player2 존재시 출력
         if (PhotonNetwork.PlayerListOthers.Length >= 2)
         {
             Debug.Log(PhotonNetwork.PlayerListOthers[1]);
-            PlayerText[4].text = PhotonNetwork.PlayerListOthers[1].NickName.ToString();
-            PlayerText[5].text = "준비중";
+            playerText[4].text = PhotonNetwork.PlayerListOthers[1].NickName.ToString();
+            playerText[5].text = "준비중";
         }
 
         //Player3 존재시 출력
         if (PhotonNetwork.PlayerListOthers.Length >= 3)
         {
-            PlayerText[6].text = PhotonNetwork.PlayerListOthers[2].NickName.ToString();
-            PlayerText[7].text = "준비중";
+            playerText[6].text = PhotonNetwork.PlayerListOthers[2].NickName.ToString();
+            playerText[7].text = "준비중";
         }
     }
 
@@ -137,17 +137,17 @@ public class PlayerTextManager : MonoBehaviourPunCallbacks
 
         //새 플레이어가 포함된 플레이어 정보 얻기
         //쓰이진 않는데 일단 넣어둠
-        currentPlayersInRoom = PhotonNetwork.PlayerList;
+        _currentPlayersInRoom = PhotonNetwork.PlayerList;
 
         //새 플레이어가 몇번째 원격 플레이어인지 찾기
         int newPlayerindex = Array.FindIndex(PhotonNetwork.PlayerListOthers, i => i.NickName == newPlayer.NickName);
 
         //텍스트 출력
-        PlayerText[newPlayerindex * 2 + 2].text = newPlayer.NickName;
-        PlayerText[newPlayerindex * 2 + 3].text = "준비중";
+        playerText[newPlayerindex * 2 + 2].text = newPlayer.NickName;
+        playerText[newPlayerindex * 2 + 3].text = "준비중";
 
         //현 상태 플레이어 정보 남겨두기
-        playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
+        _playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
     }
 
     //기존 플레이어가 방에서 나갔을때 호출
@@ -157,16 +157,16 @@ public class PlayerTextManager : MonoBehaviourPunCallbacks
 
         //새 플레이어가 포함된 플레이어 정보 얻기
         //쓰이진 않는데 일단 넣어둠
-        currentPlayersInRoom = PhotonNetwork.PlayerList;
+        _currentPlayersInRoom = PhotonNetwork.PlayerList;
 
         //나간 플레이어가 몇번째 원격 플레이어인지 찾기
-        int OtherPlayerIndex = Array.FindIndex(playersInRoomOthersLeft, leftPlayer => leftPlayer.NickName == otherPlayer.NickName);
+        int OtherPlayerIndex = Array.FindIndex(_playersInRoomOthersLeft, leftPlayer => leftPlayer.NickName == otherPlayer.NickName);
 
         //텍스트 출력
-        PlayerText[OtherPlayerIndex * 2 + 2].text = "";
-        PlayerText[OtherPlayerIndex * 2 + 3].text = "";
+        playerText[OtherPlayerIndex * 2 + 2].text = "";
+        playerText[OtherPlayerIndex * 2 + 3].text = "";
 
         //현 상태 플레이어 정보 남겨두기
-        playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
+        _playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
     }
 }
