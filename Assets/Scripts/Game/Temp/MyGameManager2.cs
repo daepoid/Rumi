@@ -44,8 +44,8 @@ public partial class MyGameManager2 : MonoBehaviourPunCallbacks
             if (_playerNum == turn && !ControlFlag)
             {
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
-                ControlFlag = true;
                 turnText.enabled = false;
+                ControlFlag = true;
                 SaveCardHand();
             }
 

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class CardControlEngine : MonoBehaviour
 {
     public Transform invisibleCard;
-    public static Transform TempCard;
+    public Transform TempCard;
     
     private List<CardSlot> _cardSlots;
     private CardSlot _workingCardHand;        // BeginDrag를 수행 할 때 선택 된 Card의 CardHand
@@ -125,7 +125,8 @@ public class CardControlEngine : MonoBehaviour
     {
         Debug.Log("EndDrag\ninvisibleCard position : " + invisibleCard.parent.name);
         // if (invisibleCard.parent == transform)
-        if(_whichCardSlot == null || !MyGameManager.ControlFlag)
+        // if(_whichCardSlot == null || !MyGameManager.ControlFlag)
+        if(_whichCardSlot == null)
         {
             Debug.Log("invisibleCard.parent==transform");
             card.SetParent(_workingCardHand.transform);

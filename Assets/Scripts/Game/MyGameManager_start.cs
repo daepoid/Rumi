@@ -322,22 +322,22 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             if (i < 11)
             {
                 Debug.Log("Top : num/col = " + clientCard[i].CardNumber + "/" + clientCard[i].CardColor);
-                CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
-                CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
-                Debug.Log("Real Top : num/col = " + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text +
-                    "/" + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color);
-                // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = PLAYERS[playerNum].card[i].number;
-                // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
+                cardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
+                cardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
+                Debug.Log("Real Top : num/col = " + cardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text +
+                    "/" + cardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color);
+                // cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = PLAYERS[playerNum].card[i].number;
+                // cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
             }
             else
             {
                 Debug.Log("Bottom : num/col = " + clientCard[i].CardNumber + "/" + clientCard[i].CardColor);
-                CardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
-                CardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
-                Debug.Log("Real Bottom : num/col = " + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text +
-                    "/" + CardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color);
-                // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = PLAYERS[playerNum].card[i].number;
-                // CardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
+                cardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
+                cardHandBot.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color = color;
+                Debug.Log("Real Bottom : num/col = " + cardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().text +
+                    "/" + cardHandTop.GetChild(i % 11).GetChild(0).GetChild(0).GetComponent<Text>().color);
+                // cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = PLAYERS[playerNum].card[i].number;
+                // cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
             }
 
         }
