@@ -15,9 +15,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
         buttonNext.enabled = false;
         buttonNext.GetComponent<Image>().color = Color.gray;
-        
+
         buttonReset.enabled = false;
         buttonReset.GetComponent<Image>().color = Color.gray;
+
+        buttonRequest.enabled = false;
+        buttonRequest.GetComponent<Image>().color = Color.gray;
 
         if (!PhotonNetwork.IsMasterClient)
         {
@@ -44,8 +47,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         photonView.RPC("Create_TABLE", RpcTarget.All);                    // Table 인스턴스 생성
         Divide_Card();                                                    // 마스터(서버)가 카드를 나누어줌
         Sync_Card();                                                      // 마스터(서버)가 배분한 카드를 동기화 시킵니다.
-        photonView.RPC("View_Card", RpcTarget.All);                       // 자신이 받은 카드를 확인합니다.
-        // photonView.RPC("View_TABLE", RpcTarget.All);                      // Table 게임판 확인하기
+        photonView.RPC("View_ClientCard", RpcTarget.All);                 // 자신이 받은 카드를 확인합니다.
+        photonView.RPC("Count_ClientCard", RpcTarget.All);
 
         // 게임의 턴을 설정합니다.
         Random random = new Random();
@@ -98,7 +101,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 return;
             }
         }
-        
+
     }
     //=========================================================================
     // 덱, 플레이어 초기화
@@ -129,7 +132,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             String cardNumber = ((i % 13) + 1).ToString();
             String cardColor;
-            switch((i / 26))
+            switch ((i / 26))
             {
                 case 0: cardColor = "black"; break;
                 case 1: cardColor = "red"; break;
@@ -227,10 +230,14 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             for (int j = 0; j < Players.Count; j++)
             {
-                for (int i = 0; i < MaxHandSize; i++)
+                for (int i = 0; i < 14; i++)
                 {
-                    Players[j].cards[i] = deck[deck.Count - 1];
+                    Players[j].cards.Add(deck[deck.Count - 1]);
                     deck.RemoveAt(deck.Count - 1);
+                }
+                for(int i=0;i<8;i++)
+                {
+                    Players[j].cards.Add(new Card("", "yellow"));
                 }
             }
         }
@@ -263,22 +270,20 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             Debug.Log("     " + playerIndex + "플레이어 카드 동기화 시작");
 
-            for (int cardIndex = 0; cardIndex < Players[playerIndex].cards.Length; cardIndex++)
+            for (int cardIndex = 0; cardIndex < Players[playerIndex].cards.Count; cardIndex++)
             {
                 // 마스터가 분배한 카드의 정보를 담슴니다.
-                numCol[0] = Players[playerIndex].cards[cardIndex].CardNumber;
-                numCol[1] = Players[playerIndex].cards[cardIndex].CardColor;
+                Card card = Players[playerIndex].cards[cardIndex];
 
                 // 마스터가 카드를 나누어줍니다.
                 Debug.Log("     RPC 송신" + cardIndex + ": " + numCol[0] + ", " + numCol[1]);
-                photonView.RPC("Sync_Client_Card", RpcTarget.All, playerIndex, cardIndex, numCol);
+                photonView.RPC("Sync_Client_Card", RpcTarget.All, playerIndex, new string[] { card.CardNumber, card.CardColor });
                 for (int i = 0; i < 1000; i++)
                     ;
             }
-            Debug.Log("     " + playerIndex + "플레이어 카드 : " + Players[playerIndex].cards.Length);
-            Debug.Log("     " + playerIndex + "플레이어 카드 동기화 끝");
+            Debug.Log("     " + playerIndex + "플레이어 카드 : " + Players[playerIndex].cards.Count);
         }
-        Debug.Log("카드 동기화 완료\n");
+        Debug.Log("플레이어 카드 동기화 완료\n");
     }
 
     //=========================================================================
@@ -286,71 +291,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // numCol[]에 number와 color를 받아와 PLAYERS에 추가하는 함수
     //=========================================================================
     [PunRPC]
-    void Sync_Client_Card(int playerIndex, int cardIndex, string[] numCol)
+    void Sync_Client_Card(int playerNum, string[] numCol)
     {
-        if (playerIndex == _playerNum)
+        if (playerNum == _playerNum)
         {
-            Debug.Log("     RPC 수신" + playerIndex + " : 카드" + cardIndex + " = " + numCol[0] + ", " + numCol[1]);
-            clientCard[cardIndex] = new Card(numCol[0], numCol[1]);
+            Debug.Log("     RPC 수신" + playerNum + " : 카드" + " = " + numCol[0] + ", " + numCol[1]);
+            ClientCard.Add(new Card(numCol[0], numCol[1]));
         }
-    }
-
-    //=========================================================================
-    //카드 띄우기
-    // 설명
-    // 1. 클라이언트가 마스터로부터 동기화 받은 카드를 확인합니다.
-    //=========================================================================
-    [PunRPC]
-    void View_Card()
-    {
-        Debug.Log("카드 띄우기 실행\n");
-        Debug.Log("     플레이어번호 : " + _playerNum);
-
-        for (int i = 0; i < MaxHandSize; i++)
-        {
-            Debug.Log(Players[_playerNum].cards.Length);
-            if (i < MaxHandSize / 2)
-            {
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = Players[_playerNum].cards[i].CardNumber;
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Players[_playerNum].cards[i].RealColor;
-            }
-            else
-            {
-                cardHandBot.GetChild(i % MaxHandSize / 2).GetChild(0).GetComponent<Text>().text = Players[_playerNum].cards[i].CardNumber;
-                cardHandBot.GetChild(i % MaxHandSize / 2).GetChild(0).GetComponent<Text>().color = Players[_playerNum].cards[i].RealColor;
-            }
-        }
-        
-        // for (int i = 0; i < MaxHandSize; i++)
-        // {
-        //     Color color = Color.green;
-        //     switch (clientCard[i].CardColor)
-        //     {
-        //         case "red": color = Color.red; break;
-        //         case "blue": color = Color.blue; break;
-        //         case "yellow": color = Color.yellow; break;
-        //         case "black": color = Color.black; break;
-        //         default: color = Color.green; break;
-        //     }
-        //     if (i < 11)
-        //     {
-        //         Debug.Log("Top : num/col = " + clientCard[i].CardNumber + "/" + clientCard[i].CardColor);
-        //         cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
-        //         cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color = color;
-        //         Debug.Log("Real Top : num/col = " + cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text +
-        //             "/" + cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color);
-        //     }
-        //     else
-        //     {
-        //         Debug.Log("Bottom : num/col = " + clientCard[i].CardNumber + "/" + clientCard[i].CardColor);
-        //         cardHandBot.GetChild(i % 11).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
-        //         cardHandBot.GetChild(i % 11).GetChild(0).GetComponent<Text>().color = color;
-        //         Debug.Log("Real Bottom : num/col = " + cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text +
-        //             "/" + cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color);
-        //         // cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = Players[playerNum].card[i].number;
-        //         // cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
-        //     }
-        // }
-        Debug.Log("카드 띄우기 완료\n");
     }
 }
