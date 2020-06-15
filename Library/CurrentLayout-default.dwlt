@@ -74,7 +74,7 @@ MonoBehaviour:
   m_MinSize: {x: 101, y: 242}
   m_MaxSize: {x: 4001, y: 8042}
   vertical: 1
-  controlID: 148
+  controlID: 16
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_MinSize: {x: 232, y: 471}
   m_MaxSize: {x: 10002, y: 14021}
   vertical: 1
-  controlID: 34
+  controlID: 59
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -224,7 +224,7 @@ MonoBehaviour:
   m_MinSize: {x: 608, y: 471}
   m_MaxSize: {x: 18003, y: 14021}
   vertical: 0
-  controlID: 33
+  controlID: 53
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -445,9 +445,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 16390000
+      m_SelectedIDs: a0310000
       m_LastClickedID: 0
-      m_ExpandedIDs: 0cbeffff14beffff44bfffffb2c0ffff18cbffff3eceffff10fbffffb64e0000f24e0000aa520000505700008c570000e8570000
+      m_ExpandedIDs: 2cf6ffff4af6ffff7af7ffff92f7ffffc2f9ffffd4f9ffffe0f9ffffe6faffff68fbffff8046000090460000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -548,20 +548,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes
+    - Assets/Scripts/Game
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Scenes
+  - Assets/Scripts/Game
   m_LastFoldersGridSize: 16
   m_LastProjectPath: E:\Users\Daepoid\Code\Rumi
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: f4380000
-    m_LastClickedID: 14580
-    m_ExpandedIDs: 00000000ee380000f0380000f2380000f4380000f6380000f838000004390000a439000000ca9a3b
+    m_SelectedIDs: e8380000
+    m_LastClickedID: 14568
+    m_ExpandedIDs: 00000000ca380000cc380000ce380000d0380000d2380000d438000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -589,7 +589,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000ee380000f0380000f2380000f4380000f6380000f8380000
+    m_ExpandedIDs: 00000000ca380000cc380000ce380000d0380000d2380000d4380000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -620,15 +620,15 @@ MonoBehaviour:
     m_ExpandedInstanceIDs: 00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: SignIn
-      m_OriginalName: SignIn
+      m_Name: PlayerTextManager
+      m_OriginalName: PlayerTextManager
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 14614
+      m_UserData: 12704
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0

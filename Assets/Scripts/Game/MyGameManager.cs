@@ -8,9 +8,10 @@ using System;
 
 public partial class MyGameManager : MonoBehaviourPunCallbacks
 {
-    static public readonly int TableRow = 6;                  // 게임판의 RAW 크기
-    static public readonly int TableCol = 16;                 // 게임판의 COLUM 크기
+    public static readonly int TableRow = 6;                  // 게임판의 RAW 크기
+    public static readonly int TableCol = 16;                 // 게임판의 COLUM 크기
     public static readonly int MaxHandSize = 22;
+    public static readonly int MaxTime = 5;
     
     public static bool ControlFlag = false;
     public List<Card> deck = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
@@ -66,7 +67,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 _time += Time.deltaTime;
 
-                if (_time > 60)
+                if (_time > MaxTime)
                 {
                     _time = 0;
                     photonView.RPC("Next", RpcTarget.All);

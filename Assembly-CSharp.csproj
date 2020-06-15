@@ -86,6 +86,8 @@
      <Compile Include="Assets\Scripts\Game\Temp\MyGameManager2_start.cs" />
      <Compile Include="Assets\Scripts\Lobby\LobbyManager.cs" />
      <Compile Include="Assets\Scripts\Lobby\LobbyNetworkManager.cs" />
+     <Compile Include="Assets\Scripts\Lobby\RoomName.cs" />
+     <Compile Include="Assets\Scripts\Lobby\RoomPlayer.cs" />
      <Compile Include="Assets\Scripts\SignIn\AuthManager.cs" />
      <Compile Include="Assets\Scripts\SignIn\PlayerName.cs" />
      <None Include="Assets\Photon\PhotonUnityNetworking\changelog.txt" />
