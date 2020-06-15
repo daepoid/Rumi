@@ -18,8 +18,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public static List<Player> Players = new List<Player>();    // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
     public static Card[,] Table = new Card[TableRow, TableCol];      // Rumikub의 게임판을 저장한 배열입니다.
     public static Card[,] TableBackup;                                // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
-    public static List<Card> CardHandBackup = new List<Card>();
-    public Card[] clientCard = new Card[22];                    // 클라이언트의 카드를 나타냅니다.
+    public static List<Card> ClientCard = new List<Card>();     // 클라이언트의 카드를 나타냅니다.
 
     private int _playerCount = 0;
     private int _playerNum = -1;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
@@ -45,7 +44,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             if (turnStartFlag)
             {
                 ControlFlag = true;
-                SaveCardHand();
+                //Get_Card();
             }
             if (_playerNum == _turn)
             {
@@ -72,7 +71,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     _time = 0;
                     photonView.RPC("Next", RpcTarget.All);
                 }
-                // photonView.RPC("SyncTime", RpcTarget.All, _time.ToString("N1"));
                 photonView.RPC("SyncTime", RpcTarget.All, _time);
             }
             
@@ -88,21 +86,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         return false;
     }
-
-    public void SaveCardHand()
-    {
-        for (int i = 0; i < cardHandTop.childCount; i++)
-        {
-            Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color.ToString());
-            CardHandBackup.Add(newCard);
-        }
-
-        for (int i = 0; i < cardHandBot.childCount; i++)
-        {
-            Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color.ToString());
-            CardHandBackup.Add(newCard);
-        }
-    }
     
     //=========================================================================
     // Reset 버튼 - BETA
@@ -111,7 +94,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     public void Reset()
     {
-        Table = TableBackup;
+        Table = (Card[,])TableBackup.Clone();
+        View_Card();
         View_TABLE();
     }
 
@@ -138,14 +122,14 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             // Rule을 만족시키지 못함
             Debug.Log("     Rule : Fail");
-            Table = TableBackup;
-            View_TABLE();
+            Reset();
         }
         else
         {
             // Rule을 만족시킴
             Debug.Log("     Rule : True");
             photonView.RPC("Sync_TABLE", RpcTarget.All);
+            Get_Card();
         }
 
         photonView.RPC("Backup", RpcTarget.All);
@@ -231,7 +215,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
 
                     // 카드가 2장 이상 확정일 때
-                    if (type == 0)                                      // 어떤 규칙인지 설정이 안되었을 때 실행
+                    if (type == 0)                                              // 어떤 규칙인지 설정이 안되었을 때 실행
                         type = (pre.CardColor != cur.CardColor) ? 1 : 2;        // 색상이 다르면 같은 숫자가 연속됩니다.(1), 색상이 같으면 숫자가 오름차순입니다.(2) 
 
                     Debug.Log("pre:" + pre.CardColor + pre.CardNumber);
@@ -296,6 +280,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     }
 
     //=========================================================================
+    // 설명
     // 테이블을 백업합니다.
     // 위 함수에서 호출합니다.
     //=========================================================================
@@ -303,7 +288,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Backup()
     {
         Debug.Log("백업 시작");
-        TableBackup = Table;
+        TableBackup = (Card[,])Table.Clone();
         Debug.Log("백업 끝");
     }
 
@@ -311,7 +296,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Sync_Turn(int turn)
     {
         _turn = turn;
-        // textTurn.text = "_turn : "+ _turn.ToString();
     }
 
     //=========================================================================
@@ -363,19 +347,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 try
                 {
-                    string color = "red";
-                    switch (tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color.ToString())
-                    {
-                        case "RGBA(1.000, 0.000, 0.000, 1.000)": color = "red"; break;
-                        case "RGBA(0.000, 0.000, 1.000, 1.000)": color = "blue"; break;
-                        case "RGBA(1.000, 0.920, 0.016, 1.000)": color = "yellow"; break;
-                        case "RGBA(0.000, 0.000, 0.000, 1.000)": color = "black"; break;
-                        default : color = "green"; break;
-                    }
-
-                    Table[row, col].CardNumber = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text;
-                    Table[row, col].CardColor = color;
-                    // Table[row, col].RealColor = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color;
+                    Table[row, col] = new Card(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text,
+                    tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
                 }
                 catch (Exception e)
                 {
@@ -384,13 +357,36 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 }
             }
         }
-        // for (int row = 0; row < TableRow; row++)
-        // {
-        //     for (int col = 0; col < TableCol; col++)
-        //     {
-        //         Debug.Log("Table[" + row + "," + col + "]" + Table[row, col].CardColor + Table[row, col].CardNumber);
-        //     }
-        // }
+
+         for (int row = 0; row < TableRow; row++)
+         {
+             for (int col = 0; col < TableCol; col++)
+             {
+                 Debug.Log("Table[" + row + "," + col + "]" + Table[row, col].CardColor + Table[row, col].CardNumber);
+             }
+         }
+    }
+
+    //=========================================================================
+    // Card 가져오기
+    // 설명
+    // 1. 사용자가 들고있는 카드를 clientCard 배열 가져옵니다.
+    //=========================================================================
+    void Get_Card()
+    {
+        ClientCard.Clear();
+
+        for (int i = 0; i < cardHandTop.childCount; i++)
+        {
+            Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            ClientCard.Add(newCard);
+        }
+
+        for (int i = 0; i < cardHandBot.childCount; i++)
+        {
+            Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            ClientCard.Add(newCard);
+        }
     }
 
     //=========================================================================
@@ -405,10 +401,72 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             for (int col = 0; col < TableCol; col++)
             {
+                Image cardImage = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Image>();
+
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text = Table[row, col].CardNumber;
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color = Table[row, col].RealColor;
+
+                if(Table[row,col].CardNumber == "")
+                {
+                    cardImage.color = new Color(0, 0, 0, 0);
+                }
+                else
+                {
+                    cardImage.color = new Color(204, 153, 26, 255);
+                }
             }
         }
+    }
+    //=========================================================================
+    //카드 띄우기
+    // 설명
+    // 1. 클라이언트가 마스터로부터 동기화 받은 카드를 확인합니다.
+    //=========================================================================
+    [PunRPC]
+    void View_Card()
+    {
+        Debug.Log("카드 띄우기 실행\n");
+        Debug.Log("     플레이어번호 : " + _playerNum);
+
+        foreach (Card item in ClientCard)
+            Debug.Log(item.CardColor + item.CardNumber);
+
+        for (int i = 0; i < MaxHandSize; i++)
+        {
+            if (i < MaxHandSize / 2)
+            {
+                Image cardImage = cardHandTop.GetChild(i).GetComponent<Image>();
+
+                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = ClientCard[i].CardNumber;
+                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i].RealColor;
+
+                if (ClientCard[i].CardNumber != "")
+                {
+                    cardImage.color = new Color(0, 0, 0, 0);
+                }
+                else
+                {
+                    cardImage.color = new Color(204, 153, 26, 255);
+                }
+            }
+            else
+            {
+                Image cardImage = cardHandBot.GetChild(i % (MaxHandSize / 2)).GetComponent<Image>();
+
+                cardHandBot.GetChild(i % (MaxHandSize / 2)).GetChild(0).GetComponent<Text>().text = ClientCard[i].CardNumber;
+                cardHandBot.GetChild(i % (MaxHandSize / 2)).GetChild(0).GetComponent<Text>().color = ClientCard[i].RealColor;
+
+                if (ClientCard[i].CardNumber != "")
+                {
+                    cardImage.color = new Color(0, 0, 0, 0);
+                }
+                else
+                {
+                    cardImage.color = new Color(204, 153, 26, 255);
+                }
+            }
+        }
+        Debug.Log("카드 띄우기 완료\n");
     }
 
     //=========================================================================
@@ -418,12 +476,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     [PunRPC]
     void SyncTime(float time)
-    // void SyncTime(String time)
     {
-        // textTimer.text = time;
         textTimer.text = time.ToString("N1");
-        // this.textTimer.text = $"{time:N1}";
-        // textTimer.text = time.ToString();
     }
 
     //=========================================================================

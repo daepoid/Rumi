@@ -53,7 +53,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
 
 
-        //버튼, 테이블을 셋팅합니다.
+        //버튼, 테이블, 카드를 백업합니다.
         photonView.RPC("Backup", RpcTarget.All);
 
         // 게임 시작
@@ -271,7 +271,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
                 // 마스터가 카드를 나누어줍니다.
                 Debug.Log("     RPC 송신" + cardIndex + ": " + numCol[0] + ", " + numCol[1]);
-                photonView.RPC("Sync_Client_Card", RpcTarget.All, playerIndex, cardIndex, numCol);
+                photonView.RPC("Sync_Client_Card", RpcTarget.All, playerIndex, numCol);
                 for (int i = 0; i < 1000; i++)
                     ;
             }
@@ -286,71 +286,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // numCol[]에 number와 color를 받아와 PLAYERS에 추가하는 함수
     //=========================================================================
     [PunRPC]
-    void Sync_Client_Card(int playerIndex, int cardIndex, string[] numCol)
+    void Sync_Client_Card(int playerIndex,string[] numCol)
     {
         if (playerIndex == _playerNum)
         {
-            Debug.Log("     RPC 수신" + playerIndex + " : 카드" + cardIndex + " = " + numCol[0] + ", " + numCol[1]);
-            clientCard[cardIndex] = new Card(numCol[0], numCol[1]);
+            Debug.Log("     RPC 수신" + playerIndex + " : 카드" + " = " + numCol[0] + ", " + numCol[1]);
+            ClientCard.Add(new Card(numCol[0], numCol[1]));
         }
-    }
-
-    //=========================================================================
-    //카드 띄우기
-    // 설명
-    // 1. 클라이언트가 마스터로부터 동기화 받은 카드를 확인합니다.
-    //=========================================================================
-    [PunRPC]
-    void View_Card()
-    {
-        Debug.Log("카드 띄우기 실행\n");
-        Debug.Log("     플레이어번호 : " + _playerNum);
-
-        for (int i = 0; i < MaxHandSize; i++)
-        {
-            Debug.Log(Players[_playerNum].cards.Length);
-            if (i < MaxHandSize / 2)
-            {
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = Players[_playerNum].cards[i].CardNumber;
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Players[_playerNum].cards[i].RealColor;
-            }
-            else
-            {
-                cardHandBot.GetChild(i % MaxHandSize / 2).GetChild(0).GetComponent<Text>().text = Players[_playerNum].cards[i].CardNumber;
-                cardHandBot.GetChild(i % MaxHandSize / 2).GetChild(0).GetComponent<Text>().color = Players[_playerNum].cards[i].RealColor;
-            }
-        }
-        
-        // for (int i = 0; i < MaxHandSize; i++)
-        // {
-        //     Color color = Color.green;
-        //     switch (clientCard[i].CardColor)
-        //     {
-        //         case "red": color = Color.red; break;
-        //         case "blue": color = Color.blue; break;
-        //         case "yellow": color = Color.yellow; break;
-        //         case "black": color = Color.black; break;
-        //         default: color = Color.green; break;
-        //     }
-        //     if (i < 11)
-        //     {
-        //         Debug.Log("Top : num/col = " + clientCard[i].CardNumber + "/" + clientCard[i].CardColor);
-        //         cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
-        //         cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color = color;
-        //         Debug.Log("Real Top : num/col = " + cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text +
-        //             "/" + cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color);
-        //     }
-        //     else
-        //     {
-        //         Debug.Log("Bottom : num/col = " + clientCard[i].CardNumber + "/" + clientCard[i].CardColor);
-        //         cardHandBot.GetChild(i % 11).GetChild(0).GetComponent<Text>().text = clientCard[i].CardNumber;
-        //         cardHandBot.GetChild(i % 11).GetChild(0).GetComponent<Text>().color = color;
-        //         Debug.Log("Real Bottom : num/col = " + cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().text +
-        //             "/" + cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Text>().color);
-        //         // cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().number = Players[playerNum].card[i].number;
-        //         // cardHandTop.GetChild(i % 11).GetChild(0).GetComponent<Card>().realcolor = color;
-        //     }
-        // }
-        Debug.Log("카드 띄우기 완료\n");
     }
 }
