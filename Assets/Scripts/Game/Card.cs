@@ -25,20 +25,20 @@ public class Card
     public Card(string number, Color color)
     {
         CardNumber = number;
-        CardColor = ConvertToCardColor(ColorUtility.ToHtmlStringRGB(color));
+        CardColor = ConvertToCardColor(color);
         RealColor = color;
     }
 
-    public static String ConvertToCardColor(string color)
+    public static String ConvertToCardColor(Color color)
     {
         string stringColor;
-        switch (color)
+        switch (color.ToString())
         {
-            case "000000": stringColor = "black"; break;
-            case "FF0000": stringColor = "red"; break;
-            case "00FF00": stringColor = "green"; break;
-            case "0000FF": stringColor = "blue"; break;
-            default: stringColor = "yellow"; break;
+            case "RGBA(1.000, 0.000, 0.000, 1.000)": stringColor = "red"; break;
+            case "RGBA(0.000, 0.000, 1.000, 1.000)": stringColor = "blue"; break;
+            case "RGBA(1.000, 0.920, 0.016, 1.000)": stringColor = "yellow"; break;
+            case "RGBA(0.000, 0.000, 0.000, 1.000)": stringColor = "black"; break;
+            default : stringColor = "green"; break;
         }
 
         return stringColor;

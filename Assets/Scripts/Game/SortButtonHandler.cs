@@ -10,61 +10,147 @@ public class SortButtonHandler : MonoBehaviour
     public Transform cardHandTop;
     public Transform cardHandBot;
     
-    public void OnClickSortbyColor()
-    {
-        List<Transform> cards = new List<Transform>();
-        for (int i = 0; i < cardHandTop.childCount; i++)
-        {
-            cards.Add(cardHandTop.GetChild(i));            
-        }
-
-        for (int i = 0; i < cardHandBot.childCount; i++)
-        {
-            cards.Add(cardHandTop.GetChild(i));
-        }
-        
-        Debug.Log("\nStart Sort!\ncards.Count : " + cards.Count + "\ncards[0].CardNumber : " + cards[0].GetChild(0).GetComponent<Text>().text);
-        List<Transform> sortedCards = cards.OrderBy(x => x.GetChild(0).GetComponent<Text>().color.ToString()).ThenBy(x => x.GetChild(0).GetComponent<Text>().text).ToList();
-        
-        MoveDataToCardHands(sortedCards);
-        Debug.Log("SortbyColor 789");
-    }
     
-    public void OnClickSortbyNumber()
+    // 어차피 정렬이나 대충 들어가도 될듯
+    public void OnClickSortByColor()
     {
-        List<Transform> cards = new List<Transform>();
-        for (int i = 0; i < cardHandTop.childCount; i++)
+        List<Card> cards = new List<Card>();
+        for (int i = 0; i < MyGameManager.MaxHandSize / 2; i++)
         {
-            cards.Add(cardHandTop.GetChild(i));            
+            Card newCard1 = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            Card newCard2 = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            cards.Add(newCard1);
+            cards.Add(newCard2);
         }
-
-        for (int i = 0; i < cardHandBot.childCount; i++)
+        cards.Sort((x, y) =>
         {
-            cards.Add(cardHandTop.GetChild(i));
-        }
-        
-        Debug.Log("Start Sort!");
-        List<Transform> sortedCards = cards.OrderBy(x => x.GetChild(0).GetComponent<Text>().text).ThenBy(x => x.GetChild(0).GetComponent<Text>().color.ToString()).ToList();
-        
-        MoveDataToCardHands(sortedCards);
-        Debug.Log("SortByColor 777");
-    }
-
-    private void MoveDataToCardHands(List<Transform> cards)
-    {
-        int halfSize = MyGameManager.MaxHandSize / 2;
-        for (int i = 0; i < MyGameManager.MaxHandSize; i++)
-        {
-            if (i < halfSize)
+            int comp = String.Compare(x.CardColor, y.CardColor);
+            if (comp == 0)
             {
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
+                if (x.CardNumber == "J" && y.CardNumber == "J")
+                {
+                    return 0;
+                }   
+                else if (x.CardNumber == "J")
+                {
+                    return -1;
+                }
+                else if (y.CardNumber == "J")
+                {
+                    return 1;
+                }
+                else
+                {
+                    return Int32.Parse(x.CardNumber).CompareTo(Int32.Parse(y.CardNumber));
+                }
             }
             else
             {
-                cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
-                cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
+                return comp;
             }
+        });
+        MoveDataToCardHands(cards);
+        
+        // List<Card> sortedCards = cards.OrderBy(x => x.CardColor).ThenBy(x => x.CardNumber).ToList();
+        // List<Card> sortedCards = cards.OrderBy(x => x.CardColor).ThenBy(x => x.CardNumber).ToList();
+        // MoveDataToCardHands(sortedCards);
+        Debug.Log("SortByColor 789");
+    }
+    
+    public void OnClickSortByNumber()
+    {
+        List<Card> cards = new List<Card>();
+        for (int i = 0; i < MyGameManager.MaxHandSize / 2; i++)
+        {
+            Card newCard1 = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            Card newCard2 = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            cards.Add(newCard1);
+            cards.Add(newCard2);
+        }
+        cards.Sort((x, y) =>
+        {
+            if (x.CardNumber == "J" && y.CardNumber == "J")
+            {
+                return String.Compare(x.CardColor, y.CardColor);
+            }   
+            else if (x.CardNumber == "J")
+            {
+                return -1;
+            }
+            else if (y.CardNumber == "J")
+            {
+                return 1;
+            }
+            else
+            {
+                int comp = Int32.Parse(x.CardNumber).CompareTo(Int32.Parse(y.CardNumber));
+                if (comp == 0)
+                {
+                    return String.Compare(x.CardColor, y.CardColor);
+                }
+                else
+                {
+                    return comp;
+                }
+            }
+        });
+        Debug.Log("SortByNumber 777");
+    }
+
+    private void MoveDataToCardHands(List<Card> cards)
+    {
+        int halfSize = MyGameManager.MaxHandSize / 2;
+        // for (int i = 0; i < MyGameManager.MaxHandSize; i++)
+        for (int i = 0; i < halfSize; i++)
+        {
+            cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = cards[i].CardNumber;
+            cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = cards[i].RealColor;
+            
+            cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text = cards[i + halfSize].CardNumber;
+            cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color = cards[i + halfSize].RealColor;
+            // if (i < halfSize)
+            // {
+            //     cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
+            //     cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
+            //     cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
+            //     cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
+            // }
+            // else
+            // {
+            //     cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
+            //     cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
+            // }
         }
     }
+    
+    
+    // private void MoveDataToCardHands(List<Transform> cards)
+    // {
+    //     int halfSize = MyGameManager.MaxHandSize / 2;
+    //     // for (int i = 0; i < MyGameManager.MaxHandSize; i++)
+    //     for (int i = 0; i < halfSize; i++)
+    //     {
+    //         cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text =
+    //             cards[i].GetChild(0).GetComponent<Text>().text;
+    //         cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color =
+    //             cards[i].GetChild(0).GetComponent<Text>().color;
+    //         
+    //         cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text =
+    //             cards[i + halfSize].GetChild(0).GetComponent<Text>().text;
+    //         cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color =
+    //             cards[i + halfSize].GetChild(0).GetComponent<Text>().color;
+    //         // if (i < halfSize)
+    //         // {
+    //         //     cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
+    //         //     cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
+    //         //     cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
+    //         //     cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
+    //         // }
+    //         // else
+    //         // {
+    //         //     cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().text = cards[i].GetChild(0).GetComponent<Text>().text;
+    //         //     cardHandBot.GetChild(i - halfSize).GetChild(0).GetComponent<Text>().color = cards[i].GetChild(0).GetComponent<Text>().color;
+    //         // }
+    //     }
+    // }
 }

@@ -35,21 +35,25 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public Transform tableTop;                                  // 게임판
     public Text textTimer;                                    // 60초 타이머
     // public Text textTurn;
-
-    private bool turnStartFlag = true;
+    public Text showWhosTurn;
+    private bool turnStartFlag = true;                        // 자신의 턴이 시작될때 한 번만 수행
+    
     // Update is called once per frame
     void Update()
     {
         if (_runningGame == 1)
         {
-            if (turnStartFlag)
-            {
-                ControlFlag = true;
-                SaveCardHand();
-            }
             if (_playerNum == _turn)
             {
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
+                if (turnStartFlag)
+                {
+                    showWhosTurn.enabled = false;
+                    ControlFlag = true;
+                    turnStartFlag = false;
+                    SaveCardHand();
+                    SwitchTableAccess(ControlFlag);
+                }
                 buttonNext.enabled = true;
                 buttonNext.GetComponent<Image>().color = Color.white;
                 buttonReset.enabled = true;
@@ -70,6 +74,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 if (_time > MaxTime)
                 {
                     _time = 0;
+                    turnStartFlag = true;
+                    ControlFlag = false;
+                    showWhosTurn.enabled = false;
+                    SwitchTableAccess(ControlFlag);
                     photonView.RPC("Next", RpcTarget.All);
                 }
                 // photonView.RPC("SyncTime", RpcTarget.All, _time.ToString("N1"));
@@ -83,24 +91,58 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
              */
         }
     }
-    
-    public bool ValidateTableTop()
-    {
-        return false;
-    }
 
-    public void SaveCardHand()
+    private void SaveCardHand()
     {
+        CardHandBackup.Clear();
         for (int i = 0; i < cardHandTop.childCount; i++)
         {
-            Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color.ToString());
+            Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
             CardHandBackup.Add(newCard);
         }
 
         for (int i = 0; i < cardHandBot.childCount; i++)
         {
-            Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color.ToString());
+            Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
             CardHandBackup.Add(newCard);
+        }
+    }
+    
+    private void LoadCardHand()
+    {
+        int halfSize = MaxHandSize / 2;
+        for (int i = 0; i < halfSize; i++)
+        {
+            cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = CardHandBackup[i].CardNumber;
+            cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = CardHandBackup[i].RealColor;
+            if (CardHandBackup[i].CardNumber != "")
+            {
+                cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
+            }
+            
+            cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text = CardHandBackup[i + halfSize].CardNumber;
+            cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color = CardHandBackup[i + halfSize].RealColor;
+            if (CardHandBackup[i + halfSize].CardNumber != "")
+            {
+                cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
+            }
+        }
+    }
+
+    private void SwitchTableAccess(bool flag)
+    {
+        for (int row = 0; row < TableRow; row++)
+        {
+            for (int col = 0; col < TableCol; col++)
+            {
+                tableTop.GetChild(row).GetChild(col).GetComponent<Draggable>().enabled = flag;
+            }
+        }
+
+        for (int i = 0; i < MaxHandSize / 2; i++)
+        {
+            cardHandTop.GetChild(i).GetComponent<Draggable>().enabled = flag;
+            cardHandBot.GetChild(i).GetComponent<Draggable>().enabled = flag;
         }
     }
     
@@ -140,6 +182,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             Debug.Log("     Rule : Fail");
             Table = TableBackup;
             View_TABLE();
+            LoadCardHand();
         }
         else
         {
@@ -407,6 +450,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text = Table[row, col].CardNumber;
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color = Table[row, col].RealColor;
+                if (Table[row, col].CardNumber != "")
+                {
+                    tableTop.GetChild(row).GetChild(col).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 0F);
+                }
             }
         }
     }
