@@ -141,6 +141,13 @@ public class CardControlEngine : MonoBehaviour
         //     _workingCardHand = null;
         //     _beforeCardIndex = -1;
         // }
+        // else if(!_workingCardHand.cardHandFlag && _whichCardSlot.cardHandFlag)
+        // {
+        //     card.SetParent(_workingCardHand.transform);
+        //     _workingCardHand.InsertCard(card, _beforeCardIndex);
+        //     _workingCardHand = null;
+        //     _beforeCardIndex = -1;
+        // }
         else if (_whichCardSlot.CountRealCard() > _whichCardSlot.OriginCardCount - 1)
         {
             Debug.Log("카드 제한을 넘는 경우");

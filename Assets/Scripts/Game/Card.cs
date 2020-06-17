@@ -11,7 +11,7 @@ public class Card
     public Color RealColor { get; set; }
     public Card()
     {
-        CardNumber = "-1";
+        CardNumber = "";
         CardColor = "green";
     }
 

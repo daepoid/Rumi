@@ -61,7 +61,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 buttonReset.enabled = true;
                 buttonReset.GetComponent<Image>().color = Color.white;
 
-                if (ClientCardNum < 22)
+                if (ClientCardNum < MaxHandSize)
                 {
                     buttonRequest.enabled = true;
                     buttonRequest.GetComponent<Image>().color = Color.white;
@@ -153,7 +153,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
         if(ClientCardNum == Count_ClientCard())
         {
-            if (ClientCardNum < 22)
+            if (ClientCardNum < MaxHandSize)
             {
                 Request();
             }
@@ -430,18 +430,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 try
                 {
-                    string color = "red";
-                    switch (tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color.ToString())
-                    {
-                        case "RGBA(1.000, 0.000, 0.000, 1.000)": color = "red"; break;
-                        case "RGBA(0.000, 0.000, 1.000, 1.000)": color = "blue"; break;
-                        case "RGBA(1.000, 0.920, 0.016, 1.000)": color = "yellow"; break;
-                        case "RGBA(0.000, 0.000, 0.000, 1.000)": color = "black"; break;
-                        default : color = "green"; break;
-                    }
-
                     Table[row, col].CardNumber = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text;
-                    Table[row, col].CardColor = color;
+                    Table[row, col].CardColor = Card.ConvertToCardColor(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
                 }
                 catch (Exception e)
                 {
@@ -471,7 +461,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
                 if (Table[row, col].CardNumber != "")
                 {
-                    cardImage.color = new Color(0.8F, 0.6F, 0.1F, 0F);
+                    cardImage.color = new Color(0.8F, 0.6F, 0.1F, 1F);
                 }
                 else
                 {
@@ -514,43 +504,31 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Debug.Log("카드 띄우기 실행\n");
         Debug.Log("     플레이어번호 : " + _playerNum);
 
-        Image cardImage;
-        for (int i = 0; i < MaxHandSize; i++)
+        int halfSize = MaxHandSize / 2;
+        for (int i = 0; i < halfSize; i++)
         {
-            if (i < MaxHandSize / 2)
+            cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = ClientCard[i].CardNumber;
+            cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i].RealColor;
+            if (ClientCard[i].CardNumber != "")
             {
-                cardImage = cardHandTop.GetChild(i).GetComponent<Image>();
-
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = ClientCard[i].CardNumber;
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i].RealColor;
-
-                if (ClientCard[i].CardNumber != "")
-                {
-                    cardImage.color = new Color(0.8F, 0.6F, 0.1F, 0F);
-                }
-                else
-                {
-                    cardImage.color = new Color(0, 0, 0, 0);
-                }
+                cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
             }
             else
             {
-                cardImage = cardHandBot.GetChild(i % (MaxHandSize / 2)).GetComponent<Image>();
-
-                cardHandBot.GetChild(i % (MaxHandSize / 2)).GetChild(0).GetComponent<Text>().text = ClientCard[i].CardNumber;
-                cardHandBot.GetChild(i % (MaxHandSize / 2)).GetChild(0).GetComponent<Text>().color = ClientCard[i].RealColor;
-
-                if (ClientCard[i].CardNumber != "")
-                {
-                    cardImage.color = new Color(0.8F, 0.6F, 0.1F, 0F);
-                }
-                else
-                {
-                    cardImage.color = new Color(0, 0, 0, 0);
-                }
+                cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            }
+            
+            cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text = ClientCard[i + halfSize].CardNumber;
+            cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i + halfSize].RealColor;
+            if (ClientCard[i + halfSize].CardNumber != "")
+            {
+                cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
+            }
+            else
+            {
+                cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0, 0, 0, 0);
             }
         }
-        Debug.Log("카드 띄우기 완료\n");
     }
 
     //=========================================================================
@@ -582,12 +560,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void Receive_Card(int playerNum, string[] NumCol)
+    void Receive_Card(int playerNum, string[] numCol)
     {
         if (playerNum != _playerNum)
             return;
 
-        ClientCard[ClientCardNum] = new Card(NumCol[0], NumCol[1]);
+        ClientCard[ClientCardNum] = new Card(numCol[0], numCol[1]);
         Count_ClientCard();
     }
 
