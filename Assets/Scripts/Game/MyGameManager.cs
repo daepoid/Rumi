@@ -19,8 +19,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public static Card[,] Table = new Card[TableRow, TableCol];      // Rumikub의 게임판을 저장한 배열입니다.
     public static Card[,] TableBackup;                                // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
     public static List<Card> ClientCard = new List<Card>();         // 클라이언트의 카드를 나타냅니다.
+    public static bool SortButtonFlag = false;
     public int ClientCardNum = 0;
-
+    
     private int _playerCount = 0;                                       // 게임중인 플레이어 수를 알려줍니다.
     private int _playerNum = -1;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
     private int _runningGame = 0;                                   // 게임전:0, 게임중:1
@@ -36,22 +37,27 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public Transform tableTop;                                  // 게임판
     public Text textTimer;                                    // 60초 타이머
     public Text showWhosTurn;
-
-    private bool turnStartFlag = true;                        // 자신의 턴이 시작될때 한 번만 수행
+    
+    private bool _turnStartFlag = true;                        // 자신의 턴이 시작될때 한 번만 수행
     
     // Update is called once per frame
     void Update()
     {
         if (_runningGame == 1)
         {
+            if (SortButtonFlag)
+            {
+                Get_ClientCard();
+                SortButtonFlag = false;
+            }
             if (_playerNum == _turn)
             {
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
-                if (turnStartFlag)
+                if (_turnStartFlag)
                 {
                     showWhosTurn.enabled = false;
                     ControlFlag = true;
-                    turnStartFlag = false;
+                    _turnStartFlag = false;
                     Get_ClientCard();    // 자신의 카드의 개수를 셉니다.
                     Count_ClientCard();
                     SwitchTableAccess(ControlFlag);
@@ -89,7 +95,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 if (_time > MaxTime)
                 {
                     _time = 0;
-                    turnStartFlag = true;
+                    _turnStartFlag = true;
                     ControlFlag = false;
                     showWhosTurn.enabled = false;
                     SwitchTableAccess(ControlFlag);
@@ -151,42 +157,47 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         if (_turn != _playerNum)
             return;
 
-        if(ClientCardNum == Count_ClientCard())
+        // if(ClientCardNum == Count_ClientCard()) 
+        // {
+        //     if (ClientCardNum < MaxHandSize)
+        //     {
+        //         Request();
+        //     }
+        //     // photonView.RPC("Backup", RpcTarget.All);
+        //     // _time = 0;
+        //     // _turn = (_turn + 1) % _playerCount;
+        //     // photonView.RPC("SyncTime", RpcTarget.All, _time);
+        //     // photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
+        //     // photonView.RPC("View_TABLE", RpcTarget.All);
+        //     //
+        //     // Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
+        //     // return;
+        // }
+        if(ClientCardNum == Count_ClientCard() && ClientCardNum < MaxHandSize)
         {
-            if (ClientCardNum < MaxHandSize)
-            {
-                Request();
-            }
-
-            photonView.RPC("Backup", RpcTarget.All);
-            _time = 0;
-            _turn = (_turn + 1) % _playerCount;
-            photonView.RPC("SyncTime", RpcTarget.All, _time);
-            photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
-            photonView.RPC("View_TABLE", RpcTarget.All);
-
-            Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
-            return;
-        }
-
-        Debug.Log("Next() : 시작");
-
-        // TABLE Rule 검사 시작
-        Get_TABLE();
-        if (!Rule())
-        {
-            // Rule을 만족시키지 못함
-            Debug.Log("     Rule : Fail");
-            Reset();
+            Request();
         }
         else
         {
-            // Rule을 만족시킴
-            Debug.Log("     Rule : True");
-            Get_ClientCard();
-            photonView.RPC("Sync_TABLE", RpcTarget.All);
-        }
+            Debug.Log("Next() : 시작");
 
+            // TABLE Rule 검사 시작
+            Get_TABLE();
+            if (!Rule())
+            {
+                // Rule을 만족시키지 못함
+                Debug.Log("     Rule : Fail");
+                Reset();
+            }
+            else
+            {
+                // Rule을 만족시킴
+                Debug.Log("     Rule : True");
+                Get_ClientCard();
+                photonView.RPC("Sync_TABLE", RpcTarget.All);
+            }
+        }
+        
         photonView.RPC("Backup", RpcTarget.All);
         _time = 0;
         _turn = (_turn + 1) % _playerCount;
@@ -435,7 +446,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 }
                 catch (Exception e)
                 {
-                    Debug.Log("getTable 에러발생");
+                    Debug.Log("getTable 에러발생 : " + e.Message);
                     return;
                 }
             }
@@ -450,22 +461,21 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void View_TABLE()
     {
-        Image cardImage;
         for (int row = 0; row < TableRow; row++)
         {
             for (int col = 0; col < TableCol; col++)
             {
-                cardImage = tableTop.GetChild(row).GetChild(col).GetComponent<Image>();
+                
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text = Table[row, col].CardNumber;
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color = Table[row, col].RealColor;
 
-                if (Table[row, col].CardNumber != "")
+                if (Table[row, col].CardNumber != "" && Table[row, col].CardNumber != "-1")
                 {
-                    cardImage.color = new Color(0.8F, 0.6F, 0.1F, 1F);
+                    tableTop.GetChild(row).GetChild(col).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
                 }
                 else
                 {
-                    cardImage.color = new Color(0, 0, 0, 0);
+                    tableTop.GetChild(row).GetChild(col).GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 }
             }
         }

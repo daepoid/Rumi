@@ -11,7 +11,7 @@ public class Card
     public Color RealColor { get; set; }
     public Card()
     {
-        CardNumber = "";
+        CardNumber = "-1";
         CardColor = "green";
     }
 
@@ -29,16 +29,30 @@ public class Card
         RealColor = color;
     }
 
+    public static int ToSymbolNumberFromCardNumber(String number)
+    {
+        if (number == "J")
+        {
+            return 14;
+        }
+        if (number == "" || number == "-1")
+        {
+            return 15;
+        }
+
+        return Int32.Parse(number);
+    }
+    
     public static String ConvertToCardColor(Color color)
     {
         string stringColor;
         switch (color.ToString())
         {
-            case "RGBA(1.000, 0.000, 0.000, 1.000)": stringColor = "red"; break;
-            case "RGBA(0.000, 0.000, 1.000, 1.000)": stringColor = "blue"; break;
-            case "RGBA(1.000, 0.920, 0.016, 1.000)": stringColor = "yellow"; break;
             case "RGBA(0.000, 0.000, 0.000, 1.000)": stringColor = "black"; break;
-            default : stringColor = "green"; break;
+            case "RGBA(1.000, 0.000, 0.000, 1.000)": stringColor = "red"; break;
+            case "RGBA(0.000, 1.000, 0.000, 1.000)": stringColor = "green"; break;
+            case "RGBA(0.000, 0.000, 1.000, 1.000)": stringColor = "blue"; break;
+            default : stringColor = "yellow"; break;
         }
 
         return stringColor;

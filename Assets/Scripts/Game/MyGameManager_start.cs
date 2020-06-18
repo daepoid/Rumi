@@ -243,7 +243,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         }
         catch (Exception e)
         {
-            Debug.Log("     Error : 오류가 발생했습니다. \n");
+            Debug.Log("Divide_Card Error : " + e.Message);
             return;
         }
 

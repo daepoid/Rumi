@@ -60,6 +60,7 @@ public class CardSlot : MonoBehaviour
         CardControlEngine.SwapCardsByInfo(_cards[index01], _cards[index02]);
         UpdateCardSlot();
     }
+    // Todo: 수정
     public int CountRealCard()
     {
         var realCards = transform.GetComponentsInChildren<Draggable>();

@@ -32,11 +32,6 @@ public class CardControlEngine : MonoBehaviour
         Debug.Log("_cardSlots : " + _cardSlots.Count.ToString());
     }
     
-    void Update()
-    {
-        
-    }
-    
     public static void SwapCards(Transform sour, Transform dest)
     {
         Debug.Log("Swap Cards Position");
@@ -75,6 +70,7 @@ public class CardControlEngine : MonoBehaviour
         SwapCardsByInfo(sour, dest);
         _cardSlots.ForEach(t => t.UpdateCardSlot());
     }
+    
     void SwapCardsByInvisible(Transform sour, Transform dest)
     {
         SwapCards(sour, dest);
@@ -88,7 +84,7 @@ public class CardControlEngine : MonoBehaviour
 
     void BeginDrag(Transform card)
     {
-        Debug.Log("BeginDrag");
+        Debug.Log("BeginDrag : "  + card.GetChild(0).GetComponent<Text>().text);
         _workingCardHand = _cardSlots.Find(t => ContainPos(t.transform as RectTransform, card.position));
         _beforeCardIndex = card.GetSiblingIndex();
         // SwapCardsInHierarchy(invisibleCard, card);
@@ -99,13 +95,9 @@ public class CardControlEngine : MonoBehaviour
     {
         // CardSlot 찾기
         _whichCardSlot = _cardSlots.Find(t=> ContainPos(t.transform as RectTransform, card.position));
-        Debug.Log("Drag : " + invisibleCard.parent.name);
-        Debug.Log(_whichCardSlot);
         if (_whichCardSlot == null)
         {
             // CardSlot이 없는 곳에 놓을 경우 원래 자리로 돌아가야한다.
-            Debug.Log("Drag _whichCardSlot == null");
-            // invisibleCard.SetParent(transform);
             if(invisibleCard.parent.parent != transform)
             {
                 _cardSlots.ForEach(t=>t.UpdateCardSlot());
@@ -113,22 +105,15 @@ public class CardControlEngine : MonoBehaviour
         }
         else // CardSlot이 있는 곳을 지나는 경우
         {
-            // 기존의 방식은 카드를 교환하는 방식
-            // 카드의 정보만 교환하는 방식으로 교체
             _invisibleCardIndex = invisibleCard.GetSiblingIndex();
             _targetIndex = _whichCardSlot.GetIndexByPosition(card, _invisibleCardIndex);
-            Debug.Log("TargetIndex : " + _targetIndex.ToString() + "\nwhichCardhandName : " + _whichCardSlot.name);
         }
     }
     
     void EndDrag(Transform card)
     {
-        Debug.Log("EndDrag\ninvisibleCard position : " + invisibleCard.parent.name);
-        // if (invisibleCard.parent == transform)
-        // if(_whichCardSlot == null || !MyGameManager.ControlFlag)
         if(_whichCardSlot == null)
         {
-            Debug.Log("invisibleCard.parent==transform");
             card.SetParent(_workingCardHand.transform);
             _workingCardHand.InsertCard(card, _beforeCardIndex);
             _workingCardHand = null;
@@ -151,7 +136,6 @@ public class CardControlEngine : MonoBehaviour
         else if (_whichCardSlot.CountRealCard() > _whichCardSlot.OriginCardCount - 1)
         {
             Debug.Log("카드 제한을 넘는 경우");
-            Debug.Log(_whichCardSlot.transform.GetChild(_targetIndex).GetChild(0).GetComponent<Text>().text);
             // invisibleCard 제자리로 보내기
             invisibleCard.SetParent(transform);
             SwapCardsByInfo(card, _whichCardSlot.transform.GetChild(_targetIndex));
@@ -163,15 +147,10 @@ public class CardControlEngine : MonoBehaviour
         else
         {
             // 모두 차 있지 않아 자리를 바꾸지 않고 그냥 추가한다.
-            Debug.Log("invisibleCard.parent!=transform");
-            Debug.Log("_whichCardSlot Count : " + _whichCardSlot.CountRealCard().ToString());
             SwapCardsByInvisible(invisibleCard, card);
             // 자리가 비어있으므로 해당 cardslot에 집어 넣는다.
             _whichCardSlot.InsertCard(card, _targetIndex);
-            // SwapCardsByInfo(card, _whichCardSlot.transform.GetChild(_targetIndex));
         }
         _cardSlots.ForEach(t=>t.UpdateCardSlot());
-        // _whichCardSlot.RefreshCardSlot();
-        // _workingCardHand.RefreshCardSlot();
     }
 }
