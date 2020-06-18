@@ -18,10 +18,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
         buttonReset.enabled = false;
         buttonReset.GetComponent<Image>().color = Color.gray;
-
-        buttonRequest.enabled = false;
-        buttonRequest.GetComponent<Image>().color = Color.gray;
-
+       
         if (!PhotonNetwork.IsMasterClient)
         {
             buttonStart.enabled = false;
@@ -45,10 +42,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Create_PLAYERS();                                                 // Players 인스턴스 생성
         photonView.RPC("Set_playerNum", RpcTarget.All);                   // 플레이어 번호 지정
         photonView.RPC("Create_TABLE", RpcTarget.All);                    // Table 인스턴스 생성
+        photonView.RPC("Clear_ClientCard", RpcTarget.All);
         Divide_Card();                                                    // 마스터(서버)가 카드를 나누어줌
         Sync_Card();                                                      // 마스터(서버)가 배분한 카드를 동기화 시킵니다.
         photonView.RPC("View_ClientCard", RpcTarget.All);                 // 자신이 받은 카드를 확인합니다.
         photonView.RPC("Count_ClientCard", RpcTarget.All);
+        photonView.RPC("Print_ClientCardNum", RpcTarget.All);
 
         // 게임의 턴을 설정합니다.
         Random random = new Random();
@@ -61,13 +60,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
         // 게임 시작
         photonView.RPC("Set_RunningGame", RpcTarget.All, 1);
-
-        /* 에러 방지용 주석
-        photonView.RPC("PrintPlayer0CardText", RpcTarget.All);  //Player0 카드 갯수 출력
-        photonView.RPC("PrintPlayer1CardText", RpcTarget.All);  //Player1 카드 갯수 출력
-        photonView.RPC("PrintPlayer2CardText", RpcTarget.All);  //Player2 카드 갯수 출력
-        photonView.RPC("PrintPlayer3CardText", RpcTarget.All);  //Player3 카드 갯수 출력
-        */
+        
     }
     //=========================================================================
     // 게임 시작 플래그
@@ -112,6 +105,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         deck.Clear();            // 카드 초기화
         Players.Clear();         // 플레이어 초기화
+        ClientCardNum_Board = new int[]{ 14, 14, 14, 14 };
     }
     //=========================================================================
     // 카드 생성 - 마스터만 실행
@@ -237,7 +231,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 }
                 for(int i=0;i<8;i++)
                 {
-                    Players[j].cards.Add(new Card("", "yellow"));
+                    Players[j].cards.Add(new Card());
                 }
             }
         }

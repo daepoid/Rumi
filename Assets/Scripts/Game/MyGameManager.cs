@@ -11,17 +11,19 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public static readonly int TableRow = 6;                  // 게임판의 RAW 크기
     public static readonly int TableCol = 16;                 // 게임판의 COLUM 크기
     public static readonly int MaxHandSize = 22;
-    public static readonly int MaxTime = 10;
-    
+    public static readonly int MaxTime = 30;
+
     public static bool ControlFlag = false;
     public List<Card> deck = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
     public static List<Player> Players = new List<Player>();    // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
     public static Card[,] Table = new Card[TableRow, TableCol];      // Rumikub의 게임판을 저장한 배열입니다.
-    public static Card[,] TableBackup;                                // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
+    public static Card[,] TableBackup = new Card[TableRow, TableCol]; // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
     public static List<Card> ClientCard = new List<Card>();         // 클라이언트의 카드를 나타냅니다.
+    public static List<Card> ClientCardBackup = new List<Card>();    //클라이언트의 카드를 백업합니다.
     public static bool SortButtonFlag = false;
     public int ClientCardNum = 0;
-    
+    public int[] ClientCardNum_Board = new int[4] { 0, 0, 0, 0 };
+
     private int _playerCount = 0;                                       // 게임중인 플레이어 수를 알려줍니다.
     private int _playerNum = -1;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
     private int _runningGame = 0;                                   // 게임전:0, 게임중:1
@@ -31,15 +33,15 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public Button buttonStart;                                 // start button : 마스터만 실행
     public Button buttonReset;                                  // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
     public Button buttonNext;                                  // turn을 넘겨주는 버튼
-    public Button buttonRequest;                                // 카드를 한장 더 요청합니다.
     public Transform cardHandTop;                               // 로컬 플레이어 카드패 
     public Transform cardHandBot;                               // 로컬 플레이어 카드패
     public Transform tableTop;                                  // 게임판
     public Text textTimer;                                    // 60초 타이머
     public Text showWhosTurn;
-    
+    public Transform PLAYERS;                                 // Game Scene의 Players와 연결되어 있습니다.
+
     private bool _turnStartFlag = true;                        // 자신의 턴이 시작될때 한 번만 수행
-    
+
     // Update is called once per frame
     void Update()
     {
@@ -55,6 +57,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
                 if (_turnStartFlag)
                 {
+                    Backup();
                     showWhosTurn.enabled = false;
                     ControlFlag = true;
                     _turnStartFlag = false;
@@ -66,24 +69,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 buttonNext.GetComponent<Image>().color = Color.white;
                 buttonReset.enabled = true;
                 buttonReset.GetComponent<Image>().color = Color.white;
-
-                if (ClientCardNum < MaxHandSize)
-                {
-                    buttonRequest.enabled = true;
-                    buttonRequest.GetComponent<Image>().color = Color.white;
-                }
-                else
-                {
-                    buttonRequest.enabled = false;
-                    buttonRequest.GetComponent<Image>().color = Color.gray;
-                }
             }
             else
             {
                 buttonNext.enabled = false;
                 buttonNext.GetComponent<Image>().color = Color.gray;
-                buttonRequest.enabled = false;
-                buttonRequest.GetComponent<Image>().color = Color.gray;
             }
 
             // 제한시간(MaxTime)이 지나면 모든 '사용자'들의 Turn을 1 증가시킵니다.
@@ -103,8 +93,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 }
                 // photonView.RPC("SyncTime", RpcTarget.All, _time.ToString("N1"));
                 photonView.RPC("SyncTime", RpcTarget.All, _time);
+
+                photonView.RPC("Sync_ClientCardNum", RpcTarget.All,ClientCardNum_Board);
             }
-            
             // 자신의 카드의 개수가 0개면 게임을 종료합니다.
             /* if()
               {
@@ -129,7 +120,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             cardHandBot.GetChild(i).GetComponent<Draggable>().enabled = flag;
         }
     }
-    
+
     //=========================================================================
     // Reset 버튼 - BETA
     // 설명
@@ -137,7 +128,16 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     public void Reset()
     {
-        Table = (Card[,])TableBackup.Clone();
+        // 테이블 복원
+        for (int row = 0; row < TableRow; row++)
+            for (int col = 0; col < TableCol; col++)
+                Table[row, col] = new Card(TableBackup[row, col].CardNumber, TableBackup[row, col].CardNumber);
+
+        //클라이언트 카드 복원
+        ClientCard.Clear();
+        for (int i = 0; i < ClientCardBackup.Count; i++)
+            ClientCard.Add(new Card(ClientCardBackup[i].CardNumber, ClientCardBackup[i].CardColor));
+
         View_TABLE();
         View_ClientCard();
     }
@@ -157,29 +157,56 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         if (_turn != _playerNum)
             return;
 
-        // if(ClientCardNum == Count_ClientCard()) 
-        // {
-        //     if (ClientCardNum < MaxHandSize)
-        //     {
-        //         Request();
-        //     }
-        //     // photonView.RPC("Backup", RpcTarget.All);
-        //     // _time = 0;
-        //     // _turn = (_turn + 1) % _playerCount;
-        //     // photonView.RPC("SyncTime", RpcTarget.All, _time);
-        //     // photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
-        //     // photonView.RPC("View_TABLE", RpcTarget.All);
-        //     //
-        //     // Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
-        //     // return;
-        // }
-        if(ClientCardNum == Count_ClientCard() && ClientCardNum < MaxHandSize)
+        Backup();
+        Get_ClientCard();
+        Get_TABLE();
+
+        // 클라이언트 카드
+        string str = "";
+        foreach (Card c in ClientCard)
+            str = str + c.CardColor + c.CardNumber + " ";
+        Debug.Log("ClientCard : " + str);
+
+        // 클라리언트 카드 백업
+        str = "";
+        foreach (Card c in ClientCardBackup)
+            str = str + c.CardColor + c.CardNumber + " ";
+        Debug.Log("ClientCardBackup : " + str);
+
+        //테이블 출력
+        for (int i = 0; i < TableRow; i++)
         {
-            Request();
+            str = "";
+            for (int j = 0; j < TableCol; j++)
+            {
+                str = str + " " + Table[i, j].CardColor + Table[i, j].CardNumber;
+            }
+            Debug.Log("table" + i + " : " + str);
+        }
+
+        // 테이블 백업
+        for (int i = 0; i < TableRow; i++)
+        {
+            str = "";
+            for (int j = 0; j < TableCol; j++)
+            {
+                str = str + " " + TableBackup[i, j].CardColor + TableBackup[i, j].CardNumber;
+            }
+            Debug.Log("TableBackup" + i + " : " + str);
+        }
+
+
+
+
+        if (ClientCardNum == Count_ClientCard() && ClientCardNum < MaxHandSize)
+        {
+            Debug.Log("Request() : 카드를 한 장 요청합니다.");
+            photonView.RPC("Serve_Card", RpcTarget.MasterClient, _playerNum);
+            View_ClientCard();
         }
         else
         {
-            Debug.Log("Next() : 시작");
+            Debug.Log("Rule() : 시작");
 
             // TABLE Rule 검사 시작
             Get_TABLE();
@@ -197,13 +224,15 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 photonView.RPC("Sync_TABLE", RpcTarget.All);
             }
         }
-        
+
         photonView.RPC("Backup", RpcTarget.All);
         _time = 0;
         _turn = (_turn + 1) % _playerCount;
         photonView.RPC("SyncTime", RpcTarget.All, _time);
         photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
         photonView.RPC("View_TABLE", RpcTarget.All);
+        photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,_playerNum,ClientCardNum);
+        photonView.RPC("Print_ClientCardNum", RpcTarget.All);
 
         Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
     }
@@ -233,7 +262,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 cur = Table[row, col];
 
                 // 해당 위치에 카드가 없을 때
-                if (cur.CardNumber == "")
+                if (cur.CardNumber == "-1")
                 {
                     if (Count_Continue == 1 || Count_Continue == 2)
                     {
@@ -279,7 +308,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
 
                     // 카드가 2장 이상 확정일 때
-                    if (type == 0)                                      // 어떤 규칙인지 설정이 안되었을 때 실행
+                    if (type == 0)                                              // 어떤 규칙인지 설정이 안되었을 때 실행
                         type = (pre.CardColor != cur.CardColor) ? 1 : 2;        // 색상이 다르면 같은 숫자가 연속됩니다.(1), 색상이 같으면 숫자가 오름차순입니다.(2) 
 
                     Debug.Log("pre:" + pre.CardColor + pre.CardNumber);
@@ -292,7 +321,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                         // 2. 색상이 같으면 안된다.
 
                         // 카드의 숫자가 다름 -> 1번 위반
-                        if (pre.CardNumber != cur.CardNumber) {
+                        if (pre.CardNumber != cur.CardNumber)
+                        {
                             Debug.Log("     Fail:(1)-1 같은 숫자가 아님");
                             Debug.Log("     pre:" + pre.CardColor + pre.CardNumber + "/ cur:" + cur.CardColor + cur.CardNumber);
 
@@ -322,7 +352,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                         if (int.Parse(pre.CardNumber) + 1 != int.Parse(cur.CardNumber))
                         {
                             Debug.Log("     Fail:(2)-1 오름차순이 아님");
-                            Debug.Log("     pre:"+pre.CardColor+pre.CardNumber+"/ cur:"+cur.CardColor+cur.CardNumber);
+                            Debug.Log("     pre:" + pre.CardColor + pre.CardNumber + "/ cur:" + cur.CardColor + cur.CardNumber);
 
                             return false;
                         }
@@ -356,7 +386,17 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Backup()
     {
         Debug.Log("백업 시작");
-        TableBackup = (Card[,])Table.Clone();
+        // 테이블 백업
+        for (int row = 0; row < TableRow; row++)
+            for (int col = 0; col < TableCol; col++)
+                TableBackup[row, col] = new Card(Table[row, col].CardNumber, Table[row, col].CardNumber);
+
+
+        // 클라이언트 카드 백업
+        ClientCardBackup.Clear();
+        for(int i=0; i< ClientCard.Count;i++)
+            ClientCardBackup.Add(new Card(ClientCard[i].CardNumber, ClientCard[i].CardColor));
+        
         Debug.Log("백업 끝");
     }
 
@@ -372,26 +412,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         ClientCardNum = 0;
         foreach (Card item in ClientCard)
         {
-            if (item.CardNumber != "")
+            if (item.CardNumber != "-1")
                 ClientCardNum++;
         }
 
         return ClientCardNum;
     }
 
-    //=========================================================================
-    // Reset 버튼 - BETA
-    // 설명
-    // 1. Reset 버튼을 누르면 자신이 작업하기 전 게임판으로 만듭니다.
-    //=========================================================================
-    public void Request()
-    {
-        Debug.Log("Request() : 카드를 한 장 요청합니다.");
-        photonView.RPC("Serve_Card", RpcTarget.MasterClient,_playerNum);
-       
-        
-        View_ClientCard();
-    }
     //=========================================================================
     // Table 동기화
     // 설명
@@ -442,6 +469,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 try
                 {
                     Table[row, col].CardNumber = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text;
+                    if (Table[row, col].CardNumber == "")
+                        Table[row, col].CardNumber = "-1";
                     Table[row, col].CardColor = Card.ConvertToCardColor(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
                 }
                 catch (Exception e)
@@ -465,7 +494,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             for (int col = 0; col < TableCol; col++)
             {
-                
+
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text = Table[row, col].CardNumber;
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color = Table[row, col].RealColor;
 
@@ -475,6 +504,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 }
                 else
                 {
+                    tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text = "";
                     tableTop.GetChild(row).GetChild(col).GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 }
             }
@@ -493,12 +523,16 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < cardHandTop.childCount; i++)
         {
             Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            if (newCard.CardNumber == "")
+                newCard.CardNumber = "-1";
             ClientCard.Add(newCard);
         }
 
         for (int i = 0; i < cardHandBot.childCount; i++)
         {
             Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            if (newCard.CardNumber == "")
+                newCard.CardNumber = "-1";
             ClientCard.Add(newCard);
         }
     }
@@ -511,31 +545,31 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void View_ClientCard()
     {
-        Debug.Log("카드 띄우기 실행\n");
-        Debug.Log("     플레이어번호 : " + _playerNum);
-
         int halfSize = MaxHandSize / 2;
         for (int i = 0; i < halfSize; i++)
         {
             cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = ClientCard[i].CardNumber;
             cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i].RealColor;
-            if (ClientCard[i].CardNumber != "")
+            if (ClientCard[i].CardNumber != "-1")
             {
+
                 cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
             }
             else
             {
+                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = "";
                 cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0, 0, 0, 0);
             }
-            
+
             cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text = ClientCard[i + halfSize].CardNumber;
             cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i + halfSize].RealColor;
-            if (ClientCard[i + halfSize].CardNumber != "")
+            if (ClientCard[i + halfSize].CardNumber != "-1")
             {
                 cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
             }
             else
             {
+                cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text = "";
                 cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0, 0, 0, 0);
             }
         }
@@ -559,6 +593,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // --------------------------------------------------------
     // Receive_Card()
     // 1. 마스터가 제공한 카드를 받습니다.
+    // 2. 제공 받은 카드는 빈 공간에 채워집니다.
     //=========================================================================
     [PunRPC]
     void Serve_Card(int playerNum)
@@ -566,7 +601,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Card card = deck[deck.Count - 1];
         deck.RemoveAt(deck.Count - 1);
 
-        photonView.RPC("Receive_Card", RpcTarget.All, playerNum, new string[]{card.CardNumber,card.CardColor });
+        photonView.RPC("Receive_Card", RpcTarget.All, playerNum, new string[] { card.CardNumber, card.CardColor });
     }
 
     [PunRPC]
@@ -574,83 +609,63 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         if (playerNum != _playerNum)
             return;
+        int index = 0;
+        for (index = 0; index < MaxHandSize; index++)
+        {
+            if (ClientCard[index].CardNumber == "-1")
+            {
+                Debug.Log("   index =" + index);
+                break;
+            }
+        }
 
-        ClientCard[ClientCardNum] = new Card(numCol[0], numCol[1]);
+        ClientCard[index] = new Card(numCol[0], numCol[1]);
         Count_ClientCard();
     }
 
     //=========================================================================
-    //카드 갯수 띄우기
+    // ClientCard List Clear
+    // 설명
+    // 1. ClientCard List를 초기화 합니다.
+    // 2. 게임 재실행 시 사용됩니다.
     //=========================================================================
     [PunRPC]
-    void PrintPlayer0CardText()
+    void Clear_ClientCard()
     {
-        //오브젝트와 컴포넌트 가져오기
-        GameObject TextObject = GameObject.Find("Player0CardNumber");
-        Text nameText = TextObject.GetComponent<Text>();
-
-        //현재 플레이어들 정보 가져오기
-        Photon.Realtime.Player[] playersInRoom = PhotonNetwork.PlayerList;
-        //로컬 플레이어 인덱스 찾기
-        int localPlayerIndex = Array.FindIndex(playersInRoom, player => player.IsLocal == true);
-
-
-        //로컬 플레이어 찾기
-        Player localPlayer = Players.Find(x => x.NickName == playersInRoom[localPlayerIndex].NickName);
-        //텍스트 출력
-        nameText.text = localPlayer.cards.Count.ToString();
-
+        ClientCard.Clear();
+    }
+    //=========================================================================
+    // 카드 개수 동기화 - 마스터만 실행
+    // 설명
+    // 1. 클라이언트가 가지고 있는 카드 갯수를 동기화합니다.
+    // --------------------------------------------------------
+    // 카드 개수 보고
+    //설명
+    // 1. 자신이 가지고 있는 카드의 수를 마스터에게 보고합니다.
+    //---------------------------------------------------------
+    // 카트 개수 프린트
+    // 설명
+    // 1. 플레이어별 카드의 개수를 프린트 합니다.
+    //=========================================================================
+    [PunRPC]
+    void Sync_ClientCardNum(int[] num)
+    {
+        for (int index = 0; index < _playerCount; index++)
+            ClientCardNum_Board[index] = num[index];
     }
 
     [PunRPC]
-    void PrintPlayer1CardText()
+    void Report_ClientCardNum(int playerNum,int cardCount)
     {
-        //오브젝트와 컴포넌트 가져오기
-        GameObject TextObject = GameObject.Find("Player1CardNumber");
-        Text nameText = TextObject.GetComponent<Text>();
-
-        //Player1 정보 가져오기
-        Photon.Realtime.Player playerInRoom = PhotonNetwork.PlayerListOthers[0];
-
-        //players 리스트에서 Player1 찾기
-        Player Player1 = Players.Find(x => x.NickName == playerInRoom.NickName);
-        //텍스트 출력
-        nameText.text = Player1.cards.Count.ToString();
-
+        ClientCardNum_Board[playerNum] = cardCount;
     }
 
     [PunRPC]
-    void PrintPlayer2CardText()
+    void Print_ClientCardNum()
     {
-        //오브젝트와 컴포넌트 가져오기
-        GameObject TextObject = GameObject.Find("Player2CardNumber");
-        Text nameText = TextObject.GetComponent<Text>();
-
-        //Player2 정보 가져오기
-        Photon.Realtime.Player playerInRoom = PhotonNetwork.PlayerListOthers[1];
-
-
-        //players 리스트에서 Player2 찾기
-        Player cardNumber = Players.Find(x => x.NickName == playerInRoom.NickName);
-        //텍스트 출력
-        nameText.text = cardNumber.cards.Count.ToString();
-
-    }
-
-    [PunRPC]
-    void PrintPlayer3CardText()
-    {
-        //오브젝트와 컴포넌트 가져오기
-        GameObject TextObject = GameObject.Find("Player3CardNumber");
-        Text nameText = TextObject.GetComponent<Text>();
-
-        //Player3 정보 가져오기
-        Photon.Realtime.Player playerInRoom = PhotonNetwork.PlayerListOthers[2];
-
-
-        //players 리스트에서 Player3 찾기
-        Player cardNumber = Players.Find(x => x.NickName == playerInRoom.NickName);
-        //텍스트 출력
-        nameText.text = cardNumber.cards.Count.ToString();
+        for (int index = 0; index < _playerCount; index++)
+        {
+            PLAYERS.GetChild(index).GetChild(1).GetComponent<Text>().text = ClientCardNum_Board[index].ToString();
+        }
     }
 }

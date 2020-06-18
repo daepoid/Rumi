@@ -7,12 +7,12 @@ using UnityEngine.UI;
 public class Card
 {
     public string CardNumber { get; set; } // J:Joker, 1~13:CardNumber
-    public string CardColor { get; set; } // black, blue, red, yellow
+    public string CardColor { get; set; } // black, blue, red, green
     public Color RealColor { get; set; }
     public Card()
     {
         CardNumber = "-1";
-        CardColor = "green";
+        CardColor = "yellow";
     }
 
     public Card(string number, string color)
@@ -43,7 +43,7 @@ public class Card
         return Int32.Parse(number);
     }
     
-    public static String ConvertToCardColor(Color color)
+    public static string ConvertToCardColor(Color color)
     {
         string stringColor;
         switch (color.ToString())
