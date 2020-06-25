@@ -91,7 +91,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     SwitchTableAccess(ControlFlag);
                     photonView.RPC("Next", RpcTarget.All);
                 }
-                // photonView.RPC("SyncTime", RpcTarget.All, _time.ToString("N1"));
                 photonView.RPC("SyncTime", RpcTarget.All, _time);
 
                 photonView.RPC("Sync_ClientCardNum", RpcTarget.All,ClientCardNum_Board);
@@ -468,10 +467,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 try
                 {
-                    Table[row, col].CardNumber = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text;
+                    Table[row, col] = new Card(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text,
+                        tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
+                    //Table[row, col].CardNumber = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text;
                     if (Table[row, col].CardNumber == "")
                         Table[row, col].CardNumber = "-1";
-                    Table[row, col].CardColor = Card.ConvertToCardColor(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
+                    //Table[row, col].CardColor = Card.ConvertToCardColor(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
                 }
                 catch (Exception e)
                 {
