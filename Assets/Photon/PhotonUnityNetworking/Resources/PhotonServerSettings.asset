@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 366f1a35-a90c-4b2e-91cf-1cb4e392636b
+    AppIdRealtime: da2e09da-743f-4a98-a237-22db1597d2b0
     AppIdChat: 
     AppIdVoice: 
     AppVersion: 
@@ -32,6 +32,7 @@ MonoBehaviour:
   StartInOfflineMode: 0
   RpcList:
   - Backup
+  - Clear_ClientCard
   - ClickRpc
   - Count_ClientCard
   - Create_TABLE
@@ -39,28 +40,22 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - Next
-  - PrintPlayer0CardText
-  - PrintPlayer1CardText
-  - PrintPlayer2CardText
-  - PrintPlayer3CardText
+  - Print_ClientCardNum
   - Receive_Card
+  - Report_ClientCardNum
   - RespawnSpaceship
   - Serve_Card
   - Set_playerNum
   - Set_RunningGame
   - StartCardNumberText
   - Sync_Client_Card
+  - Sync_ClientCardNum
   - Sync_TABLE
   - Sync_TABLE_Element
   - Sync_Turn
   - SyncTime
   - View_ClientCard
   - View_TABLE
-  - Clear_ClientCard
-  - Print_ClientCardNum
-  - Sync_CardNumBoard
-  - Report_ClientCardNum
-  - Sync_ClientCardNum
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

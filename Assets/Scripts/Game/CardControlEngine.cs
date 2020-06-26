@@ -93,6 +93,11 @@ public class CardControlEngine : MonoBehaviour
     
     void Drag(Transform card)
     {
+        // if (!MyGameManager.DragableCheck)
+        // {
+        //     EndDrag(card);
+        //     return;
+        // }
         // CardSlot 찾기
         _whichCardSlot = _cardSlots.Find(t=> ContainPos(t.transform as RectTransform, card.position));
         if (_whichCardSlot == null)
@@ -112,6 +117,14 @@ public class CardControlEngine : MonoBehaviour
     
     void EndDrag(Transform card)
     {
+        // if (!MyGameManager.DragableCheck)
+        // {
+        //     card.SetParent(_workingCardHand.transform);
+        //     _workingCardHand.InsertCard(card, _beforeCardIndex);
+        //     _workingCardHand = null;
+        //     _beforeCardIndex = -1;
+        //     return;
+        // }
         if(_whichCardSlot == null)
         {
             card.SetParent(_workingCardHand.transform);

@@ -11,7 +11,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public static readonly int TableRow = 6;                  // 게임판의 RAW 크기
     public static readonly int TableCol = 16;                 // 게임판의 COLUM 크기
     public static readonly int MaxHandSize = 22;
-    public static readonly int MaxTime = 30;
+    public static readonly int MaxTime = 10;
 
     public static bool ControlFlag = false;
     public List<Card> deck = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
@@ -21,6 +21,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public static List<Card> ClientCard = new List<Card>();         // 클라이언트의 카드를 나타냅니다.
     public static List<Card> ClientCardBackup = new List<Card>();    //클라이언트의 카드를 백업합니다.
     public static bool SortButtonFlag = false;
+    // public static bool accessTableTopChek = false;                   // 테이블탑에 있는 값들과 교환을 할 수 있는지 설정한다.
+    // public static bool DragableCheck = false;                        // 드래그 할 수 있는 상태인지 확인.
+                                                                     // 다음 턴으로 넘어가면서 드래그를 강제로 종료하고 다음사람 턴이 시작되면서 드래그가 다시 가능해진다.
+    
     public int ClientCardNum = 0;
     public int[] ClientCardNum_Board = new int[4] { 0, 0, 0, 0 };
 
@@ -57,6 +61,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
                 if (_turnStartFlag)
                 {
+                    // DragableCheck = true;
                     Backup();
                     showWhosTurn.enabled = false;
                     ControlFlag = true;
@@ -129,14 +134,19 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         // 테이블 복원
         for (int row = 0; row < TableRow; row++)
+        {
             for (int col = 0; col < TableCol; col++)
-                Table[row, col] = new Card(TableBackup[row, col].CardNumber, TableBackup[row, col].CardNumber);
-
+            {
+                Table[row, col] = new Card(TableBackup[row, col].CardNumber, TableBackup[row, col].CardColor);
+            }
+        }
+        
         //클라이언트 카드 복원
         ClientCard.Clear();
         for (int i = 0; i < ClientCardBackup.Count; i++)
+        {
             ClientCard.Add(new Card(ClientCardBackup[i].CardNumber, ClientCardBackup[i].CardColor));
-
+        }
         View_TABLE();
         View_ClientCard();
     }
@@ -193,10 +203,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             }
             Debug.Log("TableBackup" + i + " : " + str);
         }
-
-
-
-
+        
         if (ClientCardNum == Count_ClientCard() && ClientCardNum < MaxHandSize)
         {
             Debug.Log("Request() : 카드를 한 장 요청합니다.");
@@ -304,8 +311,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                         type = 0;
                         continue;
                     }
-
-
+                    
                     // 카드가 2장 이상 확정일 때
                     if (type == 0)                                              // 어떤 규칙인지 설정이 안되었을 때 실행
                         type = (pre.CardColor != cur.CardColor) ? 1 : 2;        // 색상이 다르면 같은 숫자가 연속됩니다.(1), 색상이 같으면 숫자가 오름차순입니다.(2) 
@@ -371,9 +377,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 }
             } // for - col
         } // for - row
-
-        // 규칙 문제가 없을 시 true 반환
-        return true;
+        return true; // 규칙 문제가 없을 시 true 반환
     }
 
     //=========================================================================
@@ -387,15 +391,19 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Debug.Log("백업 시작");
         // 테이블 백업
         for (int row = 0; row < TableRow; row++)
+        {
             for (int col = 0; col < TableCol; col++)
-                TableBackup[row, col] = new Card(Table[row, col].CardNumber, Table[row, col].CardNumber);
-
-
+            {
+                TableBackup[row, col] = new Card(Table[row, col].CardNumber, Table[row, col].CardColor);
+            }
+        }
+        
         // 클라이언트 카드 백업
         ClientCardBackup.Clear();
-        for(int i=0; i< ClientCard.Count;i++)
+        for (int i = 0; i < ClientCard.Count; i++)
+        {
             ClientCardBackup.Add(new Card(ClientCard[i].CardNumber, ClientCard[i].CardColor));
-        
+        }
         Debug.Log("백업 끝");
     }
 
@@ -411,10 +419,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         ClientCardNum = 0;
         foreach (Card item in ClientCard)
         {
-            if (item.CardNumber != "-1")
+            if (item.CardNumber != "-1" && item.CardNumber != "")
+            {
                 ClientCardNum++;
+            }
         }
-
         return ClientCardNum;
     }
 
@@ -428,7 +437,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Sync_TABLE()
     {
         Debug.Log("게임판 동기화 시작");
-
         string[] numCol = { "", "" };
         for (int row = 0; row < TableRow; row++)
         {
@@ -441,6 +449,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         }
         Debug.Log("게임판 동기화 끝");
     }
+    
     //=========================================================================
     // Table 요소 동기화 - 위 함수에 의해 호출됩니다.
     // 설명
@@ -471,7 +480,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                         tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
                     //Table[row, col].CardNumber = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text;
                     if (Table[row, col].CardNumber == "")
+                    {
                         Table[row, col].CardNumber = "-1";
+                    }
                     //Table[row, col].CardColor = Card.ConvertToCardColor(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
                 }
                 catch (Exception e)
@@ -551,7 +562,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = ClientCard[i].CardNumber;
             cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i].RealColor;
-            if (ClientCard[i].CardNumber != "-1")
+            if (ClientCard[i].CardNumber != "-1" && ClientCard[i].CardNumber != "")
             {
 
                 cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
@@ -564,7 +575,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
             cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text = ClientCard[i + halfSize].CardNumber;
             cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i + halfSize].RealColor;
-            if (ClientCard[i + halfSize].CardNumber != "-1")
+            if (ClientCard[i + halfSize].CardNumber != "-1" && ClientCard[i+halfSize].CardNumber != "")
             {
                 cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
             }
@@ -619,7 +630,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 break;
             }
         }
-
         ClientCard[index] = new Card(numCol[0], numCol[1]);
         Count_ClientCard();
     }
@@ -635,6 +645,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         ClientCard.Clear();
     }
+    
     //=========================================================================
     // 카드 개수 동기화 - 마스터만 실행
     // 설명
