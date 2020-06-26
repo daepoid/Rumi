@@ -62,13 +62,21 @@ public class SortButtonHandler : MonoBehaviour
             }
             if (cardHandTop.childCount > i)
             {
-                newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
-                newCards.Add(newCard);
+                if (cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
+                    cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
+                {
+                    newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+                    newCards.Add(newCard);
+                }
             }
             if (cardHandBot.childCount > i)
             {
-                newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
-                newCards.Add(newCard);
+                if (cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
+                    cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
+                {
+                    newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+                    newCards.Add(newCard);
+                }
             }
         }
     }

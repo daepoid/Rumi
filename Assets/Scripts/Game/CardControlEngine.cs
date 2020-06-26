@@ -93,11 +93,6 @@ public class CardControlEngine : MonoBehaviour
     
     void Drag(Transform card)
     {
-        // if (!MyGameManager.DragableCheck)
-        // {
-        //     EndDrag(card);
-        //     return;
-        // }
         // CardSlot 찾기
         _whichCardSlot = _cardSlots.Find(t=> ContainPos(t.transform as RectTransform, card.position));
         if (_whichCardSlot == null)
@@ -117,16 +112,19 @@ public class CardControlEngine : MonoBehaviour
     
     void EndDrag(Transform card)
     {
-        // if (!MyGameManager.DragableCheck)
-        // {
-        //     card.SetParent(_workingCardHand.transform);
-        //     _workingCardHand.InsertCard(card, _beforeCardIndex);
-        //     _workingCardHand = null;
-        //     _beforeCardIndex = -1;
-        //     return;
-        // }
+        if (!MyGameManager.DragableCheck)
+        {
+            invisibleCard.SetParent(transform);
+            card.SetParent(_workingCardHand.transform);
+            _workingCardHand.InsertCard(card, _beforeCardIndex);
+            _workingCardHand = null;
+            _beforeCardIndex = -1;
+            return;
+        }
         if(_whichCardSlot == null)
         {
+            Debug.Log("CardSlot 바깥에 카드를 드롭한 경우");
+            invisibleCard.SetParent(transform);
             card.SetParent(_workingCardHand.transform);
             _workingCardHand.InsertCard(card, _beforeCardIndex);
             _workingCardHand = null;
@@ -159,6 +157,7 @@ public class CardControlEngine : MonoBehaviour
         }
         else
         {
+            Debug.Log("카드 제한을 넘지 않는 경우");
             // 모두 차 있지 않아 자리를 바꾸지 않고 그냥 추가한다.
             SwapCardsByInvisible(invisibleCard, card);
             // 자리가 비어있으므로 해당 cardslot에 집어 넣는다.

@@ -57,7 +57,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
         //버튼, 테이블을 셋팅합니다.
         photonView.RPC("Backup", RpcTarget.All);
-
+        photonView.RPC("SetCardOwnership", RpcTarget.All);
         // 게임 시작
         photonView.RPC("Set_RunningGame", RpcTarget.All, 1);
         
@@ -293,4 +293,16 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             ClientCard.Add(new Card(numCol[0], numCol[1]));
         }
     }
+
+    [PunRPC]
+    void SetCardOwnership()
+    {
+        int halfSize = MaxHandSize / 2;
+        for (int i = 0; i < halfSize; i++)
+        {
+            cardHandTop.GetChild(i).GetComponent<CardOwnership>().cardOwner = _playerNum;
+            cardHandBot.GetChild(i).GetComponent<CardOwnership>().cardOwner = _playerNum;
+        }
+    }
+    
 }

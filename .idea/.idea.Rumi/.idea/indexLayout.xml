@@ -27,7 +27,7 @@
       <Path>Library</Path>
       <Path>Logs</Path>
       <Path>Reference</Path>
-      <Path>Temp</Path>
+      <Path>git_test</Path>
       <Path>obj</Path>
     </explicitExcludes>
   </component>

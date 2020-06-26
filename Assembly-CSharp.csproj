@@ -73,6 +73,7 @@
      <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
      <Compile Include="Assets\Scripts\Game\Card.cs" />
      <Compile Include="Assets\Scripts\Game\CardControlEngine.cs" />
+     <Compile Include="Assets\Scripts\Game\CardOwnership.cs" />
      <Compile Include="Assets\Scripts\Game\CardSlot.cs" />
      <Compile Include="Assets\Scripts\Game\Draggable.cs" />
      <Compile Include="Assets\Scripts\Game\MakeCards.cs" />
@@ -81,7 +82,6 @@
      <Compile Include="Assets\Scripts\Game\Player.cs" />
      <Compile Include="Assets\Scripts\Game\PlayerTextManager.cs" />
      <Compile Include="Assets\Scripts\Game\SortButtonHandler.cs" />
-     <Compile Include="Assets\Scripts\Game\TableTopSlot.cs" />
      <Compile Include="Assets\Scripts\Lobby\LobbyManager.cs" />
      <Compile Include="Assets\Scripts\Lobby\LobbyNetworkManager.cs" />
      <Compile Include="Assets\Scripts\Lobby\RoomName.cs" />
