@@ -37,7 +37,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     private int _beforeTurn = -1;
     private static float _time = 0; // 60초 타이머
     
-
     public Button buttonStart; // start button : 마스터만 실행
     public Button buttonReset; // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
     public Button buttonNext; // turn을 넘겨주는 버튼
@@ -54,11 +53,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         if (_runningGame == 1)
         {
-            // if (_beforeTurn != _turn)
-            // {
-            //     _time = 0;
-            //     _beforeTurn = _turn;
-            // }
+            if (_beforeTurn != _turn)
+            {
+                _time = 0;
+                _beforeTurn = _turn;
+            }
             if (SortButtonFlag)
             {
                 Get_ClientCard();
@@ -75,7 +74,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     _turnStartFlag = false;
                     Get_ClientCard(); // 자신의 카드의 개수를 셉니다.
                     Count_ClientCard();
-                    // SwitchTableAccess();
                     photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
 
@@ -101,20 +99,17 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     _time = 0;
                     _turnStartFlag = true;
                     showWhosTurn.enabled = false;
-                    // SwitchTableAccess();
                     // photonView.RPC("SwitchTableAccess", RpcTarget.All);
                     photonView.RPC("Next", RpcTarget.All);
                     photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
-
-                // if (!NextEntryFlag)
-                // {
-                //     photonView.RPC("SyncTime", RpcTarget.All, _time);
-                // }
-                photonView.RPC("SyncTime", RpcTarget.All, _time);
+                if (!NextEntryFlag)
+                {
+                    photonView.RPC("SyncTime", RpcTarget.All, _time);
+                }
+                // photonView.RPC("SyncTime", RpcTarget.All, _time);
                 photonView.RPC("Sync_ClientCardNum", RpcTarget.All, ClientCardNum_Board);
             }
-
             // 자신의 카드의 개수가 0개면 게임을 종료합니다.
             /* if()
               {
@@ -180,11 +175,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Next()
     {
-        // NextEntryFlag = true;
         if (_turn != _playerNum)
         {
             return;
         }
+        
+        NextEntryFlag = true;
+        
         Backup();
         Get_ClientCard();
         Get_TABLE();
@@ -263,7 +260,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,_playerNum,ClientCardNum);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
         Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
-        // NextEntryFlag = false;
+        NextEntryFlag = false;
     }
 
     //=========================================================================
