@@ -51,7 +51,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Random random = new Random();
         _turn = (int)(random.NextDouble() * 1000 % Players.Count);
         photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
-        
+        photonView.RPC("SwitchTableAccess", RpcTarget.All);
+
         //버튼, 테이블을 셋팅합니다.
         photonView.RPC("Backup", RpcTarget.All);
         photonView.RPC("SetCardOwnership", RpcTarget.All);
@@ -122,7 +123,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             }
             deck.Add(new Card(cardNumber, cardColor));
         }
-
         deck.Add(new Card("J", "red"));
         deck.Add(new Card("J", "black"));
 

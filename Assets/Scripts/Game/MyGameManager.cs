@@ -8,43 +8,45 @@ using System;
 
 public partial class MyGameManager : MonoBehaviourPunCallbacks
 {
-    public static readonly int TableRow = 6;                  // 게임판의 RAW 크기
-    public static readonly int TableCol = 16;                 // 게임판의 COLUM 크기
+    public static readonly int TableRow = 6; // 게임판의 RAW 크기
+    public static readonly int TableCol = 16; // 게임판의 COLUM 크기
     public static readonly int MaxHandSize = 22;
-    public static readonly int MaxTime = 10;
+    public static readonly int MaxTime = 30;
 
     public static bool ControlFlag = false;
-    public List<Card> deck = new List<Card>();                  // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
-    public static List<Player> Players = new List<Player>();    // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
-    public static Card[,] Table = new Card[TableRow, TableCol];      // Rumikub의 게임판을 저장한 배열입니다.
+    public List<Card> deck = new List<Card>(); // 전체 카드 덱 : 분배하 남은 카드가 있습니다.
+    public static List<Player> Players = new List<Player>(); // 플레이어 : 각 플레이어들의 카드를 저장하고 있습니다.
+    public static Card[,] Table = new Card[TableRow, TableCol]; // Rumikub의 게임판을 저장한 배열입니다.
     public static Card[,] TableBackup = new Card[TableRow, TableCol]; // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
-    public static List<Card> ClientCard = new List<Card>();         // 클라이언트의 카드를 나타냅니다.
-    public static List<Card> ClientCardBackup = new List<Card>();    //클라이언트의 카드를 백업합니다.
+    public static List<Card> ClientCard = new List<Card>(); // 클라이언트의 카드를 나타냅니다.
+    public static List<Card> ClientCardBackup = new List<Card>(); //클라이언트의 카드를 백업합니다.
+
     public static bool SortButtonFlag = false;
-    // public static bool accessTableTopChek = false;                   // 테이블탑에 있는 값들과 교환을 할 수 있는지 설정한다.
-    public static bool DragableCheck = false;                        // 드래그 할 수 있는 상태인지 확인.
-                                                                     // 다음 턴으로 넘어가면서 드래그를 강제로 종료하고 다음사람 턴이 시작되면서 드래그가 다시 가능해진다.
-    
+
+    //Todo: TimeOver로 turn이 넘어가는 것 인지 아닌지 확인하는 변수
+    public static bool DragableCheck = false; // 드래그 할 수 있는 상태인지 확인.
+    // 다음 턴으로 넘어가면서 드래그를 강제로 종료하고 다음사람 턴이 시작되면서 드래그가 다시 가능해진다.
+
     public int ClientCardNum = 0;
-    public int[] ClientCardNum_Board = new int[4] { 0, 0, 0, 0 };
+    public int[] ClientCardNum_Board = new int[4] {0, 0, 0, 0};
 
-    private int _playerCount = 0;                                       // 게임중인 플레이어 수를 알려줍니다.
-    private int _playerNum = -1;                                      // 자신의 플레이어 번호를 알려줍니다. 0~4
-    private int _runningGame = 0;                                   // 게임전:0, 게임중:1
-    private int _turn = -1;                                       // 턴을 나타내는 변수
-    private float _time = 0;                                    // 60초 타이머
+    private int _playerCount = 0; // 게임중인 플레이어 수를 알려줍니다.
+    private int _playerNum = -1; // 자신의 플레이어 번호를 알려줍니다. 0~4
+    private int _runningGame = 0; // 게임전:0, 게임중:1
+    private int _turn = -1; // 턴을 나타내는 변수
+    private float _time = 0; // 60초 타이머
 
-    public Button buttonStart;                                 // start button : 마스터만 실행
-    public Button buttonReset;                                  // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
-    public Button buttonNext;                                  // turn을 넘겨주는 버튼
-    public Transform cardHandTop;                               // 로컬 플레이어 카드패 
-    public Transform cardHandBot;                               // 로컬 플레이어 카드패
-    public Transform tableTop;                                  // 게임판
-    public Text textTimer;                                    // 60초 타이머
+    public Button buttonStart; // start button : 마스터만 실행
+    public Button buttonReset; // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
+    public Button buttonNext; // turn을 넘겨주는 버튼
+    public Transform cardHandTop; // 로컬 플레이어 카드패 
+    public Transform cardHandBot; // 로컬 플레이어 카드패
+    public Transform tableTop; // 게임판
+    public Text textTimer; // 60초 타이머
     public Text showWhosTurn;
-    public Transform PLAYERS;                                 // Game Scene의 Players와 연결되어 있습니다.
+    public Transform PLAYERS; // Game Scene의 Players와 연결되어 있습니다.
 
-    private bool _turnStartFlag = true;                        // 자신의 턴이 시작될때 한 번만 수행
+    private bool _turnStartFlag = true; // 자신의 턴이 시작될때 한 번만 수행
 
     void Update()
     {
@@ -55,6 +57,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 Get_ClientCard();
                 SortButtonFlag = false;
             }
+
             if (_playerNum == _turn)
             {
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
@@ -63,12 +66,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     DragableCheck = true;
                     Backup();
                     showWhosTurn.enabled = false;
-                    ControlFlag = true;
                     _turnStartFlag = false;
-                    Get_ClientCard();    // 자신의 카드의 개수를 셉니다.
+                    Get_ClientCard(); // 자신의 카드의 개수를 셉니다.
                     Count_ClientCard();
-                    SwitchTableAccess(ControlFlag);
+                    // SwitchTableAccess();
+                    photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
+
                 buttonNext.enabled = true;
                 buttonNext.GetComponent<Image>().color = Color.white;
                 buttonReset.enabled = true;
@@ -90,15 +94,17 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 {
                     _time = 0;
                     _turnStartFlag = true;
-                    ControlFlag = false;
                     showWhosTurn.enabled = false;
-                    SwitchTableAccess(ControlFlag);
+                    // SwitchTableAccess();
+                    // photonView.RPC("SwitchTableAccess", RpcTarget.All);
                     photonView.RPC("Next", RpcTarget.All);
+                    photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
-                photonView.RPC("SyncTime", RpcTarget.All, _time);
 
-                photonView.RPC("Sync_ClientCardNum", RpcTarget.All,ClientCardNum_Board);
+                photonView.RPC("SyncTime", RpcTarget.All, _time);
+                photonView.RPC("Sync_ClientCardNum", RpcTarget.All, ClientCardNum_Board);
             }
+
             // 자신의 카드의 개수가 0개면 게임을 종료합니다.
             /* if()
               {
@@ -107,20 +113,22 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    private void SwitchTableAccess(bool flag)
+    [PunRPC]
+    private void SwitchTableAccess()
     {
+        bool turnFlag = (_turn == _playerNum);
         for (int row = 0; row < TableRow; row++)
         {
             for (int col = 0; col < TableCol; col++)
             {
-                tableTop.GetChild(row).GetChild(col).GetComponent<Draggable>().enabled = flag;
+                tableTop.GetChild(row).GetChild(col).GetComponent<Draggable>().enabled = turnFlag;
             }
         }
 
         for (int i = 0; i < MaxHandSize / 2; i++)
         {
-            cardHandTop.GetChild(i).GetComponent<Draggable>().enabled = flag;
-            cardHandBot.GetChild(i).GetComponent<Draggable>().enabled = flag;
+            cardHandTop.GetChild(i).GetComponent<Draggable>().enabled = turnFlag;
+            cardHandBot.GetChild(i).GetComponent<Draggable>().enabled = turnFlag;
         }
     }
 
@@ -162,11 +170,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Next()
     {
-        // if (_turn != _playerNum)
-        // {
-        //     return;
-        // }
-
+        if (_turn != _playerNum)
+        {
+            return;
+        }
         Backup();
         Get_ClientCard();
         Get_TABLE();
@@ -216,26 +223,19 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
             // TABLE Rule 검사 시작
             Get_TABLE();
-            if (Rule())
+            if (!Rule())
             {
+                // Rule을 만족시키지 못함
+                Debug.Log("     Rule : Fail");
+                Reset();
+            }
+            else
+            {
+                // Rule을 만족시킴
                 Debug.Log("     Rule : True");
                 Get_ClientCard();
                 Sync_TABLE();
             }
-            Reset();
-            // if (!Rule())
-            // {
-            //     // Rule을 만족시키지 못함
-            //     Debug.Log("     Rule : Fail");
-            //     Reset();
-            // }
-            // else
-            // {
-            //     // Rule을 만족시킴
-            //     Debug.Log("     Rule : True");
-            //     Get_ClientCard();
-            //     Sync_TABLE();
-            // }
         }
         
         _time = 0;
@@ -243,8 +243,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         photonView.RPC("Backup", RpcTarget.All);
         Debug.Log("_turn: " + _turn);
         photonView.RPC("SyncTime", RpcTarget.All, _time);
-        
-        // photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
+        photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
+        photonView.RPC("SwitchTableAccess", RpcTarget.All);
         photonView.RPC("View_TABLE", RpcTarget.All);
         photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,_playerNum,ClientCardNum);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
@@ -504,7 +504,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     //=========================================================================
     [PunRPC]
     void SyncTime(float time)
-        // void SyncTime(String time)
     {
         textTimer.text = time.ToString("N1");
     }
@@ -563,6 +562,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         Table[row, col].CardNumber = numCol[0];
         Table[row, col].CardColor = numCol[1];
+        // 의도치 않게 RealColor를 사용하는 경우가 있으므로 항상 같이 저장해주어야한다.
+        Table[row, col].RealColor = Card.ConvertToRealColor(numCol[1]);    
     }
 
     //=========================================================================
@@ -610,10 +611,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             for (int col = 0; col < TableCol; col++)
             {
-
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text = Table[row, col].CardNumber;
                 tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color = Table[row, col].RealColor;
-
                 if (Table[row, col].CardNumber != "" && Table[row, col].CardNumber != "-1")
                 {
                     tableTop.GetChild(row).GetChild(col).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
@@ -635,12 +634,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Get_ClientCard()
     {
         ClientCard.Clear();
-
         for (int i = 0; i < cardHandTop.childCount; i++)
         {
             Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
             if (newCard.CardNumber == "")
+            {
                 newCard.CardNumber = "-1";
+            }
             ClientCard.Add(newCard);
         }
 
@@ -648,7 +648,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
             if (newCard.CardNumber == "")
+            {
                 newCard.CardNumber = "-1";
+            }
             ClientCard.Add(newCard);
         }
     }
@@ -723,7 +725,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 break;
             }
         }
-
         ClientCard[index] = new Card(numCol[0], numCol[1]);
         Count_ClientCard();
         View_TABLE();
@@ -759,7 +760,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Sync_ClientCardNum(int[] num)
     {
         for (int index = 0; index < _playerCount; index++)
+        {
             ClientCardNum_Board[index] = num[index];
+        }
     }
 
     [PunRPC]

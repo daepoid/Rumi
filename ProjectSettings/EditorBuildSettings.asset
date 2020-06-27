@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/SignIn.unity
     guid: 60615670b1b86b042a39ade8ba5d5f4c
   - enabled: 1
-    path: Assets/Scenes/SignIn 1.unity
+    path: Assets/Scenes/SignIn.unity
     guid: 9d901d76d2372b840b030c8cdf604e14
   - enabled: 1
     path: Assets/Scenes/Lobby.unity
