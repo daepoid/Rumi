@@ -1315,6 +1315,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardHandFlag: 1
+--- !u!1 &355981330 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6424693358636934634, guid: 8b3ebfaf7335e8c469b5e6c359588a7f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1819351221}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &355981331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355981330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d87dcb5deabbe7642977ac9b30d83591, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  root: {fileID: 0}
 --- !u!1 &416342481
 GameObject:
   m_ObjectHideFlags: 0

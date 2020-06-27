@@ -24,16 +24,16 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
     public static bool NextEntryFlag = false;
     //Todo: TimeOver로 turn이 넘어가는 것 인지 아닌지 확인하는 변수
-    public static bool DragableCheck = false; // 드래그 할 수 있는 상태인지 확인.
+    // public static bool DragableCheck = false; // 드래그 할 수 있는 상태인지 확인.
     // 다음 턴으로 넘어가면서 드래그를 강제로 종료하고 다음사람 턴이 시작되면서 드래그가 다시 가능해진다.
 
     public int ClientCardNum = 0;
     public int[] ClientCardNum_Board = new int[4] {0, 0, 0, 0};
 
     private int _playerCount = 0; // 게임중인 플레이어 수를 알려줍니다.
-    private int _playerNum = -1; // 자신의 플레이어 번호를 알려줍니다. 0~4
+    private static int _playerNum = -1; // 자신의 플레이어 번호를 알려줍니다. 0~4
     private int _runningGame = 0; // 게임전:0, 게임중:1
-    private int _turn = -1; // 턴을 나타내는 변수
+    private static int _turn = -1; // 턴을 나타내는 변수
     private int _beforeTurn = -1;
     private static float _time = 0; // 60초 타이머
     
@@ -68,7 +68,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
                 if (_turnStartFlag)
                 {
-                    DragableCheck = true;
+                    // DragableCheck = true;
                     Backup();
                     showWhosTurn.enabled = false;
                     _turnStartFlag = false;
@@ -186,39 +186,39 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Get_ClientCard();
         Get_TABLE();
 
-        // 클라이언트 카드
-        string str = "";
-        foreach (Card c in ClientCard)
-            str = str + c.CardColor + c.CardNumber + " ";
-        Debug.Log("ClientCard : " + str);
-
-        // 클라이언트 카드 백업
-        str = "";
-        foreach (Card c in ClientCardBackup)
-            str = str + c.CardColor + c.CardNumber + " ";
-        Debug.Log("ClientCardBackup : " + str);
-
-        //테이블 출력
-        for (int i = 0; i < TableRow; i++)
-        {
-            str = "";
-            for (int j = 0; j < TableCol; j++)
-            {
-                str = str + " " + Table[i, j].CardColor + Table[i, j].CardNumber;
-            }
-            Debug.Log("table" + i + " : " + str);
-        }
-
-        // 테이블 백업
-        for (int i = 0; i < TableRow; i++)
-        {
-            str = "";
-            for (int j = 0; j < TableCol; j++)
-            {
-                str = str + " " + TableBackup[i, j].CardColor + TableBackup[i, j].CardNumber;
-            }
-            Debug.Log("TableBackup" + i + " : " + str);
-        }
+        // // 클라이언트 카드
+        // string str = "";
+        // foreach (Card c in ClientCard)
+        //     str = str + c.CardColor + c.CardNumber + " ";
+        // Debug.Log("ClientCard : " + str);
+        //
+        // // 클라이언트 카드 백업
+        // str = "";
+        // foreach (Card c in ClientCardBackup)
+        //     str = str + c.CardColor + c.CardNumber + " ";
+        // Debug.Log("ClientCardBackup : " + str);
+        //
+        // //테이블 출력
+        // for (int i = 0; i < TableRow; i++)
+        // {
+        //     str = "";
+        //     for (int j = 0; j < TableCol; j++)
+        //     {
+        //         str = str + " " + Table[i, j].CardColor + Table[i, j].CardNumber;
+        //     }
+        //     Debug.Log("table" + i + " : " + str);
+        // }
+        //
+        // // 테이블 백업
+        // for (int i = 0; i < TableRow; i++)
+        // {
+        //     str = "";
+        //     for (int j = 0; j < TableCol; j++)
+        //     {
+        //         str = str + " " + TableBackup[i, j].CardColor + TableBackup[i, j].CardNumber;
+        //     }
+        //     Debug.Log("TableBackup" + i + " : " + str);
+        // }
 
         if (ClientCardNum == Count_ClientCard() && ClientCardNum < MaxHandSize)
         {
@@ -645,25 +645,54 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Get_ClientCard()
     {
         ClientCard.Clear();
-        for (int i = 0; i < cardHandTop.childCount; i++)
-        {
-            Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
-            if (newCard.CardNumber == "")
-            {
-                newCard.CardNumber = "-1";
-            }
-            ClientCard.Add(newCard);
-        }
+        int halfSize = MaxHandSize / 2;
 
-        for (int i = 0; i < cardHandBot.childCount; i++)
+        for (int i = 0; i < halfSize; i++)
         {
-            Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
-            if (newCard.CardNumber == "")
+            Card newCard = new Card();
+            Debug.Log("cardHandTop.childCount" + cardHandTop.childCount);
+            if (cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
+                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
             {
-                newCard.CardNumber = "-1";
+                newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            }
+            else
+            {
+                newCard = new Card();
+            }
+            ClientCard.Add(newCard);
+            
+            Debug.Log("cardHandTop.childCount" + cardHandBot.childCount);
+            if (cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
+                cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
+            {
+                newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            }
+            else
+            {
+                newCard = new Card();
             }
             ClientCard.Add(newCard);
         }
+        // for (int i = 0; i < cardHandTop.childCount; i++)
+        // {
+        //     Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+        //     if (newCard.CardNumber == "")
+        //     {
+        //         newCard.CardNumber = "-1";
+        //     }
+        //     ClientCard.Add(newCard);
+        // }
+        //
+        // for (int i = 0; i < cardHandBot.childCount; i++)
+        // {
+        //     Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+        //     if (newCard.CardNumber == "")
+        //     {
+        //         newCard.CardNumber = "-1";
+        //     }
+        //     ClientCard.Add(newCard);
+        // }
     }
 
     //=========================================================================
@@ -726,7 +755,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Receive_Card(int playerNum, string[] numCol)
     {
         if (playerNum != _playerNum)
+        {
             return;
+        }
         int index = 0;
         for (index = 0; index < MaxHandSize; index++)
         {

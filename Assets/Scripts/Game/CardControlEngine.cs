@@ -112,15 +112,23 @@ public class CardControlEngine : MonoBehaviour
     
     void EndDrag(Transform card)
     {
-        if (!MyGameManager.DragableCheck)
+        if (!card.GetComponent<Draggable>().enabled)
         {
             invisibleCard.SetParent(transform);
             card.SetParent(_workingCardHand.transform);
             _workingCardHand.InsertCard(card, _beforeCardIndex);
             _workingCardHand = null;
             _beforeCardIndex = -1;
-            return;
         }
+        // if (!MyGameManager.DragableCheck)
+        // {
+        //     invisibleCard.SetParent(transform);
+        //     card.SetParent(_workingCardHand.transform);
+        //     _workingCardHand.InsertCard(card, _beforeCardIndex);
+        //     _workingCardHand = null;
+        //     _beforeCardIndex = -1;
+        //     return;
+        // }
         if(_whichCardSlot == null)
         {
             Debug.Log("CardSlot 바깥에 카드를 드롭한 경우");

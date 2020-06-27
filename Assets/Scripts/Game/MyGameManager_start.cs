@@ -71,8 +71,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         ClientCardNum_Board = new int[]{ 14, 14, 14, 14 };
     }
     
-    // 카드 바꾸기 - shuffle()에서 사용
-    void swap(int sour, int dest)
+    // 카드 바꾸기 - Shuffle()에서 사용
+    void Swap(int sour, int dest)
     {
         Card temp = deck[sour];
         deck[sour] = deck[dest];
@@ -80,7 +80,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     }
     
     // 카드 섞기 - opencard()에서 사용
-    void shuffle()
+    void Shuffle()
     {
         Debug.Log("마스터 : 카드 섞기 시작\n");
         int i, j;
@@ -89,7 +89,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         for (i = 0; i < deck.Count; i++)
         {
             j = ((int)(random.NextDouble() * 1000)) % 106;
-            swap(i, j);
+            Swap(i, j);
         }
         Debug.Log("마스터 : 카드 섞기 완료\n");
     }
@@ -129,7 +129,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         // 마스터 클라이언트만 카드를 섞습니다.
         if (PhotonNetwork.IsMasterClient)
         {
-            shuffle();
+            Shuffle();
         }
         Debug.Log("카드 생성 완료");
     }
@@ -197,9 +197,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Debug.Log("Table 인스턴스 생성 끝");
     }
 
-    // Clear_ClientCard
-    
-    
     //=========================================================================
     //카드 분배하기 - 마스터만 실행
     // 설명
@@ -281,16 +278,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         }
     }
     
-    // View_ClientCard
-    
-    // Count_ClientCard
-    
-    // Print_ClientCardNum
-    
-    // Sync_Turn
-    
-    // Backup
-    
+    //Todo: 코드 사용 테스트
     [PunRPC]
     void SetCardOwnership()
     {
