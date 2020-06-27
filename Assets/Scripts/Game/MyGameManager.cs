@@ -31,9 +31,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public int[] ClientCardNum_Board = new int[4] {0, 0, 0, 0};
 
     private int _playerCount = 0; // 게임중인 플레이어 수를 알려줍니다.
-    private static int _playerNum = -1; // 자신의 플레이어 번호를 알려줍니다. 0~4
+    public static int PlayerNum = -1; // 자신의 플레이어 번호를 알려줍니다. 0~4
     private int _runningGame = 0; // 게임전:0, 게임중:1
-    private static int _turn = -1; // 턴을 나타내는 변수
+    public static int Turn = -1; // 턴을 나타내는 변수
     private int _beforeTurn = -1;
     private static float _time = 0; // 60초 타이머
     
@@ -53,17 +53,17 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         if (_runningGame == 1)
         {
-            if (_beforeTurn != _turn)
+            if (_beforeTurn != Turn)
             {
                 _time = 0;
-                _beforeTurn = _turn;
+                _beforeTurn = Turn;
             }
             if (SortButtonFlag)
             {
                 Get_ClientCard();
                 SortButtonFlag = false;
             }
-            if (_playerNum == _turn)
+            if (PlayerNum == Turn)
             {
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
                 if (_turnStartFlag)
@@ -121,7 +121,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void SwitchTableAccess()
     {
-        bool turnFlag = (_turn == _playerNum);
+        bool turnFlag = (Turn == PlayerNum);
         for (int row = 0; row < TableRow; row++)
         {
             for (int col = 0; col < TableCol; col++)
@@ -175,7 +175,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Next()
     {
-        if (_turn != _playerNum)
+        if (Turn != PlayerNum)
         {
             return;
         }
@@ -223,7 +223,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         if (ClientCardNum == Count_ClientCard() && ClientCardNum < MaxHandSize)
         {
             Debug.Log("Request() : 카드를 한 장 요청합니다.");
-            photonView.RPC("Serve_Card", RpcTarget.MasterClient, _playerNum); 
+            photonView.RPC("Serve_Card", RpcTarget.MasterClient, PlayerNum); 
         }
         else
         {
@@ -251,13 +251,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         // photonView.RPC("SyncTime", RpcTarget.All, 0);
         photonView.RPC("SyncTime", RpcTarget.All, _time);
         
-        _turn = (_turn + 1) % _playerCount;
-        Debug.Log("_turn: " + _turn);
-        photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
+        Turn = (Turn + 1) % _playerCount;
+        Debug.Log("Turn: " + Turn);
+        photonView.RPC("Sync_Turn", RpcTarget.All, Turn);
         
         photonView.RPC("SwitchTableAccess", RpcTarget.All);
         photonView.RPC("View_TABLE", RpcTarget.All);
-        photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,_playerNum,ClientCardNum);
+        photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,PlayerNum,ClientCardNum);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
         Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
         NextEntryFlag = false;
@@ -522,7 +522,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void Sync_Turn(int turn)
     {
-        _turn = turn;
+        Turn = turn;
     }
 
     [PunRPC]
@@ -645,54 +645,54 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Get_ClientCard()
     {
         ClientCard.Clear();
-        int halfSize = MaxHandSize / 2;
-
-        for (int i = 0; i < halfSize; i++)
+        // int halfSize = MaxHandSize / 2;
+        //
+        // for (int i = 0; i < halfSize; i++)
+        // {
+        //     Card newCard = new Card();
+        //     Debug.Log("cardHandTop.childCount" + cardHandTop.childCount);
+        //     if (cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
+        //         cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
+        //     {
+        //         newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+        //     }
+        //     else
+        //     {
+        //         newCard = new Card();
+        //     }
+        //     ClientCard.Add(newCard);
+        //     
+        //     Debug.Log("cardHandTop.childCount" + cardHandBot.childCount);
+        //     if (cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
+        //         cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
+        //     {
+        //         newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+        //     }
+        //     else
+        //     {
+        //         newCard = new Card();
+        //     }
+        //     ClientCard.Add(newCard);
+        // }
+        for (int i = 0; i < cardHandTop.childCount; i++)
         {
-            Card newCard = new Card();
-            Debug.Log("cardHandTop.childCount" + cardHandTop.childCount);
-            if (cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
-                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
+            Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            if (newCard.CardNumber == "")
             {
-                newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
-            }
-            else
-            {
-                newCard = new Card();
-            }
-            ClientCard.Add(newCard);
-            
-            Debug.Log("cardHandTop.childCount" + cardHandBot.childCount);
-            if (cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
-                cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
-            {
-                newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
-            }
-            else
-            {
-                newCard = new Card();
+                newCard.CardNumber = "-1";
             }
             ClientCard.Add(newCard);
         }
-        // for (int i = 0; i < cardHandTop.childCount; i++)
-        // {
-        //     Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
-        //     if (newCard.CardNumber == "")
-        //     {
-        //         newCard.CardNumber = "-1";
-        //     }
-        //     ClientCard.Add(newCard);
-        // }
-        //
-        // for (int i = 0; i < cardHandBot.childCount; i++)
-        // {
-        //     Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
-        //     if (newCard.CardNumber == "")
-        //     {
-        //         newCard.CardNumber = "-1";
-        //     }
-        //     ClientCard.Add(newCard);
-        // }
+        
+        for (int i = 0; i < cardHandBot.childCount; i++)
+        {
+            Card newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
+            if (newCard.CardNumber == "")
+            {
+                newCard.CardNumber = "-1";
+            }
+            ClientCard.Add(newCard);
+        }
     }
 
     //=========================================================================
@@ -710,7 +710,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = ClientCard[i].RealColor;
             if (ClientCard[i].CardNumber != "-1" && ClientCard[i].CardNumber != "")
             {
-
                 cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0.8F, 0.6F, 0.1F, 1F);
             }
             else
@@ -754,7 +753,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void Receive_Card(int playerNum, string[] numCol)
     {
-        if (playerNum != _playerNum)
+        if (playerNum != PlayerNum)
         {
             return;
         }

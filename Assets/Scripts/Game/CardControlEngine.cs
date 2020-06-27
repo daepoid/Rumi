@@ -112,13 +112,14 @@ public class CardControlEngine : MonoBehaviour
     
     void EndDrag(Transform card)
     {
-        if (!card.GetComponent<Draggable>().enabled)
+        if (!card.GetComponent<Draggable>().enabled || MyGameManager.Turn != MyGameManager.PlayerNum)
         {
             invisibleCard.SetParent(transform);
             card.SetParent(_workingCardHand.transform);
             _workingCardHand.InsertCard(card, _beforeCardIndex);
             _workingCardHand = null;
             _beforeCardIndex = -1;
+            return;
         }
         // if (!MyGameManager.DragableCheck)
         // {

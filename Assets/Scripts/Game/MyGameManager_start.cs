@@ -49,8 +49,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
         // 게임의 턴을 설정합니다.
         Random random = new Random();
-        _turn = (int)(random.NextDouble() * 1000 % Players.Count);
-        photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
+        Turn = (int)(random.NextDouble() * 1000 % Players.Count);
+        photonView.RPC("Sync_Turn", RpcTarget.All, Turn);
         photonView.RPC("SwitchTableAccess", RpcTarget.All);
 
         //버튼, 테이블을 셋팅합니다.
@@ -168,9 +168,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.PlayerList[i].IsLocal)
             {
-                _playerNum = i;
+                PlayerNum = i;
                 _playerCount = PhotonNetwork.PlayerList.Length;
-                Debug.Log("     플레이어번호 : " + _playerNum.ToString());
+                Debug.Log("     플레이어번호 : " + PlayerNum.ToString());
                 Debug.Log("     플레이어 수 : " + _playerCount.ToString());
                 Debug.Log("플레이어 번호 지정 끝");
                 return;
@@ -269,11 +269,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // numCol[]에 number와 color를 받아와 PLAYERS에 추가하는 함수
     //=========================================================================
     [PunRPC]
-    void Sync_Client_Card(int playerNum, string[] numCol)
+    void Sync_Client_Card(int newPlayerNum, string[] numCol)
     {
-        if (playerNum == _playerNum)
+        if (newPlayerNum == PlayerNum)
         {
-            Debug.Log("     RPC 수신" + playerNum + " : 카드" + " = " + numCol[0] + ", " + numCol[1]);
+            Debug.Log("     RPC 수신" + newPlayerNum + " : 카드" + " = " + numCol[0] + ", " + numCol[1]);
             ClientCard.Add(new Card(numCol[0], numCol[1]));
         }
     }
@@ -285,8 +285,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         int halfSize = MaxHandSize / 2;
         for (int i = 0; i < halfSize; i++)
         {
-            cardHandTop.GetChild(i).GetComponent<CardOwnership>().cardOwner = _playerNum;
-            cardHandBot.GetChild(i).GetComponent<CardOwnership>().cardOwner = _playerNum;
+            cardHandTop.GetChild(i).GetComponent<CardOwnership>().cardOwner = PlayerNum;
+            cardHandBot.GetChild(i).GetComponent<CardOwnership>().cardOwner = PlayerNum;
         }
     }
     

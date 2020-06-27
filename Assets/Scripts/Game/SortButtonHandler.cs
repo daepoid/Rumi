@@ -15,7 +15,6 @@ public class SortButtonHandler : MonoBehaviour
     {
         cards.Clear();
         MakeCardList(cards);
-        Card.ToSymbolNumberFromCardNumber("0");
         cards.Sort((x, y) =>
         {
             int comp = String.Compare(x.CardColor, y.CardColor);
@@ -66,8 +65,12 @@ public class SortButtonHandler : MonoBehaviour
                     cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
                 {
                     newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
-                    newCards.Add(newCard);
                 }
+                else
+                {
+                    newCard = new Card();
+                }
+                newCards.Add(newCard);
             }
             if (cardHandBot.childCount > i)
             {
@@ -75,8 +78,12 @@ public class SortButtonHandler : MonoBehaviour
                     cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
                 {
                     newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
-                    newCards.Add(newCard);
                 }
+                else
+                {
+                    newCard = new Card();
+                }
+                newCards.Add(newCard);
             }
         }
     }
