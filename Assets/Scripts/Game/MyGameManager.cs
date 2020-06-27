@@ -20,9 +20,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public static Card[,] TableBackup = new Card[TableRow, TableCol]; // 게임판을 백업합니다. 백업은 마스터만 관리합니다.
     public static List<Card> ClientCard = new List<Card>(); // 클라이언트의 카드를 나타냅니다.
     public static List<Card> ClientCardBackup = new List<Card>(); //클라이언트의 카드를 백업합니다.
-
     public static bool SortButtonFlag = false;
 
+    public static bool NextEntryFlag = false;
     //Todo: TimeOver로 turn이 넘어가는 것 인지 아닌지 확인하는 변수
     public static bool DragableCheck = false; // 드래그 할 수 있는 상태인지 확인.
     // 다음 턴으로 넘어가면서 드래그를 강제로 종료하고 다음사람 턴이 시작되면서 드래그가 다시 가능해진다.
@@ -34,7 +34,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     private int _playerNum = -1; // 자신의 플레이어 번호를 알려줍니다. 0~4
     private int _runningGame = 0; // 게임전:0, 게임중:1
     private int _turn = -1; // 턴을 나타내는 변수
-    private float _time = 0; // 60초 타이머
+    private int _beforeTurn = -1;
+    private static float _time = 0; // 60초 타이머
+    
 
     public Button buttonStart; // start button : 마스터만 실행
     public Button buttonReset; // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
@@ -52,12 +54,16 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         if (_runningGame == 1)
         {
+            if (_beforeTurn != _turn)
+            {
+                _time = 0;
+                _beforeTurn = _turn;
+            }
             if (SortButtonFlag)
             {
                 Get_ClientCard();
                 SortButtonFlag = false;
             }
-
             if (_playerNum == _turn)
             {
                 // 게임판의 사용을 허가하는 코드를 추가해야 합니다.
@@ -101,7 +107,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
 
-                photonView.RPC("SyncTime", RpcTarget.All, _time);
+                if (!NextEntryFlag)
+                {
+                    photonView.RPC("SyncTime", RpcTarget.All, _time);
+                }
                 photonView.RPC("Sync_ClientCardNum", RpcTarget.All, ClientCardNum_Board);
             }
 
@@ -170,6 +179,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Next()
     {
+        NextEntryFlag = true;
         if (_turn != _playerNum)
         {
             return;
@@ -220,7 +230,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log("Rule() : 시작");
-
             // TABLE Rule 검사 시작
             Get_TABLE();
             if (!Rule())
@@ -238,18 +247,22 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             }
         }
         
-        _time = 0;
-        _turn = (_turn + 1) % _playerCount;
         photonView.RPC("Backup", RpcTarget.All);
-        Debug.Log("_turn: " + _turn);
+        
+        _time = 0.0f;
+        // photonView.RPC("SyncTime", RpcTarget.All, 0);
         photonView.RPC("SyncTime", RpcTarget.All, _time);
+        
+        _turn = (_turn + 1) % _playerCount;
+        Debug.Log("_turn: " + _turn);
         photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
+        
         photonView.RPC("SwitchTableAccess", RpcTarget.All);
         photonView.RPC("View_TABLE", RpcTarget.All);
         photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,_playerNum,ClientCardNum);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
-
         Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
+        NextEntryFlag = false;
     }
 
     //=========================================================================
