@@ -54,11 +54,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     {
         if (_runningGame == 1)
         {
-            if (_beforeTurn != _turn)
-            {
-                _time = 0;
-                _beforeTurn = _turn;
-            }
+            // if (_beforeTurn != _turn)
+            // {
+            //     _time = 0;
+            //     _beforeTurn = _turn;
+            // }
             if (SortButtonFlag)
             {
                 Get_ClientCard();
@@ -96,7 +96,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 _time += Time.deltaTime;
 
-                if (_time > MaxTime)
+                if (_time >= MaxTime)
                 {
                     _time = 0;
                     _turnStartFlag = true;
@@ -107,10 +107,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
 
-                if (!NextEntryFlag)
-                {
-                    photonView.RPC("SyncTime", RpcTarget.All, _time);
-                }
+                // if (!NextEntryFlag)
+                // {
+                //     photonView.RPC("SyncTime", RpcTarget.All, _time);
+                // }
+                photonView.RPC("SyncTime", RpcTarget.All, _time);
                 photonView.RPC("Sync_ClientCardNum", RpcTarget.All, ClientCardNum_Board);
             }
 
@@ -179,7 +180,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Next()
     {
-        NextEntryFlag = true;
+        // NextEntryFlag = true;
         if (_turn != _playerNum)
         {
             return;
@@ -262,7 +263,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,_playerNum,ClientCardNum);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
         Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
-        NextEntryFlag = false;
+        // NextEntryFlag = false;
     }
 
     //=========================================================================
