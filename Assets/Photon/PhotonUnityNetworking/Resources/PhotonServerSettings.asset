@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: da2e09da-743f-4a98-a237-22db1597d2b0
+    AppIdRealtime: 
     AppIdChat: 
     AppIdVoice: 
     AppVersion: 
@@ -25,7 +25,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: kr
+  DevRegion: 
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -47,6 +47,7 @@ MonoBehaviour:
   - Serve_Card
   - Set_playerNum
   - Set_RunningGame
+  - SetCardOwnership
   - StartCardNumberText
   - Sync_Client_Card
   - Sync_ClientCardNum
@@ -56,7 +57,6 @@ MonoBehaviour:
   - SyncTime
   - View_ClientCard
   - View_TABLE
-  - SetCardOwnership
   DisableAutoOpenWizard: 1
   ShowSettings: 0
-  DevRegionSetOnce: 1
+  DevRegionSetOnce: 0
