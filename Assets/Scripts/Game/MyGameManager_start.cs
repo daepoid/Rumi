@@ -8,11 +8,9 @@ using System;
 
 public partial class MyGameManager : MonoBehaviourPunCallbacks
 {
-    // Start is called before the first frame update
     void Start()
     {
         Debug.Log("게임메니저 시작\n");
-
         buttonNext.enabled = false;
         buttonNext.GetComponent<Image>().color = Color.gray;
 
@@ -36,16 +34,16 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public void GameStart()
     {
         Debug.Log(PhotonNetwork.LocalPlayer.UserId + "\n");
-
+        
         Initialize();                                                     // deck, Players Clear()
         Create_DECK();                                                    // deck 인스턴스 생성
         Create_PLAYERS();                                                 // Players 인스턴스 생성
-        photonView.RPC("Set_playerNum", RpcTarget.All);                   // 플레이어 번호 지정
-        photonView.RPC("Create_TABLE", RpcTarget.All);                    // Table 인스턴스 생성
+        photonView.RPC("Set_playerNum", RpcTarget.All);      // 플레이어 번호 지정
+        photonView.RPC("Create_TABLE", RpcTarget.All);       // Table 인스턴스 생성
         photonView.RPC("Clear_ClientCard", RpcTarget.All);
         Divide_Card();                                                    // 마스터(서버)가 카드를 나누어줌
         Sync_Card();                                                      // 마스터(서버)가 배분한 카드를 동기화 시킵니다.
-        photonView.RPC("View_ClientCard", RpcTarget.All);                 // 자신이 받은 카드를 확인합니다.
+        photonView.RPC("View_ClientCard", RpcTarget.All);    // 자신이 받은 카드를 확인합니다.
         photonView.RPC("Count_ClientCard", RpcTarget.All);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
 
@@ -53,49 +51,13 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Random random = new Random();
         _turn = (int)(random.NextDouble() * 1000 % Players.Count);
         photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
-
-
+        
         //버튼, 테이블을 셋팅합니다.
         photonView.RPC("Backup", RpcTarget.All);
         photonView.RPC("SetCardOwnership", RpcTarget.All);
-        // 게임 시작
-        photonView.RPC("Set_RunningGame", RpcTarget.All, 1);
-        
+        photonView.RPC("Set_RunningGame", RpcTarget.All, 1);        // 게임 시작
     }
-    //=========================================================================
-    // 게임 시작 플래그
-    // 설명
-    // 1. 게임이 시작되었음을 알리는 플래그입니다.
-    //=========================================================================
-    [PunRPC]
-    void Set_RunningGame(int flag)
-    {
-        _runningGame = flag;
-    }
-    //=========================================================================
-    // 플레이어 번호 지정
-    // 설명
-    // 1. 플레이어가 네트워크로 부터 받은 번호를 저장합니다.
-    //=========================================================================
-    [PunRPC]
-    void Set_playerNum()
-    {
-        Debug.Log("플레이어 번호 지정 시작");
-
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-        {
-            if (PhotonNetwork.PlayerList[i].IsLocal)
-            {
-                _playerNum = i;
-                _playerCount = PhotonNetwork.PlayerList.Length;
-                Debug.Log("     플레이어번호 : " + _playerNum.ToString());
-                Debug.Log("     플레이어 수 : " + _playerCount.ToString());
-                Debug.Log("플레이어 번호 지정 끝");
-                return;
-            }
-        }
-
-    }
+    
     //=========================================================================
     // 덱, 플레이어 초기화
     // 설명
@@ -107,6 +69,30 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Players.Clear();         // 플레이어 초기화
         ClientCardNum_Board = new int[]{ 14, 14, 14, 14 };
     }
+    
+    // 카드 바꾸기 - shuffle()에서 사용
+    void swap(int sour, int dest)
+    {
+        Card temp = deck[sour];
+        deck[sour] = deck[dest];
+        deck[dest] = temp;
+    }
+    
+    // 카드 섞기 - opencard()에서 사용
+    void shuffle()
+    {
+        Debug.Log("마스터 : 카드 섞기 시작\n");
+        int i, j;
+        Random random = new Random();
+
+        for (i = 0; i < deck.Count; i++)
+        {
+            j = ((int)(random.NextDouble() * 1000)) % 106;
+            swap(i, j);
+        }
+        Debug.Log("마스터 : 카드 섞기 완료\n");
+    }
+    
     //=========================================================================
     // 카드 생성 - 마스터만 실행
     // 설명
@@ -142,32 +128,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
         // 마스터 클라이언트만 카드를 섞습니다.
         if (PhotonNetwork.IsMasterClient)
-            shuffle();
-
-        Debug.Log("카드 생성 완료");
-    }
-
-    // 카드 섞기 - opencard()에서 사용
-    void shuffle()
-    {
-        Debug.Log("마스터 : 카드 섞기 시작\n");
-        int i, j;
-        Random random = new Random();
-
-        for (i = 0; i < deck.Count; i++)
         {
-            j = ((int)(random.NextDouble() * 1000)) % 106;
-            swap(i, j);
+            shuffle();
         }
-        Debug.Log("마스터 : 카드 섞기 완료\n");
-    }
-
-    // 카드 바꾸기 - shuffle()에서 사용
-    void swap(int sour, int dest)
-    {
-        Card temp = deck[sour];
-        deck[sour] = deck[dest];
-        deck[dest] = temp;
+        Debug.Log("카드 생성 완료");
     }
 
     //=========================================================================
@@ -191,6 +155,30 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     }
 
     //=========================================================================
+    // 플레이어 번호 지정
+    // 설명
+    // 1. 플레이어가 네트워크로 부터 받은 번호를 저장합니다.
+    //=========================================================================
+    [PunRPC]
+    void Set_playerNum()
+    {
+        Debug.Log("플레이어 번호 지정 시작");
+
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        {
+            if (PhotonNetwork.PlayerList[i].IsLocal)
+            {
+                _playerNum = i;
+                _playerCount = PhotonNetwork.PlayerList.Length;
+                Debug.Log("     플레이어번호 : " + _playerNum.ToString());
+                Debug.Log("     플레이어 수 : " + _playerCount.ToString());
+                Debug.Log("플레이어 번호 지정 끝");
+                return;
+            }
+        }
+    }
+    
+    //=========================================================================
     // Table 인스턴스 생성
     // 설명
     // 1. Table 배열의 인스턴스를 생성합니다.
@@ -209,6 +197,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Debug.Log("Table 인스턴스 생성 끝");
     }
 
+    // Clear_ClientCard
+    
+    
     //=========================================================================
     //카드 분배하기 - 마스터만 실행
     // 설명
@@ -240,7 +231,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             Debug.Log("Divide_Card Error : " + e.Message);
             return;
         }
-
         Debug.Log("카드 분배 완료\n");
     }
 
@@ -252,13 +242,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Sync_Card()
     {
         Debug.Log("카드 동기화 시작\n");
-
         Debug.Log("     입장한 플레이어 수: " + PhotonNetwork.PlayerList.Length + "\n");
         Debug.Log("     플레이어 인스턴스 수 : " + Players.Count);
-
-
+        
         string[] numCol = { "", "" };
-
         // 플레이어 카드 동기화
         for (int playerIndex = 0; playerIndex < PhotonNetwork.PlayerList.Length; playerIndex++)
         {
@@ -293,7 +280,17 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             ClientCard.Add(new Card(numCol[0], numCol[1]));
         }
     }
-
+    
+    // View_ClientCard
+    
+    // Count_ClientCard
+    
+    // Print_ClientCardNum
+    
+    // Sync_Turn
+    
+    // Backup
+    
     [PunRPC]
     void SetCardOwnership()
     {
@@ -305,4 +302,14 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         }
     }
     
+    //=========================================================================
+    // 게임 시작 플래그
+    // 설명
+    // 1. 게임이 시작되었음을 알리는 플래그입니다.
+    //=========================================================================
+    [PunRPC]
+    void Set_RunningGame(int flag)
+    {
+        _runningGame = flag;
+    }
 }

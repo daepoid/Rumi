@@ -46,7 +46,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
     private bool _turnStartFlag = true;                        // 자신의 턴이 시작될때 한 번만 수행
 
-    // Update is called once per frame
     void Update()
     {
         if (_runningGame == 1)
@@ -163,8 +162,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Next()
     {
-        if (_turn != _playerNum)
-            return;
+        // if (_turn != _playerNum)
+        // {
+        //     return;
+        // }
 
         Backup();
         Get_ClientCard();
@@ -215,26 +216,35 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
 
             // TABLE Rule 검사 시작
             Get_TABLE();
-            if (!Rule())
+            if (Rule())
             {
-                // Rule을 만족시키지 못함
-                Debug.Log("     Rule : Fail");
-                Reset();
-            }
-            else
-            {
-                // Rule을 만족시킴
                 Debug.Log("     Rule : True");
                 Get_ClientCard();
                 Sync_TABLE();
             }
+            Reset();
+            // if (!Rule())
+            // {
+            //     // Rule을 만족시키지 못함
+            //     Debug.Log("     Rule : Fail");
+            //     Reset();
+            // }
+            // else
+            // {
+            //     // Rule을 만족시킴
+            //     Debug.Log("     Rule : True");
+            //     Get_ClientCard();
+            //     Sync_TABLE();
+            // }
         }
-
-        photonView.RPC("Backup", RpcTarget.All);
+        
         _time = 0;
         _turn = (_turn + 1) % _playerCount;
+        photonView.RPC("Backup", RpcTarget.All);
+        Debug.Log("_turn: " + _turn);
         photonView.RPC("SyncTime", RpcTarget.All, _time);
-        photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
+        
+        // photonView.RPC("Sync_Turn", RpcTarget.All, _turn);
         photonView.RPC("View_TABLE", RpcTarget.All);
         photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,_playerNum,ClientCardNum);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
@@ -487,6 +497,18 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Debug.Log("백업 끝");
     }
 
+    //=========================================================================
+    // 타이머 동기화
+    // 설명
+    // 1. 마스터의 타이머를 동기화 하는 프로그램 입니다.
+    //=========================================================================
+    [PunRPC]
+    void SyncTime(float time)
+        // void SyncTime(String time)
+    {
+        textTimer.text = time.ToString("N1");
+    }
+    
     [PunRPC]
     void Sync_Turn(int turn)
     {
@@ -556,8 +578,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 try
                 {
-                    Table[row, col] = new Card(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text,
-                        tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
+                    Table[row, col] = new Card(
+                        tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text, 
+                        tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color
+                        );
                     //Table[row, col].CardNumber = tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().text;
                     if (Table[row, col].CardNumber == "")
                     {
@@ -665,18 +689,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0, 0, 0, 0);
             }
         }
-    }
-
-    //=========================================================================
-    // 타이머 동기화
-    // 설명
-    // 1. 마스터의 타이머를 동기화 하는 프로그램 입니다.
-    //=========================================================================
-    [PunRPC]
-    void SyncTime(float time)
-    // void SyncTime(String time)
-    {
-        textTimer.text = time.ToString("N1");
     }
 
     //=========================================================================

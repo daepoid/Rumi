@@ -98,9 +98,14 @@ public class SortButtonHandler : MonoBehaviour
                 {
                     cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0.0F, 0.0F, 0.0F, 0F);
                 }
-
             }
-
+            else
+            {
+                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text = "";
+                cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.yellow;
+                cardHandTop.GetChild(i).GetComponent<Image>().color = new Color(0.0F, 0.0F, 0.0F, 0F);
+            }
+            
             if (newCards.Count > i + halfSize)
             {
                 cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text = newCards[i + halfSize].CardNumber;
@@ -113,6 +118,12 @@ public class SortButtonHandler : MonoBehaviour
                 {
                     cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0.0F, 0.0F, 0.0F, 0F);
                 }
+            }
+            else
+            {
+                cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text = "";
+                cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color = Color.yellow;
+                cardHandBot.GetChild(i).GetComponent<Image>().color = new Color(0.0F, 0.0F, 0.0F, 0F);
             }
         }
     }
