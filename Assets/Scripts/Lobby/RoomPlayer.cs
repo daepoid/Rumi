@@ -65,7 +65,15 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
         int newPlayerindex = Array.FindIndex(PhotonNetwork.PlayerListOthers, i => i.NickName == newPlayer.NickName);
 
         //텍스트 출력
-        PlayerText[newPlayerindex * 2 + 1].text = newPlayer.NickName;
+        for(int i = 0; i < 4; i++)
+        {
+            if (PlayerText[i].text == "")
+            {
+                PlayerText[i].text = newPlayer.NickName;
+                break;
+            }
+        }
+    
 
         //현 상태 플레이어 정보 남겨두기
         playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
@@ -84,7 +92,7 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
         int OtherPlayerIndex = Array.FindIndex(playersInRoomOthersLeft, leftPlayer => leftPlayer.NickName == otherPlayer.NickName);
 
         //텍스트 출력
-        PlayerText[OtherPlayerIndex * 2 + 1].text = "";
+        PlayerText[OtherPlayerIndex  + 1].text = "";
   
 
         //현 상태 플레이어 정보 남겨두기
