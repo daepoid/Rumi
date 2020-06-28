@@ -73,7 +73,6 @@
      <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
      <Compile Include="Assets\Scripts\Game\Card.cs" />
      <Compile Include="Assets\Scripts\Game\CardControlEngine.cs" />
-     <Compile Include="Assets\Scripts\Game\CardOwnership.cs" />
      <Compile Include="Assets\Scripts\Game\CardSlot.cs" />
      <Compile Include="Assets\Scripts\Game\Draggable.cs" />
      <Compile Include="Assets\Scripts\Game\MakeCards.cs" />

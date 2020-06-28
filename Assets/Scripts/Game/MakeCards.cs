@@ -17,7 +17,6 @@ public class MakeCards : MonoBehaviour
             newCard.transform.GetComponent<Image>().color = new Color(0, 0, 0, 0);
             newCard.transform.localScale = new Vector3(1, 1, 1);
             newCard.transform.localPosition = new Vector3(30 * i - 465, 0, 0);
-            newCard.transform.GetComponent<CardOwnership>().cardOwner = -1;
         }
     }
 

@@ -3,7 +3,6 @@ ScriptsOnlyBuild:
     Assembly-CSharp.dll:
     - AuthManager
     - CardControlEngine
-    - CardOwnership
     - CardSlot
     - Draggable
     - LobbyNetworkManager
@@ -23,6 +22,8 @@ ScriptsOnlyBuild:
     - Photon.Pun.Demo.PunBasics.PlayerUI
     - Photon.Pun.Demo.SlotRacer.PlayerControl
     - Photon.Pun.Demo.SlotRacer.Utils.SplineWalker
+    PhotonUnityNetworking.Editor.dll:
+    - ServerSettingsInspector
     PhotonUnityNetworking.dll:
     - Photon.Pun.PhotonAnimatorView
     - Photon.Pun.PhotonRigidbodyView
@@ -1014,12 +1015,6 @@ ScriptsOnlyBuild:
     assemblyName: PhotonUnityNetworking.Utilities.dll
     namespaceName: Photon.Pun.UtilityScripts
     className: OnClickDestroy
-  - hash:
-      serializedVersion: 2
-      Hash: 07895e04e85a27b49f5f719b83b03836
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: CardOwnership
   - hash:
       serializedVersion: 2
       Hash: c656dcc13ae391b68d594cc8f9c590b0

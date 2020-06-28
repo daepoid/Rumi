@@ -278,18 +278,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         }
     }
     
-    //Todo: 코드 사용 테스트
-    [PunRPC]
-    void SetCardOwnership()
-    {
-        int halfSize = MaxHandSize / 2;
-        for (int i = 0; i < halfSize; i++)
-        {
-            cardHandTop.GetChild(i).GetComponent<CardOwnership>().cardOwner = PlayerNum;
-            cardHandBot.GetChild(i).GetComponent<CardOwnership>().cardOwner = PlayerNum;
-        }
-    }
-    
     //=========================================================================
     // 게임 시작 플래그
     // 설명
