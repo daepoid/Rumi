@@ -13,7 +13,9 @@ public class CardControlEngine : MonoBehaviour
     private CardSlot _workingCardHand;        // BeginDrag를 수행 할 때 선택 된 Card의 CardHand
     private int _beforeCardIndex;             // BeginDrag를 수행 할 때 선택 된 Card의 CardHand에서의 Index
     private CardSlot _whichCardSlot;
-
+    public static Card WoringCardBackup = new Card();
+    public static bool IsDragging = false;
+    
     private int _targetIndex;
     private int _invisibleCardIndex;
     
@@ -87,12 +89,19 @@ public class CardControlEngine : MonoBehaviour
         Debug.Log("BeginDrag : "  + card.GetChild(0).GetComponent<Text>().text);
         _workingCardHand = _cardSlots.Find(t => ContainPos(t.transform as RectTransform, card.position));
         _beforeCardIndex = card.GetSiblingIndex();
+        IsDragging = true;
+        WoringCardBackup = new Card(card.GetChild(0).GetComponent<Text>().text, card.GetChild(0).GetComponent<Text>().color);
         // SwapCardsInHierarchy(invisibleCard, card);
         SwapCardsByInvisible(invisibleCard, card);
     }
     
     void Drag(Transform card)
     {
+        // if (MyGameManager.Turn != MyGameManager.PlayerNum)
+        // {
+        //     EndDrag(card);
+        //     card.GetComponent<Draggable>().enabled = false;
+        // }
         // CardSlot 찾기
         _whichCardSlot = _cardSlots.Find(t=> ContainPos(t.transform as RectTransform, card.position));
         if (_whichCardSlot == null)
@@ -121,27 +130,18 @@ public class CardControlEngine : MonoBehaviour
     
     void EndDrag(Transform card)
     {
+        IsDragging = false;
         if (!card.GetComponent<Draggable>().enabled || MyGameManager.Turn != MyGameManager.PlayerNum)
         {
             GoBackBeforeHand(card);
-            // return;
         }
         // TableTop에서 CardHand 방향으로 가져오지 못하게 만듬
-        // Todo: CardHand에서 TableTop 방향으로 교환이 발생하면 안된다.
         else if ((!_workingCardHand.cardHandFlag && _whichCardSlot.cardHandFlag))
         {
             GoBackBeforeHand(card);
+            // Todo: return의 필요성 확인
             return;
         }
-        // if (!MyGameManager.DragableCheck)
-        // {
-        //     invisibleCard.SetParent(transform);
-        //     card.SetParent(_workingCardHand.transform);
-        //     _workingCardHand.InsertCard(card, _beforeCardIndex);
-        //     _workingCardHand = null;
-        //     _beforeCardIndex = -1;
-        //     return;
-        // }
         else if(_whichCardSlot == null)
         {
             Debug.Log("CardSlot 바깥에 카드를 드롭한 경우");
@@ -167,6 +167,7 @@ public class CardControlEngine : MonoBehaviour
             // invisibleCard 제자리로 보내기
             GoBackBeforeHand(card);
             string temp = _whichCardSlot.transform.GetChild(_targetIndex).GetChild(0).GetComponent<Text>().text;
+            // cardHand에서는 TableTop의 빈 칸에만 놓을 수 있다.
             if (temp == "" || temp == "-1")
             {
                 SwapCardsByInfo(card, _whichCardSlot.transform.GetChild(_targetIndex));

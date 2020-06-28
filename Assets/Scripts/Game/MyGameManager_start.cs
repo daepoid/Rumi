@@ -22,7 +22,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             buttonStart.enabled = false;
             buttonStart.GetComponent<Image>().color = Color.gray;
         }
-
         ClientCardNum_Board = new int[4] { 14, 14, 14, 14 };
     }
 
@@ -59,7 +58,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         //버튼, 테이블을 셋팅합니다.
         photonView.RPC("Backup", RpcTarget.All);
         photonView.RPC("Set_RunningGame", RpcTarget.All, 1);        // 게임 시작
-        //buttonStart.enabled = false;
+        buttonStart.enabled = false;
         buttonStart.GetComponent<Image>().color = Color.gray;
     }
     
@@ -221,7 +220,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     Players[j].cards.Add(deck[deck.Count - 1]);
                     deck.RemoveAt(deck.Count - 1);
                 }
-                for(int i=0;i<8;i++)
+                for(int i = 0; i < 8; i++)
                 {
                     Players[j].cards.Add(new Card());
                 }

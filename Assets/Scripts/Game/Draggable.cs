@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public Transform root;
+    public bool IsInvisible = false;
     void Start()
     {
         root = transform.root;

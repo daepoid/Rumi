@@ -1412,6 +1412,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   root: {fileID: 0}
+  IsInvisible: 1
 --- !u!114 &355981332
 MonoBehaviour:
   m_ObjectHideFlags: 0
