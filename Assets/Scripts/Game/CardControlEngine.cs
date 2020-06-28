@@ -109,16 +109,28 @@ public class CardControlEngine : MonoBehaviour
             _targetIndex = _whichCardSlot.GetIndexByPosition(card, _invisibleCardIndex);
         }
     }
+
+    void GoBackBeforeHand(Transform card)
+    {
+        invisibleCard.SetParent(transform);
+        card.SetParent(_workingCardHand.transform);
+        _workingCardHand.InsertCard(card, _beforeCardIndex);
+        _workingCardHand = null;
+        _beforeCardIndex = -1;
+    }
     
     void EndDrag(Transform card)
     {
-        if (!card.GetComponent<Draggable>().enabled || MyGameManager.Turn != MyGameManager.PlayerNum || (!_workingCardHand.cardHandFlag && _whichCardSlot.cardHandFlag))
+        if (!card.GetComponent<Draggable>().enabled || MyGameManager.Turn != MyGameManager.PlayerNum)
         {
-            invisibleCard.SetParent(transform);
-            card.SetParent(_workingCardHand.transform);
-            _workingCardHand.InsertCard(card, _beforeCardIndex);
-            _workingCardHand = null;
-            _beforeCardIndex = -1;
+            GoBackBeforeHand(card);
+            // return;
+        }
+        // TableTop에서 CardHand 방향으로 가져오지 못하게 만듬
+        // Todo: CardHand에서 TableTop 방향으로 교환이 발생하면 안된다.
+        else if ((!_workingCardHand.cardHandFlag && _whichCardSlot.cardHandFlag))
+        {
+            GoBackBeforeHand(card);
             return;
         }
         // if (!MyGameManager.DragableCheck)
@@ -130,14 +142,10 @@ public class CardControlEngine : MonoBehaviour
         //     _beforeCardIndex = -1;
         //     return;
         // }
-        if(_whichCardSlot == null)
+        else if(_whichCardSlot == null)
         {
             Debug.Log("CardSlot 바깥에 카드를 드롭한 경우");
-            invisibleCard.SetParent(transform);
-            card.SetParent(_workingCardHand.transform);
-            _workingCardHand.InsertCard(card, _beforeCardIndex);
-            _workingCardHand = null;
-            _beforeCardIndex = -1;
+            GoBackBeforeHand(card);
         }
         // else if (MyGameManager.ControlFlag)
         // {
@@ -157,20 +165,25 @@ public class CardControlEngine : MonoBehaviour
         {
             Debug.Log("카드 제한을 넘는 경우");
             // invisibleCard 제자리로 보내기
-            invisibleCard.SetParent(transform);
-            SwapCardsByInfo(card, _whichCardSlot.transform.GetChild(_targetIndex));
-            card.SetParent(_workingCardHand.transform);
-            _workingCardHand.InsertCard(card, _beforeCardIndex);
-            _workingCardHand = null;
-            _beforeCardIndex = -1;
+            GoBackBeforeHand(card);
+            string temp = _whichCardSlot.transform.GetChild(_targetIndex).GetChild(0).GetComponent<Text>().text;
+            if (temp == "" || temp == "-1")
+            {
+                SwapCardsByInfo(card, _whichCardSlot.transform.GetChild(_targetIndex));
+            }
+            // invisibleCard.SetParent(transform);
+            // SwapCardsByInfo(card, _whichCardSlot.transform.GetChild(_targetIndex));
+            // card.SetParent(_workingCardHand.transform);
+            // _workingCardHand.InsertCard(card, _beforeCardIndex);
+            // _workingCardHand = null;
+            // _beforeCardIndex = -1;
         }
         else
         {
+            // TODO: 지우고 테스트 해보기
             Debug.Log("카드 제한을 넘지 않는 경우");
-            // 모두 차 있지 않아 자리를 바꾸지 않고 그냥 추가한다.
-            SwapCardsByInvisible(invisibleCard, card);
-            // 자리가 비어있으므로 해당 cardslot에 집어 넣는다.
-            _whichCardSlot.InsertCard(card, _targetIndex);
+            SwapCardsByInvisible(invisibleCard, card);               // 모두 차 있지 않아 자리를 바꾸지 않고 그냥 추가한다.
+            _whichCardSlot.InsertCard(card, _targetIndex);                        // 자리가 비어있으므로 해당 cardslot에 집어 넣는다.
         }
         _cardSlots.ForEach(t=>t.UpdateCardSlot());
     }
