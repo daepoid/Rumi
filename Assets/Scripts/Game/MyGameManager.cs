@@ -45,6 +45,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public Transform tableTop; // 게임판
     public Text textTimer; // 60초 타이머
     public Text showWhosTurn;
+    public Text gameOverText;
     public Transform PLAYERS; // Game Scene의 Players와 연결되어 있습니다.
 
     private bool _turnStartFlag = true; // 자신의 턴이 시작될때 한 번만 수행
@@ -223,7 +224,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         if (ClientCardNum == Count_ClientCard() && ClientCardNum < MaxHandSize)
         {
             Debug.Log("Request() : 카드를 한 장 요청합니다.");
-            photonView.RPC("Serve_Card", RpcTarget.MasterClient, PlayerNum); 
+            photonView.RPC("Serve_Card", RpcTarget.MasterClient, PlayerNum);
+            Reset();
         }
         else
         {
