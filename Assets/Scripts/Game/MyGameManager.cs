@@ -52,7 +52,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     private bool _turnStartFlag = true; // 자신의 턴이 시작될때 한 번만 수행
 
     void Update()
-    {
+    { 
         if (_runningGame == 1)
         {
             if (_beforeTurn != Turn)
@@ -74,6 +74,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     Backup();
                     showWhosTurn.enabled = false;
                     _turnStartFlag = false;
+                    photonView.RPC("Turn_Alert", RpcTarget.All);
                     photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
 
@@ -599,10 +600,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     }
     
     //=========================================================================
-    // 카드 개수 동기화 - 마스터만 실행
-    // 설명
-    // 1. 클라이언트가 가지고 있는 카드 갯수를 동기화합니다.
-    // --------------------------------------------------------
     // 카드 개수 보고
     //설명
     // 1. 자신이 가지고 있는 카드의 수를 마스터에게 보고합니다.
@@ -625,4 +622,17 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             PLAYERS.GetChild(index).GetChild(1).GetComponent<Text>().text = ClientCardNum_Board[index].ToString();
         }
     }
+
+    [PunRPC]
+    void Turn_Alert()
+    {
+        for (int index = 0; index < _playerCount; index++) 
+        {
+            if (Turn == index)
+                PLAYERS.GetChild(index).GetComponent<Image>().color = new Color(1F, 1F, 0.2F, 0.4F);
+            else
+                PLAYERS.GetChild(index).GetComponent<Image>().color = new Color(1F, 1F, 1F, 0.2F);
+        }
+    }
 }
+

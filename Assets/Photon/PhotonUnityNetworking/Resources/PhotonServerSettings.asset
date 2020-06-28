@@ -57,6 +57,7 @@ MonoBehaviour:
   - SyncTime
   - View_ClientCard
   - View_TABLE
+  - Turn_Alert
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
