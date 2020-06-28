@@ -25,7 +25,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: kr
+  DevRegion: 
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -54,9 +54,10 @@ MonoBehaviour:
   - Sync_TABLE_Element
   - Sync_Turn
   - SyncTime
+  - Turn_Alert
   - View_ClientCard
   - View_TABLE
-  - Turn_Alert
+  - EndGame
   DisableAutoOpenWizard: 1
   ShowSettings: 0
-  DevRegionSetOnce: 1
+  DevRegionSetOnce: 0

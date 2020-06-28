@@ -105,11 +105,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 // photonView.RPC("SyncTime", RpcTarget.All, _time);
             }
             // 자신의 카드의 개수가 0개면 게임을 종료합니다.
-            if(Players[PlayerNum].cardNum == 0)
+            // if(_numberOfClientCard != 0 && Players[PlayerNum].cardNum == 0)
+            if (_numberOfClientCard != 0 && CountClientCard() == 0)
             {
                 Debug.Log("승리조건 달성. 게임종료");
                 photonView.RPC("EndGame", RpcTarget.All, PlayerNum);
-            } 
+            }
         }
     }
 
@@ -161,7 +162,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         buttonReset.enabled = false;
         buttonNext.enabled = false;
 
-        GameObject.Find("GameOverText").SetActive(true);
+        gameOverText.enabled = true;
+        // GameObject.Find("GameOverText").SetActive(true);
         if (playerNum == PlayerNum)
         {
             gameOverText.text = "You Win!";

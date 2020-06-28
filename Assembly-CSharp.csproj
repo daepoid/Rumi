@@ -12,7 +12,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{3069BBED-428E-14F8-FCF2-F885372BD2CE}</ProjectGuid>
+    <ProjectGuid>{7B4F9E76-5428-B531-DE03-7A50531737B2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -97,31 +97,31 @@
      <None Include="Assets\Photon\PhotonLibs\Photon3Unity3D.xml" />
      <None Include="Assets\Photon\PhotonUnityNetworking\link.xml" />
  <Reference Include="Unity.Timeline.Editor">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.VSCode.Editor">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro.Editor">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Timeline">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
  </Reference>
  <Reference Include="Unity.CollabProxy.Editor">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Rider.Editor">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
  </Reference>
  <Reference Include="Unity.TextMeshPro">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.UI">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
  <HintPath>D:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -301,31 +301,31 @@
  <HintPath>D:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.App">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Firebase/Plugins/Firebase.App.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Firebase/Plugins/Firebase.App.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.Auth">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Firebase/Plugins/Firebase.Auth.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Firebase/Plugins/Firebase.Auth.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.Platform">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Firebase/Plugins/Firebase.Platform.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Firebase/Plugins/Firebase.Platform.dll</HintPath>
  </Reference>
  <Reference Include="Firebase.TaskExtension">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Firebase/Plugins/Firebase.TaskExtension.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Firebase/Plugins/Firebase.TaskExtension.dll</HintPath>
  </Reference>
  <Reference Include="Google.MiniJson">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Firebase/Plugins/Google.MiniJson.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Firebase/Plugins/Google.MiniJson.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Compat">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Parse/Plugins/dotNet45/Unity.Compat.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Parse/Plugins/dotNet45/Unity.Compat.dll</HintPath>
  </Reference>
  <Reference Include="Unity.Tasks">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Parse/Plugins/dotNet45/Unity.Tasks.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Parse/Plugins/dotNet45/Unity.Tasks.dll</HintPath>
  </Reference>
  <Reference Include="Photon3Unity3D">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Photon/PhotonLibs/Photon3Unity3D.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Photon/PhotonLibs/Photon3Unity3D.dll</HintPath>
  </Reference>
  <Reference Include="websocket-sharp">
- <HintPath>E:/Users/Daepoid/Code/Rumi_20200629-2/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
+ <HintPath>E:/Users/Daepoid/Code/Rumi_JH/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
  </Reference>
  <Reference Include="netstandard">
  <HintPath>D:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
@@ -675,47 +675,47 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
-      <Project>{4B7F9627-7837-769C-0C6F-1EA98D4D3388}</Project>
+      <Project>{CB998EFC-3A70-D62A-7E39-9ABB70A16B8A}</Project>
       <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
-      <Project>{4CB0BB74-71B3-995E-781C-FF5F353F1044}</Project>
+      <Project>{A843B0A1-5E08-6CF9-C417-DCE023069649}</Project>
       <Name>PunDemos.DemoHubEditor</Name>
     </ProjectReference>
     <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
-      <Project>{7DCC3860-59FD-65B1-7E02-48B03D55A486}</Project>
+      <Project>{7E664C58-394E-D9FA-4A57-6EB8FFB78861}</Project>
       <Name>PunDemos.DemoSlotcarEditor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
-      <Project>{ED3E28E3-7DA7-B8F9-D419-68365569C227}</Project>
+      <Project>{01CC7296-2B81-AD9E-BA0A-7126289F5F56}</Project>
       <Name>PhotonUnityNetworking.Demos</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{06014B73-4F28-C946-8DA6-8EF0A3DDEC0E}</Project>
+      <Project>{AB3879F0-0C37-7BF3-D95C-39C455192D37}</Project>
       <Name>PhotonUnityNetworking.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonWebSocket.csproj">
-      <Project>{68C61FA9-3C45-9446-6510-EA9291D4B873}</Project>
+      <Project>{9B98D4C8-0A32-0D79-5888-68998F09B3D4}</Project>
       <Name>PhotonWebSocket</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonRealtime.csproj">
-      <Project>{A8494D2D-748A-4E79-AE0E-F783A778F8FD}</Project>
+      <Project>{A6230E75-2BFF-31FD-FB3B-2961BC998430}</Project>
       <Name>PhotonRealtime</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.csproj">
-      <Project>{9CEA2033-7DBB-0E97-ABEB-93D3EA6DACD5}</Project>
+      <Project>{987E94B7-EF37-5ADA-3C5F-84BD90CE45C9}</Project>
       <Name>PhotonUnityNetworking</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonChat.csproj">
-      <Project>{969235D3-128F-4FD3-83FB-D7D19684FEFB}</Project>
+      <Project>{ED8862F8-6FE2-D935-73EB-83B4229DFB52}</Project>
       <Name>PhotonChat</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
-      <Project>{8BCBC817-4229-7D5A-D4C8-0AB5B99DDF17}</Project>
+      <Project>{7751881E-1085-AFB7-60A9-93AD5105AC49}</Project>
       <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
-      <Project>{ACA92CDC-BCFE-E3E3-F0E5-7BCCE38F5AE0}</Project>
+      <Project>{12D2E83B-EC06-F39C-8777-65112798D590}</Project>
       <Name>PhotonUnityNetworking.Editor</Name>
     </ProjectReference>
   </ItemGroup>
