@@ -75,6 +75,7 @@
      <Compile Include="Assets\Scripts\Game\CardControlEngine.cs" />
      <Compile Include="Assets\Scripts\Game\CardSlot.cs" />
      <Compile Include="Assets\Scripts\Game\Draggable.cs" />
+     <Compile Include="Assets\Scripts\Game\IsInvisible.cs" />
      <Compile Include="Assets\Scripts\Game\MakeCards.cs" />
      <Compile Include="Assets\Scripts\Game\MyGameManager.cs" />
      <Compile Include="Assets\Scripts\Game\MyGameManager_start.cs" />

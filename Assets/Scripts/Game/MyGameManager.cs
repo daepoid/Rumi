@@ -745,7 +745,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void Serve_Card(int playerNum)
     {
-        Card card = deck[deck.Count - 1];
+        Card card = new Card(deck[deck.Count - 1].CardNumber, deck[deck.Count - 1].CardColor);
+        // Card card = deck[deck.Count - 1];
         deck.RemoveAt(deck.Count - 1);
 
         Debug.Log("Serve_Card : " + playerNum + "에게" + card.CardColor+card.CardNumber+"전달.");
@@ -762,9 +763,23 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         int index = 0;
         for (index = 0; index < MaxHandSize; index++)
         {
-            if (ClientCard[index].CardNumber == "-1")
+            if (ClientCard[index].CardNumber == "-1" || ClientCard[index].CardNumber == "")
             {
                 Debug.Log("   index =" + index);
+                
+                //Todo: 구현
+                if (index < MaxHandSize / 2)
+                {
+                    // invisibe != null 이면 pass
+                    if (cardHandTop.GetChild(index).GetComponent<IsInvisible>().enabled)
+                    {
+                        
+                    }
+                }
+                else
+                {
+                    
+                }
                 break;
             }
         }
