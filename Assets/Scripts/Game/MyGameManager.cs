@@ -27,7 +27,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // public static bool DragableCheck = false; // 드래그 할 수 있는 상태인지 확인.
     // 다음 턴으로 넘어가면서 드래그를 강제로 종료하고 다음사람 턴이 시작되면서 드래그가 다시 가능해진다.
 
-    public int ClientCardNum = 0;
+    public int clientCardNum = 0;
     public int[] ClientCardNum_Board = new int[4] {0, 0, 0, 0};
 
     private int _playerCount = 0; // 게임중인 플레이어 수를 알려줍니다.
@@ -36,6 +36,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public static int Turn = -1; // 턴을 나타내는 변수
     private int _beforeTurn = -1;
     private static float _time = 0; // 60초 타이머
+    private bool _tableNullFlag = true;
     
     public Button buttonStart; // start button : 마스터만 실행
     public Button buttonReset; // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
@@ -74,7 +75,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     showWhosTurn.enabled = false;
                     _turnStartFlag = false;
                     Get_ClientCard(); // 자신의 카드의 개수를 셉니다.
-                    Count_ClientCard();
+                    CountClientCard();
                     photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
 
@@ -176,6 +177,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Next()
     {
+        Debug.Log("Turn : " + Turn + "\nPlayerNum : " + PlayerNum);
         if (Turn != PlayerNum)
         {
             return;
@@ -185,8 +187,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         
         Backup();
         Get_ClientCard();
-        Get_TABLE();
-
+        // Get_TABLE();
         // // 클라이언트 카드
         // string str = "";
         // foreach (Card c in ClientCard)
@@ -220,8 +221,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         //     }
         //     Debug.Log("TableBackup" + i + " : " + str);
         // }
-
-        if (ClientCardNum == Count_ClientCard() && ClientCardNum < MaxHandSize)
+        Debug.Log("카드 받기");
+        if (clientCardNum == CountClientCard() && clientCardNum < MaxHandSize)
         {
             Debug.Log("Request() : 카드를 한 장 요청합니다.");
             photonView.RPC("Serve_Card", RpcTarget.MasterClient, PlayerNum);
@@ -232,25 +233,36 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             Debug.Log("Rule() : 시작");
             // TABLE Rule 검사 시작
             Get_TABLE();
-            if (!Rule())
+            if (_tableNullFlag)
             {
-                // Rule을 만족시키지 못함
-                Debug.Log("     Rule : Fail");
-                Reset();
+                photonView.RPC("Serve_Card", RpcTarget.MasterClient, PlayerNum);
             }
             else
             {
-                // Rule을 만족시킴
-                Debug.Log("     Rule : True");
-                Get_ClientCard();
-                Sync_TABLE();
+                if (!Rule())
+                {
+                    // Rule을 만족시키지 못함
+                    Debug.Log("     Rule : Fail");
+                    Reset();
+                    photonView.RPC("Serve_Card", RpcTarget.MasterClient, PlayerNum);
+                }
+                else
+                {
+                    // Rule을 만족시킴
+                    Debug.Log("     Rule : True");
+                    if (true)
+                    {
+                        // 아무것도 없어서 모두 규칙을 만족하는 경우를 처리한다.
+                    }
+                    Get_ClientCard();
+                    Sync_TABLE();
+                }
             }
         }
         
         photonView.RPC("Backup", RpcTarget.All);
         
         _time = 0.0f;
-        // photonView.RPC("SyncTime", RpcTarget.All, 0);
         photonView.RPC("SyncTime", RpcTarget.All, _time);
         
         Turn = (Turn + 1) % _playerCount;
@@ -259,235 +271,16 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         
         photonView.RPC("SwitchTableAccess", RpcTarget.All);
         photonView.RPC("View_TABLE", RpcTarget.All);
-        photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,PlayerNum,ClientCardNum);
+        photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,PlayerNum,clientCardNum);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
         Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
         NextEntryFlag = false;
     }
 
     //=========================================================================
-    // Rule() - BETA
-    // 설명
-    // 1. TABLE의 Rule을 확인합니다.
-    //   1) Rule을 만족시키지 못하면 False
-    //   2) Rule을 만족하면 True
-    //=========================================================================
-    public bool Rule()
-    {
-        // 카드의 규칙을 연산하기 위한 변수
-        int type = 0;           // 연속 방식 - 1 : 같은 숫자, 2 : 같은 색상         
-        int Count_Continue = 0; // 연속된 카드 카운트
-        string pre_num = "-1";
-        string pre_col = "yellow";
-        string cur_num;
-        string cur_col;
-        string jok_num = "-1";
-        string jok_col = "yellow";
-        List<string> Card_Color = new List<string>(); //색상이 겹치는지 확인할 때 사용하는 리스트
-
-        // 규칙 검사 시작
-        for (int row = 0; row < TableRow; row++)
-        {
-            for (int col = 0; col < TableCol; col++)
-            {
-                cur_num = Table[row, col].CardNumber;
-                cur_col = Table[row, col].CardColor;
-
-                // 해당 위치에 카드가 없을 때
-                if (cur_num == "-1")
-                {
-                    if (Count_Continue == 1 || Count_Continue == 2)
-                    {
-                        Debug.Log("     Fail:카드 개수 3개 이하");
-                        return false;
-                    }
-                    else
-                    {
-                        pre_num = "-1";
-                        pre_col = "yellow";
-                        Count_Continue = 0;
-                        type = 0;
-                        Card_Color.Clear();
-                        continue;
-                    }
-                }
-
-                // 해당 위치에 카드가 있을 때
-                else
-                {
-                    if (type == 1 && Count_Continue == 13)
-                    {
-                        Count_Continue = 0;
-                        type = 0;
-                        pre_num = "-1";
-                        pre_col = "yellow";
-                        continue;
-                    }
-                    if (type == 2 && Count_Continue == 4)
-                    {
-                        Count_Continue = 0;
-                        type = 0;
-                        pre_num = "-1";
-                        pre_col = "yellow";
-                        continue;
-                    }
-
-                    // 카드가 한장만 확정일 때
-                    if (Count_Continue == 0)
-                    {
-                        Debug.Log("     카드가 한장만 확정");
-                        if (cur_num == "J")
-                        {
-                            // 맨 앞에 조커가 나왔을 경우
-                            Debug.Log("     가장 앞 조커");
-                            pre_num = cur_num;
-                            Count_Continue++;
-                            type = 0;
-                            continue;
-                        }
-                        
-                        Card_Color.Add(cur_col);
-                        pre_num = cur_num;
-                        pre_col = cur_col;
-                        Count_Continue++;
-                        type = 0;
-                        continue;
-                    }
-
-                    // 조커가 카드덱의 가장 앞에 있을 경우
-                    if (Count_Continue == 1 && pre_num =="J")
-                    {
-                        Card_Color.Add(cur_col);
-                        pre_num = cur_num;
-                        pre_col = cur_col;
-                        Count_Continue++;
-                        continue;
-                        // 아직 타입을 결정 할 수 없다.
-                    }
-
-                    // 타입이 결정되지 않을 채 조커가 2번째 카드로 나왔을 경우
-                    if (Count_Continue == 1 && cur_num == "J")
-                    {
-                        Count_Continue++;
-                        continue;
-                    }
-
-                    // 카드가 2장 이상 확정일 때
-                    if (type == 0)                                          // 어떤 규칙인지 설정이 안되었을 때 실행
-                        type = (pre_col != cur_col) ? 1 : 2;                // 색상이 다르면 같은 숫자가 연속됩니다.(1), 색상이 같으면 숫자가 오름차순입니다.(2) 
-
-                    Debug.Log("pre:" +pre_col + pre_num);
-
-                    if (type == 1)
-                    {
-                        // 같은 숫자가 연속됩니다. 
-                        // EX ) 1(red), 1(blue), 1(yellow), 1(black)
-                        // 1. 숫자가 다르면 안된다. 
-                        // 2. 색상이 같으면 안된다.
-
-                        if(cur_num == "J")
-                        {
-                            Count_Continue++;
-                            continue;
-                        }
-
-                        // 카드의 숫자가 다름 -> 1번 위반
-                        if (pre_num != cur_num)
-                        {
-                            Debug.Log("     Fail:(1)-1 같은 숫자가 아님");
-                            Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);                 
-                            return false;
-                        }
-
-                        // 카드의 색상이 겹침 -> 2번 위반
-                        if (Card_Color.Contains(cur_col))
-                        {
-                            Debug.Log("     Fail:(1)-2 색상이 겹침");
-                            return false;
-                        }
-
-                        // 다음 카드 확인
-                        pre_num = cur_num;
-                        pre_col = cur_col;
-                        Card_Color.Add(cur_col);
-                        Count_Continue++;
-                    }
-                    else if (type == 2)
-                    {
-                        // 같은 색상 연속
-                        // EX ) 1(red), 2(red), 3(red), 4(red) ...
-                        // 1. 숫자가 연속되지 않으면 안된다.
-                        // 2. 색상이 다르면 안된다.
-
-                        if(cur_num == "J")
-                        {
-                            jok_num = (int.Parse(pre_num) + 1).ToString();
-                            jok_col = pre_col;
-                            pre_num = "J";
-                            Count_Continue++;
-                            continue;
-                        }
-
-                        if (pre_num != "J")
-                        {
-                            // 카드 사이가 1 차이가 아님 -> 1번 위반
-                            if (int.Parse(pre_num) + 1 != int.Parse(cur_num))
-                            {
-                                Debug.Log("     Fail:(2)-1 오름차순이 아님");
-                                Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);
-
-                                return false;
-                            }
-                            // 카드의 색상이 다름 -> 2번 위반
-                            if (pre_col != cur_col)
-                            {
-                                Debug.Log("     Fail:(2)-2 같은 색상이 아님");
-                                Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);
-
-                                return false;
-                            }
-
-                            // 다음 카드 확인
-                            pre_num = cur_num;
-                            pre_col = cur_col;
-                            Count_Continue++;
-                        }
-                        else
-                        {
-                            // 카드 사이에 조커가 껴 있을 경우
-                            // 카드 사이가 2 차이가 아님 -> 1번 위반
-                            if (int.Parse(jok_num) + 1 != int.Parse(cur_num))
-                            {
-                                Debug.Log("     Fail:(2)-1 오름차순이 아님(조커 Rule)");
-                                Debug.Log("     pre:" + jok_col + jok_num + "/ cur:" + cur_col + cur_num);
-
-                                return false;
-                            }
-                            // 카드의 색상이 다름 -> 2번 위반
-                            if (jok_col != cur_col)
-                            {
-                                Debug.Log("     Fail:(2)-2 같은 색상이 아님(조커 Rule)");
-                                Debug.Log("     pre:" + jok_col + jok_num + "/ cur:" + cur_col + cur_num);
-
-                                return false;
-                            }
-
-                            // 다음 카드 확인
-                            pre_num = cur_num;
-                            pre_col = cur_col;
-                            Count_Continue++;
-                        }
-                    }
-                }
-            } // for - col
-        } // for - row
-        return true;    // 규칙 문제가 없을 시 true 반환
-    }
-
-    //=========================================================================
     // Backup() : TABLE[] 배열의 내용을 TABLE_backup[] 배열로 복사합니다.
     // Sync_Turn() : 게임의 Turn을 동기화 합니다.
-    // Count_ClientCard() : 클라이언트들이 자신의 카드를 셉니다. 그 수만큼을 반환합니다.
+    // CountClientCard() : 클라이언트들이 자신의 카드를 셉니다. 그 수만큼을 반환합니다.
     //=========================================================================
     [PunRPC]
     void Backup()
@@ -528,17 +321,17 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    int Count_ClientCard()
+    int CountClientCard()
     {
-        ClientCardNum = 0;
+        int count = 0;
         foreach (Card item in ClientCard)
         {
             if (item.CardNumber != "-1" && item.CardNumber != "")
             {
-                ClientCardNum++;
+                count++;
             }
         }
-        return ClientCardNum;
+        return count;
     }
 
     //=========================================================================
@@ -601,6 +394,10 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     {
                         Table[row, col].CardNumber = "-1";
                     }
+                    else if(Table[row, col].CardNumber != "" && Table[row, col].CardNumber != "-1")
+                    {
+                        _tableNullFlag = false;
+                    }
                     //Table[row, col].CardColor = Card.ConvertToCardColor(tableTop.GetChild(row).GetChild(col).GetChild(0).GetComponent<Text>().color);
                 }
                 catch (Exception e)
@@ -647,35 +444,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     void Get_ClientCard()
     {
         ClientCard.Clear();
-        // int halfSize = MaxHandSize / 2;
-        //
-        // for (int i = 0; i < halfSize; i++)
-        // {
-        //     Card newCard = new Card();
-        //     Debug.Log("cardHandTop.childCount" + cardHandTop.childCount);
-        //     if (cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
-        //         cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
-        //     {
-        //         newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
-        //     }
-        //     else
-        //     {
-        //         newCard = new Card();
-        //     }
-        //     ClientCard.Add(newCard);
-        //     
-        //     Debug.Log("cardHandTop.childCount" + cardHandBot.childCount);
-        //     if (cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "" &&
-        //         cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text != "-1")
-        //     {
-        //         newCard = new Card(cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandBot.GetChild(i).GetChild(0).GetComponent<Text>().color);
-        //     }
-        //     else
-        //     {
-        //         newCard = new Card();
-        //     }
-        //     ClientCard.Add(newCard);
-        // }
         for (int i = 0; i < cardHandTop.childCount; i++)
         {
             Card newCard = new Card(cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().text, cardHandTop.GetChild(i).GetChild(0).GetComponent<Text>().color);
@@ -745,11 +513,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void Serve_Card(int playerNum)
     {
-        Card card = new Card(deck[deck.Count - 1].CardNumber, deck[deck.Count - 1].CardColor);
-        // Card card = deck[deck.Count - 1];
+        // Card card = new Card(deck[deck.Count - 1].CardNumber, deck[deck.Count - 1].CardColor);
+        Card card = deck[deck.Count - 1];
         deck.RemoveAt(deck.Count - 1);
 
-        Debug.Log("Serve_Card : " + playerNum + "에게" + card.CardColor+card.CardNumber+"전달.");
+        Debug.Log("Serve_Card : " + playerNum + "에게" + card.CardColor + card.CardNumber + "전달.");
         photonView.RPC("Receive_Card", RpcTarget.All, playerNum, new string[] { card.CardNumber, card.CardColor });
     }
 
@@ -765,26 +533,25 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             if (ClientCard[index].CardNumber == "-1" || ClientCard[index].CardNumber == "")
             {
-                Debug.Log("   index =" + index);
-                
-                //Todo: 구현
-                if (index < MaxHandSize / 2)
-                {
-                    // invisibe != null 이면 pass
-                    if (cardHandTop.GetChild(index).GetComponent<IsInvisible>().enabled)
-                    {
-                        
-                    }
-                }
-                else
-                {
-                    
-                }
+                Debug.Log("   index = " + index);
+                // //Todo: 구현
+                // if (index < MaxHandSize / 2)
+                // {
+                //     // invisibe != null 이면 pass
+                //     if (cardHandTop.GetChild(index).GetComponent<IsInvisible>().enabled)
+                //     {
+                //         
+                //     }
+                // }
+                // else
+                // {
+                //     
+                // }
                 break;
             }
         }
         ClientCard[index] = new Card(numCol[0], numCol[1]);
-        Count_ClientCard();
+        CountClientCard();
         View_TABLE();
         View_ClientCard();
     }

@@ -78,6 +78,7 @@
      <Compile Include="Assets\Scripts\Game\IsInvisible.cs" />
      <Compile Include="Assets\Scripts\Game\MakeCards.cs" />
      <Compile Include="Assets\Scripts\Game\MyGameManager.cs" />
+     <Compile Include="Assets\Scripts\Game\MyGameManager_rule.cs" />
      <Compile Include="Assets\Scripts\Game\MyGameManager_start.cs" />
      <Compile Include="Assets\Scripts\Game\Player.cs" />
      <Compile Include="Assets\Scripts\Game\PlayerTextManager.cs" />

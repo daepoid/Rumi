@@ -92,8 +92,14 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
         int OtherPlayerIndex = Array.FindIndex(playersInRoomOthersLeft, leftPlayer => leftPlayer.NickName == otherPlayer.NickName);
 
         //텍스트 출력
-        PlayerText[OtherPlayerIndex  + 1].text = "";
-  
+        for (int i = 0; i < 4; i++)
+        {
+            if (PlayerText[i].text == otherPlayer.NickName)
+            {
+                PlayerText[i].text ="";
+                break;
+            }
+        }
 
         //현 상태 플레이어 정보 남겨두기
         playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
