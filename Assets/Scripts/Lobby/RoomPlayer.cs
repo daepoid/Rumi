@@ -16,15 +16,26 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        currentPlayersInRoom = PhotonNetwork.PlayerList;
-        playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
+        
+        for (int i = 0; i < 4; i++)
+        {
 
-        printNameText();
+            PlayerText[i].text = "";
+
+        }
     }
 
 
-    void printNameText()
+    public void printNameText()
     {
+        currentPlayersInRoom = PhotonNetwork.PlayerList;
+        playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
+        for (int i = 0; i < 4; i++)
+        {
+            
+                PlayerText[i].text = "";
+            
+        }
         //로컬 플레이어 인덱스 찾기
         localPlayerIndex = Array.FindIndex(currentPlayersInRoom, player => player.IsLocal == true);
 
@@ -39,6 +50,10 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
         {
             PlayerText[1].text = PhotonNetwork.PlayerListOthers[0].NickName.ToString();
         }
+        else
+        {
+            PlayerText[1].text = "";
+        }
 
         //Player2 존재시 출력
         if (PhotonNetwork.PlayerListOthers.Length >= 2)
@@ -46,17 +61,26 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
             Debug.Log(PhotonNetwork.PlayerListOthers[1]);
             PlayerText[2].text = PhotonNetwork.PlayerListOthers[1].NickName.ToString();
         }
+        else
+        {
+            PlayerText[2].text = "";
+        }
 
         //Player3 존재시 출력
         if (PhotonNetwork.PlayerListOthers.Length >= 3)
         {
             PlayerText[3].text = PhotonNetwork.PlayerListOthers[2].NickName.ToString();
         }
+        else
+        {
+            PlayerText[3].text = "";
+        }
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
         base.OnPlayerEnteredRoom(newPlayer);
-
+        currentPlayersInRoom = PhotonNetwork.PlayerList;
+        playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
         //새 플레이어가 포함된 플레이어 정보 얻기
         //쓰이진 않는데 일단 넣어둠
         currentPlayersInRoom = PhotonNetwork.PlayerList;
@@ -83,7 +107,8 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         base.OnPlayerLeftRoom(otherPlayer);
-
+        currentPlayersInRoom = PhotonNetwork.PlayerList;
+        playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
         //새 플레이어가 포함된 플레이어 정보 얻기
         //쓰이진 않는데 일단 넣어둠
         currentPlayersInRoom = PhotonNetwork.PlayerList;
@@ -104,4 +129,5 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
         //현 상태 플레이어 정보 남겨두기
         playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
     }
+   
 }

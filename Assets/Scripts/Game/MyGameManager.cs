@@ -353,13 +353,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         {
             if (item.CardNumber != "-1" && item.CardNumber != "")
             {
-                Debug.Log(item.CardColor + item.CardNumber + " : 카운트");
                 count++;
-            }
-            else
-            {
-                Debug.Log(item.CardColor + item.CardNumber + " : No카운트");
-
             }
         }
         return count;
@@ -494,12 +488,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             }
             ClientCard.Add(newCard);
         }
-
-        Debug.Log("get_clientCard 카드 확인");
-        foreach (Card item in ClientCard)
-        {
-            Debug.Log(item.CardColor + item.CardNumber);
-        }
     }
 
     //=========================================================================
@@ -596,10 +584,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         photonView.RPC("Report_ClientCardNum", RpcTarget.All, PlayerNum, _numberOfClientCard);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
         Debug.Log("Receive 카드 확인");
-        foreach (Card item in ClientCard)
-        {
-            Debug.Log(item.CardColor + item.CardNumber);
-        }
     }
 
     //=========================================================================

@@ -701,16 +701,20 @@
     <Compile Include="Assets\Scripts\Game\CardControlEngine.cs" />
     <Compile Include="Assets\Scripts\Game\CardSlot.cs" />
     <Compile Include="Assets\Scripts\Game\Draggable.cs" />
+    <Compile Include="Assets\Scripts\Game\IsInvisible.cs" />
+    <Compile Include="Assets\Scripts\Game\MakeCards.cs" />
     <Compile Include="Assets\Scripts\Game\MyGameManager.cs" />
+    <Compile Include="Assets\Scripts\Game\MyGameManager_rule.cs" />
+    <Compile Include="Assets\Scripts\Game\MyGameManager_start.cs" />
     <Compile Include="Assets\Scripts\Game\Player.cs" />
     <Compile Include="Assets\Scripts\Game\PlayerTextManager.cs" />
     <Compile Include="Assets\Scripts\Game\SortButtonHandler.cs" />
-    <Compile Include="Assets\Scripts\Game\TableTopCardManager.cs" />
-    <Compile Include="Assets\Scripts\Game\TableTopSlot.cs" />
     <Compile Include="Assets\Scripts\Lobby\LobbyManager.cs" />
+    <Compile Include="Assets\Scripts\Lobby\LobbyNetworkManager.cs" />
+    <Compile Include="Assets\Scripts\Lobby\RoomName.cs" />
+    <Compile Include="Assets\Scripts\Lobby\RoomPlayer.cs" />
     <Compile Include="Assets\Scripts\SignIn\AuthManager.cs" />
     <Compile Include="Assets\Scripts\SignIn\PlayerName.cs" />
-    <Compile Include="Assets\Scripts\makeCards.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ExternalDependencyManager\Editor\GoogleRegistries.xml" />

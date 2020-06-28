@@ -27,6 +27,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         string jok_num = "-1";
         string jok_col = "yellow";
         List<string> Card_Color = new List<string>(); //색상이 겹치는지 확인할 때 사용하는 리스트
+        bool joker = false;
 
         // 규칙 검사 시작
         for (int row = 0; row < TableRow; row++)
@@ -35,6 +36,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             {
                 cur_num = Table[row, col].CardNumber;
                 cur_col = Table[row, col].CardColor;
+
+                Debug.Log("현재카드:" + cur_col + cur_num);
 
                 // 해당 위치에 카드가 없을 때
                 if (cur_num == "-1")
@@ -109,8 +112,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     }
 
                     // 타입이 결정되지 않을 채 조커가 2번째 카드로 나왔을 경우
-                    if (Count_Continue == 1 && cur_num == "J")
+                    if (type == 0 && cur_num == "J")
                     {
+                        joker = true;
+                        jok_num = (int.Parse(pre_num) + 1).ToString();
+                        jok_col = pre_col;
                         Count_Continue++;
                         continue;
                     }
@@ -119,7 +125,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     if (type == 0)                                          // 어떤 규칙인지 설정이 안되었을 때 실행
                         type = (pre_col != cur_col) ? 1 : 2;                // 색상이 다르면 같은 숫자가 연속됩니다.(1), 색상이 같으면 숫자가 오름차순입니다.(2) 
 
-                    Debug.Log("pre:" +pre_col + pre_num);
 
                     if (type == 1)
                     {
@@ -128,7 +133,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                         // 1. 숫자가 다르면 안된다. 
                         // 2. 색상이 같으면 안된다.
 
-                        if(cur_num == "J")
+                        if (cur_num == "J")
                         {
                             Count_Continue++;
                             continue;
@@ -138,7 +143,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                         if (pre_num != cur_num)
                         {
                             Debug.Log("     Fail:(1)-1 같은 숫자가 아님");
-                            Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);                 
+                            Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);
                             return false;
                         }
 
@@ -162,64 +167,44 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                         // 1. 숫자가 연속되지 않으면 안된다.
                         // 2. 색상이 다르면 안된다.
 
-                        if(cur_num == "J")
+                        if (joker)
                         {
+                            Debug.Log("     현재 조커가 2번째 있었음.");
+                            pre_num = jok_num;
+                            pre_col = jok_col;
+                            joker = false;
+                        }
+
+                        if (cur_num == "J")
+                        {
+                            joker = true;
                             jok_num = (int.Parse(pre_num) + 1).ToString();
                             jok_col = pre_col;
-                            pre_num = "J";
                             Count_Continue++;
                             continue;
                         }
 
-                        if (pre_num != "J")
+                        // 카드 사이가 1 차이가 아님 -> 1번 위반
+                        if (int.Parse(pre_num) + 1 != int.Parse(cur_num))
                         {
-                            // 카드 사이가 1 차이가 아님 -> 1번 위반
-                            if (int.Parse(pre_num) + 1 != int.Parse(cur_num))
-                            {
-                                Debug.Log("     Fail:(2)-1 오름차순이 아님");
-                                Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);
+                            Debug.Log("     Fail:(2)-1 오름차순이 아님");
+                            Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);
 
-                                return false;
-                            }
-                            // 카드의 색상이 다름 -> 2번 위반
-                            if (pre_col != cur_col)
-                            {
-                                Debug.Log("     Fail:(2)-2 같은 색상이 아님");
-                                Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);
-
-                                return false;
-                            }
-
-                            // 다음 카드 확인
-                            pre_num = cur_num;
-                            pre_col = cur_col;
-                            Count_Continue++;
+                            return false;
                         }
-                        else
+                        // 카드의 색상이 다름 -> 2번 위반
+                        if (pre_col != cur_col)
                         {
-                            // 카드 사이에 조커가 껴 있을 경우
-                            // 카드 사이가 2 차이가 아님 -> 1번 위반
-                            if (int.Parse(jok_num) + 1 != int.Parse(cur_num))
-                            {
-                                Debug.Log("     Fail:(2)-1 오름차순이 아님(조커 Rule)");
-                                Debug.Log("     pre:" + jok_col + jok_num + "/ cur:" + cur_col + cur_num);
+                            Debug.Log("     Fail:(2)-2 같은 색상이 아님");
+                            Debug.Log("     pre:" + pre_col + pre_num + "/ cur:" + cur_col + cur_num);
 
-                                return false;
-                            }
-                            // 카드의 색상이 다름 -> 2번 위반
-                            if (jok_col != cur_col)
-                            {
-                                Debug.Log("     Fail:(2)-2 같은 색상이 아님(조커 Rule)");
-                                Debug.Log("     pre:" + jok_col + jok_num + "/ cur:" + cur_col + cur_num);
-
-                                return false;
-                            }
-
-                            // 다음 카드 확인
-                            pre_num = cur_num;
-                            pre_col = cur_col;
-                            Count_Continue++;
+                            return false;
                         }
+
+                        // 다음 카드 확인
+                        pre_num = cur_num;
+                        pre_col = cur_col;
+                        Count_Continue++;
                     }
                 }
             } // for - col

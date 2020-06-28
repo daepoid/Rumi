@@ -59,7 +59,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         //버튼, 테이블을 셋팅합니다.
         photonView.RPC("Backup", RpcTarget.All);
         photonView.RPC("Set_RunningGame", RpcTarget.All, 1);        // 게임 시작
-        buttonStart.enabled = false;
+        //buttonStart.enabled = false;
         buttonStart.GetComponent<Image>().color = Color.gray;
     }
     
