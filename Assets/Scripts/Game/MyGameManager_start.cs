@@ -22,6 +22,8 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             buttonStart.enabled = false;
             buttonStart.GetComponent<Image>().color = Color.gray;
         }
+
+        ClientCardNum_Board = new int[4] { 14, 14, 14, 14 };
     }
 
     //=========================================================================
@@ -44,7 +46,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Divide_Card();                                                    // 마스터(서버)가 카드를 나누어줌
         Sync_Card();                                                      // 마스터(서버)가 배분한 카드를 동기화 시킵니다.
         photonView.RPC("View_ClientCard", RpcTarget.All);    // 자신이 받은 카드를 확인합니다.
-        photonView.RPC("CountClientCard", RpcTarget.All);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
 
         // 게임의 턴을 설정합니다.

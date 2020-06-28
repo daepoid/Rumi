@@ -27,7 +27,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // public static bool DragableCheck = false; // 드래그 할 수 있는 상태인지 확인.
     // 다음 턴으로 넘어가면서 드래그를 강제로 종료하고 다음사람 턴이 시작되면서 드래그가 다시 가능해진다.
 
-    public int[] ClientCardNum_Board = new int[4] {0, 0, 0, 0};
+    public int[] ClientCardNum_Board;
 
     private int _playerCount = 0; // 게임중인 플레이어 수를 알려줍니다.
     public static int PlayerNum = -1; // 자신의 플레이어 번호를 알려줍니다. 0~4
@@ -74,8 +74,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     Backup();
                     showWhosTurn.enabled = false;
                     _turnStartFlag = false;
-                    Get_ClientCard(); // 자신의 카드의 개수를 셉니다.
-                    _numberOfClientCard = CountClientCard();
                     photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
 
@@ -109,8 +107,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 {
                     photonView.RPC("SyncTime", RpcTarget.All, _time);
                 }
-                // photonView.RPC("SyncTime", RpcTarget.All, _time);
-                photonView.RPC("Sync_ClientCardNum", RpcTarget.All, ClientCardNum_Board);
+                // photonView.RPC("SyncTime", RpcTarget.All, _time);   
             }
             // 자신의 카드의 개수가 0개면 게임을 종료합니다.
             /* if()
@@ -293,7 +290,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         
         photonView.RPC("SwitchTableAccess", RpcTarget.All);
         photonView.RPC("View_TABLE", RpcTarget.All);
-        photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,PlayerNum, _numberOfClientCard);
+
+        Get_ClientCard();
+        _numberOfClientCard = CountClientCard();
+        Debug.Log("numberOfClientCard : " + _numberOfClientCard);
+        photonView.RPC("Report_ClientCardNum", RpcTarget.All,PlayerNum, _numberOfClientCard);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
         Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
         NextEntryFlag = false;
@@ -347,11 +348,18 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     int CountClientCard()
     {
         int count = 0;
+        Debug.Log(" CountClientCard 카드 카운트");
         foreach (Card item in ClientCard)
         {
             if (item.CardNumber != "-1" && item.CardNumber != "")
             {
+                Debug.Log(item.CardColor + item.CardNumber + " : 카운트");
                 count++;
+            }
+            else
+            {
+                Debug.Log(item.CardColor + item.CardNumber + " : No카운트");
+
             }
         }
         return count;
@@ -486,6 +494,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
             }
             ClientCard.Add(newCard);
         }
+
+        Debug.Log("get_clientCard 카드 확인");
+        foreach (Card item in ClientCard)
+        {
+            Debug.Log(item.CardColor + item.CardNumber);
+        }
     }
 
     //=========================================================================
@@ -573,10 +587,19 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                 break;
             }
         }
+
         ClientCard[index] = new Card(numCol[0], numCol[1]);
-        CountClientCard();
         View_TABLE();
         View_ClientCard();
+
+        _numberOfClientCard++;
+        photonView.RPC("Report_ClientCardNum", RpcTarget.All, PlayerNum, _numberOfClientCard);
+        photonView.RPC("Print_ClientCardNum", RpcTarget.All);
+        Debug.Log("Receive 카드 확인");
+        foreach (Card item in ClientCard)
+        {
+            Debug.Log(item.CardColor + item.CardNumber);
+        }
     }
 
     //=========================================================================
@@ -604,15 +627,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // 설명
     // 1. 플레이어별 카드의 개수를 프린트 합니다.
     //=========================================================================
-    [PunRPC]
-    void Sync_ClientCardNum(int[] num)
-    {
-        for (int index = 0; index < _playerCount; index++)
-        {
-            ClientCardNum_Board[index] = num[index];
-        }
-    }
-
     [PunRPC]
     void Report_ClientCardNum(int playerNum,int cardCount)
     {
