@@ -52,7 +52,9 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         Turn = (int)(random.NextDouble() * 1000 % Players.Count);
         photonView.RPC("Sync_Turn", RpcTarget.All, Turn);
         photonView.RPC("SwitchTableAccess", RpcTarget.All);
-
+        
+        _numberOfClientCard = CountClientCard();
+        
         //버튼, 테이블을 셋팅합니다.
         photonView.RPC("Backup", RpcTarget.All);
         photonView.RPC("Set_RunningGame", RpcTarget.All, 1);        // 게임 시작

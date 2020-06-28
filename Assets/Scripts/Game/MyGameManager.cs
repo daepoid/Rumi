@@ -27,7 +27,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     // public static bool DragableCheck = false; // 드래그 할 수 있는 상태인지 확인.
     // 다음 턴으로 넘어가면서 드래그를 강제로 종료하고 다음사람 턴이 시작되면서 드래그가 다시 가능해진다.
 
-    public int clientCardNum = 0;
     public int[] ClientCardNum_Board = new int[4] {0, 0, 0, 0};
 
     private int _playerCount = 0; // 게임중인 플레이어 수를 알려줍니다.
@@ -37,6 +36,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     private int _beforeTurn = -1;
     private static float _time = 0; // 60초 타이머
     private bool _tableNullFlag = true;
+    private int _numberOfClientCard = 0;
     
     public Button buttonStart; // start button : 마스터만 실행
     public Button buttonReset; // 등록한 카드에 대한 요청 : 이 후 마스터가 판단
@@ -75,7 +75,7 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
                     showWhosTurn.enabled = false;
                     _turnStartFlag = false;
                     Get_ClientCard(); // 자신의 카드의 개수를 셉니다.
-                    CountClientCard();
+                    _numberOfClientCard = CountClientCard();
                     photonView.RPC("SwitchTableAccess", RpcTarget.All);
                 }
 
@@ -139,6 +139,26 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void ResetTable()
+    {
+        for (int row = 0; row < TableRow; row++)
+        {
+            for (int col = 0; col < TableCol; col++)
+            {
+                Table[row, col] = new Card(TableBackup[row, col].CardNumber, TableBackup[row, col].CardColor);
+            }
+        }
+    }
+
+    public void ResetCardHand()
+    {
+        ClientCard.Clear();
+        for (int i = 0; i < ClientCardBackup.Count; i++)
+        {
+            ClientCard.Add(new Card(ClientCardBackup[i].CardNumber, ClientCardBackup[i].CardColor));
+        }
+    }
+    
     //=========================================================================
     // Reset 버튼 - BETA
     // 설명
@@ -147,20 +167,22 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public void Reset()
     {
         // 테이블 복원
-        for (int row = 0; row < TableRow; row++)
-        {
-            for (int col = 0; col < TableCol; col++)
-            {
-                Table[row, col] = new Card(TableBackup[row, col].CardNumber, TableBackup[row, col].CardColor);
-            }
-        }
-        
-        //클라이언트 카드 복원
-        ClientCard.Clear();
-        for (int i = 0; i < ClientCardBackup.Count; i++)
-        {
-            ClientCard.Add(new Card(ClientCardBackup[i].CardNumber, ClientCardBackup[i].CardColor));
-        }
+        // for (int row = 0; row < TableRow; row++)
+        // {
+        //     for (int col = 0; col < TableCol; col++)
+        //     {
+        //         Table[row, col] = new Card(TableBackup[row, col].CardNumber, TableBackup[row, col].CardColor);
+        //     }
+        // }
+        //
+        // //클라이언트 카드 복원
+        // ClientCard.Clear();
+        // for (int i = 0; i < ClientCardBackup.Count; i++)
+        // {
+        //     ClientCard.Add(new Card(ClientCardBackup[i].CardNumber, ClientCardBackup[i].CardColor));
+        // }
+        ResetTable();
+        ResetCardHand();
         View_TABLE();
         View_ClientCard();
     }
@@ -221,12 +243,12 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         //     }
         //     Debug.Log("TableBackup" + i + " : " + str);
         // }
-        Debug.Log("카드 받기");
-        if (clientCardNum == CountClientCard() && clientCardNum < MaxHandSize)
+        Debug.Log("_numberOfClientCard : " + _numberOfClientCard + "\nCountClientCard() : " + CountClientCard());
+        if (_numberOfClientCard == CountClientCard() && _numberOfClientCard < MaxHandSize)
         {
             Debug.Log("Request() : 카드를 한 장 요청합니다.");
             photonView.RPC("Serve_Card", RpcTarget.MasterClient, PlayerNum);
-            Reset();
+            ResetTable();
         }
         else
         {
@@ -271,10 +293,11 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         
         photonView.RPC("SwitchTableAccess", RpcTarget.All);
         photonView.RPC("View_TABLE", RpcTarget.All);
-        photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,PlayerNum,clientCardNum);
+        photonView.RPC("Report_ClientCardNum", RpcTarget.MasterClient,PlayerNum, _numberOfClientCard);
         photonView.RPC("Print_ClientCardNum", RpcTarget.All);
         Debug.Log("Next() : 다음 플레이어에게 순서가 넘어갑니다.");
         NextEntryFlag = false;
+        _turnStartFlag = true;
     }
 
     //=========================================================================
