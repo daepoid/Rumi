@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using System;
+using Photon.Realtime;
 
 public class RoomPlayer : MonoBehaviourPunCallbacks
 {
@@ -23,6 +24,10 @@ public class RoomPlayer : MonoBehaviourPunCallbacks
             PlayerText[i].text = "";
 
         }
+        currentPlayersInRoom = PhotonNetwork.PlayerList;
+        playersInRoomOthersLeft = PhotonNetwork.PlayerListOthers;
+
+        printNameText();
     }
 
 
