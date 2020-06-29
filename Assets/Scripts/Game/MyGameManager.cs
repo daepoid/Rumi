@@ -21,7 +21,6 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
     public static List<Card> ClientCard = new List<Card>(); // 클라이언트의 카드를 나타냅니다.
     public static List<Card> ClientCardBackup = new List<Card>(); //클라이언트의 카드를 백업합니다.
     public static bool SortButtonFlag = false;
-
     public static bool NextEntryFlag = false;
     
     public int[] ClientCardNum_Board;
@@ -638,9 +637,17 @@ public partial class MyGameManager : MonoBehaviourPunCallbacks
         for (int index = 0; index < _playerCount; index++) 
         {
             if (Turn == index)
-                PLAYERS.GetChild(index).GetComponent<Image>().color = new Color(1F, 1F, 0.2F, 0.4F);
+            {
+                PLAYERS.GetChild(index).GetComponent<Image>().color = new Color(1F, 1F, 0.2F, 0.3F);
+                PLAYERS.GetChild(index).GetChild(0).GetComponent<Text>().fontStyle = FontStyle.Bold;
+                PLAYERS.GetChild(index).GetChild(1).GetComponent<Text>().fontStyle = FontStyle.Bold;
+            }
             else
-                PLAYERS.GetChild(index).GetComponent<Image>().color = new Color(1F, 1F, 1F, 0.2F);
+            {
+                PLAYERS.GetChild(index).GetComponent<Image>().color = new Color(1F, 1F, 1F, 0.3F);
+                PLAYERS.GetChild(index).GetChild(0).GetComponent<Text>().fontStyle = FontStyle.Normal;
+                PLAYERS.GetChild(index).GetChild(1).GetComponent<Text>().fontStyle = FontStyle.Normal;
+            }
         }
     }
 }

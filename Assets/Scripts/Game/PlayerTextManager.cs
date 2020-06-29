@@ -46,89 +46,106 @@ public class PlayerTextManager : MonoBehaviourPunCallbacks
         return cardList;
     }
 
-
     [PunRPC]
     void StartCardNumberText(int[] playersCardNumber)
     {
-        int passLocal = 0;
-        //player0 카드 갯수 출력
-        playerText[1].text = playersCardNumber[_localPlayerIndex].ToString();
-
-        //다른 플레이어 카드 갯수 출력
-        for(int i = 0; i < _currentPlayersInRoom.Length; i++)
+        for (int i = 0; i < 4; i++)
         {
-            if (i == _localPlayerIndex)
-            {
-                playerText[1].text = playersCardNumber[_localPlayerIndex].ToString();
-                continue;
-            }
-            playerText[2 * (i - passLocal) + 1].text = playersCardNumber[i].ToString();
+            playerText[2 * i + 1].text = playersCardNumber[i].ToString();
         }
-    }
-    
-    /*
-    //게임 중 확인버튼 늘렀을 때
-    public void ClickOkButton()
-    {
-        photonView.RPC("PrintCardNumberText", RpcTarget.All, _currentPlayersInRoom[_localPlayerIndex]);
     }
 
-    [PunRPC]
-    void updateCardNumberText(Player currentPlayer)
-    {
-        //원격 플레이어 중 있는지 확인
-        //있으면 카드 갯수 수정
-        try
-        {
-            int playerIndex = Array.FindIndex(_playersInRoomOthersLeft, x => x.NickName == currentPlayer.NickName);
-            Player player = playersInfo.Find(x => x.NickName == _currentPlayersInRoom[playerIndex].NickName);
-            playerText[2 * playerIndex + 1].text = player.cards.Length.ToString();
-        }
-        //Array.FindIndex에서 못찾을 경우
-        //로컬 플레이어 카드 갯수 수정
-        catch(ArgumentNullException exception)
-        {
-            Player player = playersInfo.Find(x => x.NickName == _currentPlayersInRoom[_localPlayerIndex].NickName);
-            playerText[1].text = player.cards.Length.ToString();
-        }
-    }
-    */
-    
-    //텍스트 출력
     void PrintNameText()
     {
-        //로컬 플레이어 인덱스 찾기
-        _localPlayerIndex = Array.FindIndex(_currentPlayersInRoom, player => player.IsLocal == true);
-
-        //플레이어 순서는 원격 플레이어들 정보가 들어있는
-        //PhotonNetwork.PlayerListOthers배열의 원소 순서대로 지정
-        
-        //Player0 출력
-        playerText[0].text = _currentPlayersInRoom[_localPlayerIndex].NickName.ToString();
-        playerText[1].text = "준비중";
-
-        //Player1 존재시 출력
-        if (PhotonNetwork.PlayerListOthers.Length >= 1)
+        for (int i = 0; i < PhotonNetwork.PlayerListOthers.Length + 1; i++)
         {
-            playerText[2].text = PhotonNetwork.PlayerListOthers[0].NickName.ToString();
-            playerText[3].text = "준비중";
-        }
-
-        //Player2 존재시 출력
-        if (PhotonNetwork.PlayerListOthers.Length >= 2)
-        {
-            Debug.Log(PhotonNetwork.PlayerListOthers[1]);
-            playerText[4].text = PhotonNetwork.PlayerListOthers[1].NickName.ToString();
-            playerText[5].text = "준비중";
-        }
-
-        //Player3 존재시 출력
-        if (PhotonNetwork.PlayerListOthers.Length >= 3)
-        {
-            playerText[6].text = PhotonNetwork.PlayerListOthers[2].NickName.ToString();
-            playerText[7].text = "준비중";
+            playerText[2 * i].text = _currentPlayersInRoom[i].NickName;
+            playerText[2 * i + 1].text = "준비중";
         }
     }
+    
+//     [PunRPC]
+//     void StartCardNumberText(int[] playersCardNumber)
+//     {
+//         int passLocal = 0;
+//         //player0 카드 갯수 출력
+//         playerText[1].text = playersCardNumber[_localPlayerIndex].ToString();
+//
+//         //다른 플레이어 카드 갯수 출력
+//         for(int i = 0; i < _currentPlayersInRoom.Length; i++)
+//         {
+//             if (i == _localPlayerIndex)
+//             {
+//                 playerText[1].text = playersCardNumber[_localPlayerIndex].ToString();
+//                 continue;
+//             }
+//             playerText[2 * (i - passLocal) + 1].text = playersCardNumber[i].ToString();
+//         }
+//     }
+//     
+//     /*
+//     //게임 중 확인버튼 늘렀을 때
+//     public void ClickOkButton()
+//     {
+//         photonView.RPC("PrintCardNumberText", RpcTarget.All, _currentPlayersInRoom[_localPlayerIndex]);
+//     }
+//
+//     [PunRPC]
+//     void updateCardNumberText(Player currentPlayer)
+//     {
+//         //원격 플레이어 중 있는지 확인
+//         //있으면 카드 갯수 수정
+//         try
+//         {
+//             int playerIndex = Array.FindIndex(_playersInRoomOthersLeft, x => x.NickName == currentPlayer.NickName);
+//             Player player = playersInfo.Find(x => x.NickName == _currentPlayersInRoom[playerIndex].NickName);
+//             playerText[2 * playerIndex + 1].text = player.cards.Length.ToString();
+//         }
+//         //Array.FindIndex에서 못찾을 경우
+//         //로컬 플레이어 카드 갯수 수정
+//         catch(ArgumentNullException exception)
+//         {
+//             Player player = playersInfo.Find(x => x.NickName == _currentPlayersInRoom[_localPlayerIndex].NickName);
+//             playerText[1].text = player.cards.Length.ToString();
+//         }
+//     }
+//     */
+//     
+//     //텍스트 출력
+//     void PrintNameText()
+//     {
+//         //로컬 플레이어 인덱스 찾기
+//         _localPlayerIndex = Array.FindIndex(_currentPlayersInRoom, player => player.IsLocal == true);
+//
+//         //플레이어 순서는 원격 플레이어들 정보가 들어있는
+//         //PhotonNetwork.PlayerListOthers배열의 원소 순서대로 지정
+//         
+//         //Player0 출력
+//         playerText[0].text = _currentPlayersInRoom[_localPlayerIndex].NickName.ToString();
+//         playerText[1].text = "준비중";
+//
+//         //Player1 존재시 출력
+//         if (PhotonNetwork.PlayerListOthers.Length >= 1)
+//         {
+//             playerText[2].text = PhotonNetwork.PlayerListOthers[0].NickName.ToString();
+//             playerText[3].text = "준비중";
+//         }
+//
+//         //Player2 존재시 출력
+//         if (PhotonNetwork.PlayerListOthers.Length >= 2)
+//         {
+//             Debug.Log(PhotonNetwork.PlayerListOthers[1]);
+//             playerText[4].text = PhotonNetwork.PlayerListOthers[1].NickName.ToString();
+//             playerText[5].text = "준비중";
+//         }
+//
+//         //Player3 존재시 출력
+//         if (PhotonNetwork.PlayerListOthers.Length >= 3)
+//         {
+//             playerText[6].text = PhotonNetwork.PlayerListOthers[2].NickName.ToString();
+//             playerText[7].text = "준비중";
+//         }
+//     }
 
     //새로운 플레이어가 방에 들어왔을 때 호출
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)

@@ -38,6 +38,7 @@ MonoBehaviour:
   - Create_TABLE
   - DestroyRpc
   - DestroySpaceship
+  - EndGame
   - Fire
   - Next
   - Print_ClientCardNum
@@ -57,7 +58,7 @@ MonoBehaviour:
   - Turn_Alert
   - View_ClientCard
   - View_TABLE
-  - EndGame
+  - StartCardNumberText2
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 0
